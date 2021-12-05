@@ -4,8 +4,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.RoundedCornersTransformation
@@ -14,7 +14,7 @@ import com.example.ximalaya.databinding.ItemRecommendBinding
 import com.ximalaya.ting.android.opensdk.model.album.Album
 
 class RecommendListAdapter :
-    ListAdapter<Album, RecommendListViewHolder>(object : DiffUtil.ItemCallback<Album>() {
+    PagingDataAdapter<Album, RecommendListViewHolder>(object : DiffUtil.ItemCallback<Album>() {
         override fun areItemsTheSame(oldItem: Album, newItem: Album) = oldItem.id == newItem.id
 
         override fun areContentsTheSame(oldItem: Album, newItem: Album) = oldItem == newItem
@@ -33,7 +33,7 @@ class RecommendListAdapter :
     override fun onBindViewHolder(holder: RecommendListViewHolder, position: Int) {
         val album = getItem(position)
         holder.binding.album = album
-        holder.binding.coverUrl = album.coverUrlLarge
+        holder.binding.coverUrl = album?.coverUrlLarge
     }
 
     companion object {
