@@ -7,7 +7,7 @@
         android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".fragments.RecommendFragment">
+        tools:context=".fragment.RecommendFragment">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recommend_list"

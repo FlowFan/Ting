@@ -6,6 +6,6 @@
 
     <fragment
         android:id="@+id/recommendFragment"
-        android:name="com.example.ximalaya.fragments.RecommendFragment"
+        android:name="com.example.ximalaya.fragment.RecommendFragment"
         android:label="RecommendFragment" />
 </navigation>

@@ -17,9 +17,13 @@
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="75dp"
-        android:layout_margin="5dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
         android:clickable="true"
-        android:focusable="true">
+        android:focusable="true"
+        app:cardCornerRadius="13dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -40,7 +44,7 @@
                     android:layout_height="65dp"
                     android:contentDescription="@string/image_description"
                     app:image="@{coverUrl}"
-                    tools:srcCompat="@tools:sample/avatars" />
+                    tools:srcCompat="@tools:sample/avatars[1]" />
             </io.supercharge.shimmerlayout.ShimmerLayout>
 
             <TextView
@@ -68,7 +72,6 @@
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="@{album.albumIntro}"
-                android:textColor="#ff848484"
                 app:layout_constraintEnd_toEndOf="@+id/album_title_tv"
                 app:layout_constraintStart_toStartOf="@+id/album_title_tv"
                 app:layout_constraintTop_toBottomOf="@+id/album_title_tv"
@@ -78,9 +81,9 @@
                 android:id="@+id/album_play_count"
                 android:layout_width="45dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
                 android:text="@{String.valueOf(album.playCount)}"
-                android:textSize="7sp"
+                android:textSize="11sp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/album_description_tv"
                 app:layout_constraintTop_toBottomOf="@+id/album_description_tv"
                 tools:text="243.5万" />
@@ -90,8 +93,8 @@
                 android:layout_width="45dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="30dp"
-                android:text="@{String.valueOf(album.includeTrackCount)}"
-                android:textSize="7sp"
+                android:text="@{album.includeTrackCount + `集`}"
+                android:textSize="11sp"
                 app:layout_constraintBottom_toBottomOf="@+id/album_play_count"
                 app:layout_constraintStart_toEndOf="@+id/album_play_count"
                 app:layout_constraintTop_toTopOf="@+id/album_play_count"

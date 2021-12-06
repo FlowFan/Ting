@@ -1,4 +1,4 @@
-package com.example.ximalaya.adapters
+package com.example.ximalaya.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -13,7 +13,7 @@ import com.example.ximalaya.R
 import com.example.ximalaya.databinding.ItemRecommendBinding
 import com.ximalaya.ting.android.opensdk.model.album.Album
 
-class RecommendListAdapter :
+class RecommendListAdapter(private val onClick: () -> Unit) :
     PagingDataAdapter<Album, RecommendListViewHolder>(object : DiffUtil.ItemCallback<Album>() {
         override fun areItemsTheSame(oldItem: Album, newItem: Album) = oldItem.id == newItem.id
 
@@ -27,6 +27,7 @@ class RecommendListAdapter :
                 false
             )
         )
+        holder.itemView.setOnClickListener { onClick() }
         return holder
     }
 
@@ -35,17 +36,15 @@ class RecommendListAdapter :
         holder.binding.album = album
         holder.binding.coverUrl = album?.coverUrlLarge
     }
+}
 
-    companion object {
-        @JvmStatic
-        @BindingAdapter("image")
-        fun setImage(imageView: ImageView, url: String) {
-            if (url.isNotEmpty()) {
-                imageView.load(url) {
-                    placeholder(R.drawable.ic_launcher_background)
-                    transformations(RoundedCornersTransformation(20f))
-                }
-            }
+@BindingAdapter("image")
+fun setImage(imageView: ImageView, url: String) {
+    if (url.isNotEmpty()) {
+        imageView.load(url) {
+            crossfade(true)
+            placeholder(R.drawable.shape_r13_white)
+            transformations(RoundedCornersTransformation(13f))
         }
     }
 }

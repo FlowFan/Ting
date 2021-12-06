@@ -1,4 +1,4 @@
-package com.example.ximalaya.fragments
+package com.example.ximalaya.fragment
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,18 +9,24 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
-import com.example.ximalaya.RecommendViewModel
-import com.example.ximalaya.adapters.FooterAdapter
-import com.example.ximalaya.adapters.RecommendListAdapter
+import com.example.ximalaya.viewmodel.RecommendViewModel
+import com.example.ximalaya.adapter.FooterAdapter
+import com.example.ximalaya.adapter.RecommendListAdapter
 import com.example.ximalaya.databinding.FragmentRecommendBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class RecommendFragment : Fragment() {
     private var _binding: FragmentRecommendBinding? = null
     private val binding get() = _binding!!
-    private val recommendListAdapter by lazy { RecommendListAdapter() }
+    private val viewModel by viewModels<RecommendViewModel>()
+    private val recommendListAdapter by lazy {
+        RecommendListAdapter {
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,11 +41,8 @@ class RecommendFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.recommendList.adapter =
             recommendListAdapter.withLoadStateFooter(FooterAdapter { (recommendListAdapter.retry()) })
-        val viewModel by viewModels<RecommendViewModel>()
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.albumList.flowWithLifecycle(viewLifecycleOwner.lifecycle).collectLatest {
-                recommendListAdapter.submitData(it)
-            }
+        viewModel.albumList.observe(viewLifecycleOwner) {
+            recommendListAdapter.submitData(viewLifecycleOwner.lifecycle, it)
         }
         viewLifecycleOwner.lifecycleScope.launch {
             recommendListAdapter.loadStateFlow.flowWithLifecycle(viewLifecycleOwner.lifecycle)
@@ -53,7 +56,7 @@ class RecommendFragment : Fragment() {
                         is LoadState.Error -> {
                             delay(3000)
                             binding.swipeRefresh.isRefreshing = false
-                            recommendListAdapter.refresh()
+                            recommendListAdapter.retry()
                                 .run { binding.swipeRefresh.isRefreshing = true }
                         }
                     }

@@ -1,8 +1,8 @@
-package com.example.ximalaya.adapters
+package com.example.ximalaya.adapter
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -12,22 +12,12 @@ import com.example.ximalaya.databinding.ItemFooterBinding
 class FooterAdapter(private val retry: () -> Unit) : LoadStateAdapter<FooterViewHolder>() {
     override fun onBindViewHolder(holder: FooterViewHolder, loadState: LoadState) {
         holder.binding.apply {
+            progressBar.isVisible = loadState is LoadState.Loading
+            holder.itemView.isClickable = loadState is LoadState.Error
             when (loadState) {
-                is LoadState.Loading -> {
-                    textView.setText(R.string.footer_loading)
-                    progressBar.visibility = View.VISIBLE
-                    holder.itemView.isClickable = false
-                }
-                is LoadState.Error -> {
-                    textView.setText(R.string.footer_error)
-                    progressBar.visibility = View.GONE
-                    holder.itemView.isClickable = true
-                }
-                else -> {
-                    textView.setText(R.string.footer_success)
-                    progressBar.visibility = View.GONE
-                    holder.itemView.isClickable = false
-                }
+                is LoadState.Loading -> textView.setText(R.string.footer_loading)
+                is LoadState.Error -> textView.setText(R.string.footer_error)
+                else -> textView.setText(R.string.footer_success)
             }
         }
     }

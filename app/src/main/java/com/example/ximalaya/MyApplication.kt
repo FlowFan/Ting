@@ -9,7 +9,9 @@ import com.ximalaya.ting.android.opensdk.constants.DTransferConstants
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDeviceInfoProvider
 import com.ximalaya.ting.android.opensdk.util.SharedPreferencesUtil
 import com.xmlywind.devicehelper.oaId.helpers.DevicesIDsHelper
+import dagger.hilt.android.HiltAndroidApp
 
+@HiltAndroidApp
 class MyApplication : Application(), DevicesIDsHelper.AppIdsUpdater {
     private lateinit var oaid: String
 
