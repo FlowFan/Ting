@@ -42,7 +42,7 @@ class RecommendListAdapter(private val onClick: () -> Unit) :
 fun setImage(imageView: ImageView, url: String) {
     if (url.isNotEmpty()) {
         imageView.load(url) {
-            crossfade(true)
+            crossfade(1000)
             placeholder(R.drawable.shape_r13_white)
             transformations(RoundedCornersTransformation(13f))
         }

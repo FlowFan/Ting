@@ -14,16 +14,16 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="Theme.Ximalaya.MyStyle">
-        <item name="android:statusBarColor">@color/white</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
-        <item name="android:navigationBarColor">@color/white</item>
-        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="colorPrimary">@color/main_color</item>
-        <item name="colorPrimaryVariant">@color/main_color</item>
-        <item name="colorOnPrimary">@color/main_color</item>
-        <item name="colorAccent">@color/main_color</item>
+    <style name="Theme.Ximalaya.MyStyle" parent="Theme.Material3.DayNight.NoActionBar">
+        <!--        <item name="android:statusBarColor">@color/white</item>-->
+        <!--        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>-->
+        <!--        <item name="android:navigationBarColor">@color/white</item>-->
+        <!--        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>-->
+        <!--        <item name="windowActionBar">false</item>-->
+        <!--        <item name="windowNoTitle">true</item>-->
+        <!--        <item name="colorPrimary">@color/main_color</item>-->
+        <!--        <item name="colorPrimaryVariant">@color/main_color</item>-->
+        <!--        <item name="colorOnPrimary">@color/main_color</item>-->
+        <!--        <item name="colorAccent">@color/main_color</item>-->
     </style>
 </resources>

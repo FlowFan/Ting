@@ -43,31 +43,37 @@ android {
 }
 
 dependencies {
+    ext {
+        navigation_version = '2.3.5'
+        viewModel_version = '2.4.0'
+    }
 
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.0'
-    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'com.google.android.material:material:1.6.0-alpha01'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
 
     //Gson
     implementation 'com.google.code.gson:gson:2.8.9'
-    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
-    implementation 'com.squareup.okio:okio:3.0.0'
+//    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
+//    implementation 'com.squareup.okio:okio:3.0.0'
     //ShimmerLayout
     implementation 'io.supercharge:shimmerlayout:2.1.0'
     //Coil
     implementation 'io.coil-kt:coil:1.4.0'
     //Navigation
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.5'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.3.5'
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
     //ViewModel
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$viewModel_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$viewModel_version"
     //Paging3
     implementation 'androidx.paging:paging-runtime-ktx:3.1.0'
     //SwipeRefresh
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+    //Startup
+    implementation 'androidx.startup:startup-runtime:1.1.0'
     //Hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"

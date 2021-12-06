@@ -49,7 +49,7 @@ class RecommendFragment : Fragment() {
                 .collectLatest {
                     when (it.refresh) {
                         is LoadState.NotLoading -> {
-                            delay(800)
+                            delay(300)
                             binding.swipeRefresh.isRefreshing = false
                         }
                         is LoadState.Loading -> binding.swipeRefresh.isRefreshing = true
