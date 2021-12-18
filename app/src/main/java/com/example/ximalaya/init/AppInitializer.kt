@@ -1,7 +1,8 @@
-package com.example.ximalaya
+package com.example.ximalaya.init
 
 import android.content.Context
 import androidx.startup.Initializer
+import com.example.ximalaya.other.Constants.KEY_LAST_OAID
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest
 import com.ximalaya.ting.android.opensdk.datatrasfer.DeviceInfoProviderDefault
@@ -14,7 +15,7 @@ class AppInitializer : Initializer<Unit> {
     override fun create(context: Context) {
         val mXimalaya = CommonRequest.getInstanse()
         oaid = SharedPreferencesUtil.getInstance(context.applicationContext)
-            .getString(Constants.KEY_LAST_OAID)
+            .getString(KEY_LAST_OAID)
         if (DTransferConstants.isRelease) {
             val mAppSecret = "8646d66d6abe2efd14f2891f9fd1c8af"
             mXimalaya.apply {

@@ -9,9 +9,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.RoundedCornersTransformation
+import com.example.ximalaya.model.Album
 import com.example.ximalaya.R
 import com.example.ximalaya.databinding.ItemRecommendBinding
-import com.ximalaya.ting.android.opensdk.model.album.Album
 
 class RecommendListAdapter(private val onClick: () -> Unit) :
     PagingDataAdapter<Album, RecommendListViewHolder>(object : DiffUtil.ItemCallback<Album>() {
@@ -34,7 +34,7 @@ class RecommendListAdapter(private val onClick: () -> Unit) :
     override fun onBindViewHolder(holder: RecommendListViewHolder, position: Int) {
         val album = getItem(position)
         holder.binding.album = album
-        holder.binding.coverUrl = album?.coverUrlLarge
+        holder.binding.coverUrl = album?.coverUrl
     }
 }
 

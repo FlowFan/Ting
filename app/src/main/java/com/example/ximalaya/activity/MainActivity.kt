@@ -1,9 +1,10 @@
-package com.example.ximalaya
+package com.example.ximalaya.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import com.example.ximalaya.R
 import com.example.ximalaya.databinding.ActivityMainBinding
 import com.example.ximalaya.fragment.RecommendFragment
 import com.google.android.material.tabs.TabLayoutMediator

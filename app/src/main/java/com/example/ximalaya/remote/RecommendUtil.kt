@@ -1,6 +1,7 @@
-package com.example.ximalaya
+package com.example.ximalaya.remote
 
 import android.util.Log
+import com.example.ximalaya.other.Constants.RECOMMEND_COUNT
 import com.ximalaya.ting.android.opensdk.constants.DTransferConstants
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack
@@ -13,7 +14,7 @@ object RecommendUtil {
     //获取推荐内容
     suspend fun getRecommendData() = suspendCoroutine<List<Album>> {
         val map = HashMap<String, String>()
-        map[DTransferConstants.LIKE_COUNT] = Constants.RECOMMEND_COUNT.toString()
+        map[DTransferConstants.LIKE_COUNT] = RECOMMEND_COUNT.toString()
         CommonRequest.getGuessLikeAlbum(map, object : IDataCallBack<GussLikeAlbumList> {
             override fun onSuccess(p0: GussLikeAlbumList?) {
                 it.resume(p0?.albumList!!)

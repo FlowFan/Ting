@@ -16,7 +16,7 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
-        android:name=".MyApplication"
+        android:name=".init.MyApplication"
         android:allowBackup="true"
         android:fullBackupOnly="true"
         android:icon="@mipmap/ic_launcher"
@@ -25,7 +25,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Ximalaya.MyStyle">
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -39,7 +39,7 @@
             android:exported="false"
             tools:node="merge">
             <meta-data
-                android:name="com.example.ximalaya.AppInitializer"
+                android:name="com.example.ximalaya.init.AppInitializer"
                 android:value="androidx.startup" />
         </provider>
     </application>
