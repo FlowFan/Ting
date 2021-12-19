@@ -1,5 +1,6 @@
 package com.example.ximalaya.init
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.startup.Initializer
 import com.example.ximalaya.other.Constants.KEY_LAST_OAID
@@ -9,11 +10,18 @@ import com.ximalaya.ting.android.opensdk.datatrasfer.DeviceInfoProviderDefault
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDeviceInfoProvider
 import com.ximalaya.ting.android.opensdk.util.SharedPreferencesUtil
 
+@SuppressLint("StaticFieldLeak")
 class AppInitializer : Initializer<Unit> {
+    companion object {
+        lateinit var mContext: Context
+            private set
+    }
+
     private lateinit var oaid: String
 
     override fun create(context: Context) {
         val mXimalaya = CommonRequest.getInstanse()
+        mContext = context.applicationContext
         oaid = SharedPreferencesUtil.getInstance(context.applicationContext)
             .getString(KEY_LAST_OAID)
         if (DTransferConstants.isRelease) {

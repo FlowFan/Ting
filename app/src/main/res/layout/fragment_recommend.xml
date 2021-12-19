@@ -13,7 +13,6 @@
             android:id="@+id/recommend_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#fff4f4f4"
             android:overScrollMode="never"
             android:splitMotionEvents="false"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

@@ -48,16 +48,18 @@ class RecommendFragment : Fragment() {
             recommendListAdapter.loadStateFlow.flowWithLifecycle(viewLifecycleOwner.lifecycle)
                 .collectLatest {
                     when (it.refresh) {
+                        //加载完成300ms后停止转动
                         is LoadState.NotLoading -> {
                             delay(300)
                             binding.swipeRefresh.isRefreshing = false
                         }
+                        //正在加载时转动
                         is LoadState.Loading -> binding.swipeRefresh.isRefreshing = true
+                        //加载失败时每隔3秒重试一次并重新转动
                         is LoadState.Error -> {
                             delay(3000)
                             binding.swipeRefresh.isRefreshing = false
                             recommendListAdapter.retry()
-                                .run { binding.swipeRefresh.isRefreshing = true }
                         }
                     }
                 }

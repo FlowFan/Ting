@@ -12,12 +12,12 @@
             android:id="@+id/tabLayout"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintEnd_toStartOf="@+id/imageView"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:tabIndicatorFullWidth="false"
             app:tabMode="scrollable"
-            app:tabTextAppearance="@style/TextAppearance.AppCompat.Large">
+            app:tabTextAppearance="@style/TextAppearance.Material3.TitleLarge">
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"

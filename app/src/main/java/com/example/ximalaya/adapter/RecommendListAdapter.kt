@@ -32,19 +32,19 @@ class RecommendListAdapter(private val onClick: () -> Unit) :
     }
 
     override fun onBindViewHolder(holder: RecommendListViewHolder, position: Int) {
-        val album = getItem(position)
-        holder.binding.album = album
-        holder.binding.coverUrl = album?.coverUrl
+        getItem(position)?.let {
+            holder.binding.album = it
+        }
     }
 }
 
-@BindingAdapter("image")
-fun setImage(imageView: ImageView, url: String) {
+@BindingAdapter("bindingImage")
+fun bindingImage(imageView: ImageView, url: String) {
     if (url.isNotEmpty()) {
         imageView.load(url) {
             crossfade(1000)
             placeholder(R.drawable.shape_r13_white)
-            transformations(RoundedCornersTransformation(13f))
+            transformations(RoundedCornersTransformation(30f))
         }
     }
 }
