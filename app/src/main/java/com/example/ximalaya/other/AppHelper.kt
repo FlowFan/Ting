@@ -2,16 +2,12 @@ package com.example.ximalaya.other
 
 import android.content.Context
 import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
+import android.net.NetworkCapabilities.NET_CAPABILITY_VALIDATED
 import java.text.DecimalFormat
 
 fun Context.isConnectedNetwork() =
     (getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).run {
-        getNetworkCapabilities(activeNetwork)?.run {
-            hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
-                    || hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
-                    || hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
-        } ?: false
+        getNetworkCapabilities(activeNetwork)?.hasCapability(NET_CAPABILITY_VALIDATED) ?: false
     }
 
 fun Long.convertNumber() = when (toString().length) {
