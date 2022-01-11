@@ -14,7 +14,13 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="Theme.Ximalaya.MyStyle" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.Ximalaya.MyStyle" parent="Theme.SplashScreen">
+        <item name="postSplashScreenTheme">@style/Theme.Ximalaya.MyStyle.Base</item>
+        <item name="windowSplashScreenBackground">@color/main_color</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+    </style>
+
+    <style name="Theme.Ximalaya.MyStyle.Base" parent="Theme.Material3.DayNight.NoActionBar">
         <!--        状态栏背景-->
         <item name="android:statusBarColor">@android:color/transparent</item>
         <!--        黑色状态栏-->

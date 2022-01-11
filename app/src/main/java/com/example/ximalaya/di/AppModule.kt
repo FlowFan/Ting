@@ -3,6 +3,7 @@ package com.example.ximalaya.di
 import android.content.Context
 import androidx.room.Room
 import com.example.ximalaya.db.AppDatabase
+import com.example.ximalaya.other.Constants.APP_DATABASE
 import com.example.ximalaya.other.Constants.BASE_URL
 import com.example.ximalaya.remote.RecommendService
 import com.retrofit2.converter.JsonConverterFactory
@@ -22,7 +23,7 @@ object AppModule {
     @Singleton
     @Provides
     fun provideDatabase(@ApplicationContext context: Context) =
-        Room.databaseBuilder(context, AppDatabase::class.java, "app_database").build()
+        Room.databaseBuilder(context, AppDatabase::class.java, APP_DATABASE).build()
 
     @Singleton
     @Provides

@@ -3,7 +3,13 @@ package com.example.ximalaya.other
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities.NET_CAPABILITY_VALIDATED
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import com.example.ximalaya.other.Constants.SHP_DATASTORE
 import java.text.DecimalFormat
+
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(SHP_DATASTORE)
 
 fun Context.isConnectedNetwork() =
     (getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).run {
