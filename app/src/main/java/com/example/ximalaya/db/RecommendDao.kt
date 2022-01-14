@@ -10,7 +10,7 @@ import com.example.ximalaya.model.Album
 @Dao
 interface RecommendDao {
     @Insert(entity = Album::class, onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertRecommend(albumList: List<Album>)
+    suspend fun insertRecommend(vararg album: Album)
 
     @Query("SELECT * FROM Album")
     fun getRecommendData(): PagingSource<Int, Album>

@@ -27,7 +27,7 @@ class RecommendRemoteMediator(
                 if (loadType == LoadType.REFRESH) {
                     recommendDao.clearRecommendData()
                 }
-                recommendDao.insertRecommend(album)
+                recommendDao.insertRecommend(*album.toTypedArray())
             }
             when (loadType) {
                 LoadType.REFRESH -> return MediatorResult.Success(false)
