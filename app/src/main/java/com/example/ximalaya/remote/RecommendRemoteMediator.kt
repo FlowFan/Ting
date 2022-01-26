@@ -8,7 +8,10 @@ import androidx.room.withTransaction
 import com.example.ximalaya.db.AppDatabase
 import com.example.ximalaya.init.AppInitializer
 import com.example.ximalaya.model.Album
+import com.example.ximalaya.other.Constants.LIKE_KEY
 import com.example.ximalaya.other.isConnectedNetwork
+import com.example.ximalaya.other.sig
+import com.ximalaya.ting.android.opensdk.datatrasfer.AccessTokenManager
 import java.lang.Exception
 
 @OptIn(ExperimentalPagingApi::class)
@@ -16,9 +19,12 @@ class RecommendRemoteMediator(
     private val recommendService: RecommendService,
     private val database: AppDatabase
 ) : RemoteMediator<Int, Album>() {
+    private val accessToken = AccessTokenManager.getInstanse().accessToken
+    private val recommendSig = "access_token=$accessToken&$LIKE_KEY".sig()
+
     override suspend fun load(loadType: LoadType, state: PagingState<Int, Album>): MediatorResult {
         return try {
-            val album = recommendService.searchRecommendData()
+            val album = recommendService.searchRecommendData(accessToken, recommendSig)
             val recommendDao = database.recommendDao()
             if (!AppInitializer.mContext.isConnectedNetwork()) {
                 return MediatorResult.Success(true)

@@ -3,8 +3,10 @@ package com.example.ximalaya.init
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.startup.Initializer
+import com.example.ximalaya.other.Constants.APP_KEY
+import com.example.ximalaya.other.Constants.APP_SECRET
 import com.example.ximalaya.other.Constants.KEY_LAST_OAID
-import com.ximalaya.ting.android.opensdk.constants.DTransferConstants
+import com.example.ximalaya.other.Constants.PACK_ID
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest
 import com.ximalaya.ting.android.opensdk.datatrasfer.DeviceInfoProviderDefault
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDeviceInfoProvider
@@ -24,20 +26,10 @@ class AppInitializer : Initializer<Unit> {
         mContext = context.applicationContext
         oaid = SharedPreferencesUtil.getInstance(context.applicationContext)
             .getString(KEY_LAST_OAID)
-        if (DTransferConstants.isRelease) {
-            val mAppSecret = "8646d66d6abe2efd14f2891f9fd1c8af"
-            mXimalaya.apply {
-                setAppkey("9f9ef8f10bebeaa83e71e62f935bede8")
-                setPackid("com.app.test.android")
-                init(context, mAppSecret, true, getDeviceInfoProvider(context))
-            }
-        } else {
-            val mAppSecret = "0a09d7093bff3d4947a5c4da0125972e"
-            mXimalaya.apply {
-                setAppkey("f4d8f65918d9878e1702d49a8cdf0183")
-                setPackid("com.ximalaya.qunfeng")
-                init(context, mAppSecret, getDeviceInfoProvider(context))
-            }
+        mXimalaya.apply {
+            setAppkey(APP_KEY)
+            setPackid(PACK_ID)
+            init(context, APP_SECRET, true, getDeviceInfoProvider(context))
         }
     }
 
