@@ -14,11 +14,15 @@ import com.example.ximalaya.R
 import com.example.ximalaya.databinding.ItemRecommendBinding
 
 class RecommendListAdapter(private val onClick: () -> Unit) :
-    PagingDataAdapter<Album, RecommendListViewHolder>(object : DiffUtil.ItemCallback<Album>() {
-        override fun areItemsTheSame(oldItem: Album, newItem: Album) = oldItem.id == newItem.id
+    PagingDataAdapter<Album, RecommendListAdapter.RecommendListViewHolder>(
+        object : DiffUtil.ItemCallback<Album>() {
+            override fun areItemsTheSame(oldItem: Album, newItem: Album) = oldItem.id == newItem.id
 
-        override fun areContentsTheSame(oldItem: Album, newItem: Album) = oldItem == newItem
-    }) {
+            override fun areContentsTheSame(oldItem: Album, newItem: Album) = oldItem == newItem
+        }) {
+    inner class RecommendListViewHolder(val binding: ItemRecommendBinding) :
+        RecyclerView.ViewHolder(binding.root)
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecommendListViewHolder {
         val holder = RecommendListViewHolder(
             ItemRecommendBinding.inflate(
@@ -39,8 +43,8 @@ class RecommendListAdapter(private val onClick: () -> Unit) :
 }
 
 @BindingAdapter("bindingImage")
-fun bindingImage(imageView: ImageView, url: String) {
-    if (url.isNotEmpty()) {
+fun bindingImage(imageView: ImageView, url: String?) {
+    if (!url.isNullOrEmpty()) {
         imageView.load(url) {
             crossfade(1000)
             placeholder(R.drawable.shape_r13_white)
@@ -48,6 +52,3 @@ fun bindingImage(imageView: ImageView, url: String) {
         }
     }
 }
-
-class RecommendListViewHolder(val binding: ItemRecommendBinding) :
-    RecyclerView.ViewHolder(binding.root)

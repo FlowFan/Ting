@@ -9,7 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ximalaya.R
 import com.example.ximalaya.databinding.ItemFooterBinding
 
-class FooterAdapter(private val retry: () -> Unit) : LoadStateAdapter<FooterViewHolder>() {
+class FooterAdapter(private val retry: () -> Unit) :
+    LoadStateAdapter<FooterAdapter.FooterViewHolder>() {
+    inner class FooterViewHolder(val binding: ItemFooterBinding) :
+        RecyclerView.ViewHolder(binding.root)
+
     override fun onBindViewHolder(holder: FooterViewHolder, loadState: LoadState) {
         holder.binding.apply {
             progressBar.isVisible = loadState is LoadState.Loading
@@ -34,5 +38,3 @@ class FooterAdapter(private val retry: () -> Unit) : LoadStateAdapter<FooterView
         return holder
     }
 }
-
-class FooterViewHolder(val binding: ItemFooterBinding) : RecyclerView.ViewHolder(binding.root)

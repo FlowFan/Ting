@@ -19,13 +19,13 @@ class RecommendRemoteMediator(
     private val recommendService: RecommendService,
     private val database: AppDatabase
 ) : RemoteMediator<Int, Album>() {
-    private val accessToken = AccessTokenManager.getInstanse().accessToken
-    private val recommendSig = "access_token=$accessToken&$LIKE_KEY".sig()
+    private val accessToken by lazy { AccessTokenManager.getInstanse().accessToken }
+    private val recommendSig by lazy { "access_token=$accessToken&$LIKE_KEY".sig() }
+    private val recommendDao by lazy { database.recommendDao() }
 
     override suspend fun load(loadType: LoadType, state: PagingState<Int, Album>): MediatorResult {
         return try {
             val album = recommendService.searchRecommendData(accessToken, recommendSig)
-            val recommendDao = database.recommendDao()
             if (!AppInitializer.mContext.isConnectedNetwork()) {
                 return MediatorResult.Success(true)
             }
