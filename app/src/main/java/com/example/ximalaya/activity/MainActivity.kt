@@ -32,17 +32,49 @@ import kotlinx.coroutines.runBlocking
 class MainActivity : AppCompatActivity() {
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val dataStore by lazy { applicationContext.dataStore }
-    private var isFirstStart: Boolean = true
+    private var isFirstStart: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val splashScreen = installSplashScreen()
-        setContentView(binding.root)
         runBlocking(Dispatchers.IO) {
             isFirstStart = dataStore.data.map {
                 it[booleanPreferencesKey(KEY_FIRST_START)] ?: true
             }.first()
         }
+        installSplashScreen().apply {
+            setOnExitAnimationListener { splashScreen ->
+                ObjectAnimator.ofFloat(
+                    splashScreen.iconView,
+                    View.TRANSLATION_Y,
+                    0f,
+                    -splashScreen.view.height.toFloat()
+                ).apply {
+                    interpolator = AnticipateInterpolator()
+                    duration = 500L
+                    doOnEnd {
+                        splashScreen.remove()
+                    }
+                    if (isFirstStart) {
+                        Toast.makeText(
+                            this@MainActivity,
+                            getString(R.string.toast_first_start),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        splashScreen.view.setOnClickListener {
+                            start()
+                            lifecycleScope.launch(Dispatchers.IO) {
+                                dataStore.edit {
+                                    it[booleanPreferencesKey(KEY_FIRST_START)] = false
+                                }
+                            }
+                        }
+                    } else {
+                        start()
+                    }
+                }
+            }
+        }
+        setContentView(binding.root)
         onBackPressedDispatcher.addCallback(this) {
             Toast.makeText(
                 this@MainActivity,
@@ -53,33 +85,6 @@ class MainActivity : AppCompatActivity() {
             lifecycleScope.launch {
                 delay(1500)
                 isEnabled = true
-            }
-        }
-        splashScreen.setOnExitAnimationListener { splashScreenView ->
-            val slideUp = ObjectAnimator.ofFloat(
-                splashScreenView.iconView,
-                View.TRANSLATION_Y,
-                0f,
-                -splashScreenView.view.height.toFloat()
-            )
-            slideUp.interpolator = AnticipateInterpolator()
-            slideUp.duration = 500L
-            slideUp.doOnEnd {
-                splashScreenView.remove()
-            }
-            if (isFirstStart) {
-                Toast.makeText(this, getString(R.string.toast_first_start), Toast.LENGTH_SHORT)
-                    .show()
-                splashScreenView.view.setOnClickListener {
-                    slideUp.start()
-                    lifecycleScope.launch(Dispatchers.IO) {
-                        dataStore.edit {
-                            it[booleanPreferencesKey(KEY_FIRST_START)] = false
-                        }
-                    }
-                }
-            } else {
-                slideUp.start()
             }
         }
         val tabTitles = resources.getStringArray(R.array.tab_title)
