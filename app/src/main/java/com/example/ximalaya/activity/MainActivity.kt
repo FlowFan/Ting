@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import android.view.animation.AnticipateInterpolator
 import android.widget.Toast
-import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -16,13 +15,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.ximalaya.R
 import com.example.ximalaya.databinding.ActivityMainBinding
-import com.example.ximalaya.fragment.RecommendFragment
+import com.example.ximalaya.fragment.MainFragment
 import com.example.ximalaya.other.Constants.KEY_FIRST_START
 import com.example.ximalaya.other.dataStore
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -75,24 +73,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
         setContentView(binding.root)
-        onBackPressedDispatcher.addCallback(this) {
-            Toast.makeText(
-                this@MainActivity,
-                getString(R.string.toast_quit),
-                Toast.LENGTH_SHORT
-            ).show()
-            isEnabled = false
-            lifecycleScope.launch {
-                delay(1500)
-                isEnabled = true
-            }
-        }
         val tabTitles = resources.getStringArray(R.array.tab_title)
         binding.viewPager.adapter = object : FragmentStateAdapter(this) {
             override fun getItemCount() = tabTitles.size
 
             override fun createFragment(position: Int): Fragment {
-                return RecommendFragment()
+                return MainFragment()
             }
         }
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->

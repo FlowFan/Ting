@@ -11,7 +11,7 @@ object Constants {
     const val BASE_URL = "https://api.ximalaya.com/openapi-gateway-app/"
 
     private const val CLIENT_OS_TYPE = 2
-    private const val DEVICE_ID = "be86e3fc5152f87b"
+    private const val DEVICE_ID = "ae1416803c3a314d"
     private const val DEVICE_ID_TYPE = "Android_ID"
     private const val DEVICE_TYPE = 2
     private const val SDK_CLIENT_TYPE = 2

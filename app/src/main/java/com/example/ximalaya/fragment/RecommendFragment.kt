@@ -1,18 +1,20 @@
 package com.example.ximalaya.fragment
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
-import com.example.ximalaya.viewmodel.RecommendViewModel
+import com.example.ximalaya.R
 import com.example.ximalaya.adapter.FooterAdapter
 import com.example.ximalaya.adapter.RecommendListAdapter
 import com.example.ximalaya.databinding.FragmentRecommendBinding
+import com.example.ximalaya.viewmodel.RecommendViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -25,6 +27,7 @@ class RecommendFragment : Fragment() {
     private val viewModel by viewModels<RecommendViewModel>()
     private val recommendListAdapter by lazy {
         RecommendListAdapter {
+            findNavController().navigate(R.id.action_recommendFragment_to_detailFragment)
         }
     }
 
