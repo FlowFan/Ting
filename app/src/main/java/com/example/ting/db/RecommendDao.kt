@@ -1,10 +1,10 @@
-package com.example.ximalaya.db
+package com.example.ting.db
 
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
-import com.example.ximalaya.model.Album
+import com.example.ting.model.Album
 
 @Dao
 interface RecommendDao {

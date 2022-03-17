@@ -1,4 +1,4 @@
-package com.example.ximalaya.adapter
+package com.example.ting.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,8 +6,8 @@ import androidx.core.view.isVisible
 import androidx.paging.LoadState
 import androidx.paging.LoadStateAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.ximalaya.R
-import com.example.ximalaya.databinding.ItemFooterBinding
+import com.example.ting.R
+import com.example.ting.databinding.ItemFooterBinding
 
 class FooterAdapter(private val retry: () -> Unit) :
     LoadStateAdapter<FooterAdapter.FooterViewHolder>() {

@@ -1,7 +1,7 @@
-package com.example.ximalaya.remote
+package com.example.ting.remote
 
-import com.example.ximalaya.model.Album
-import com.example.ximalaya.other.Constants.LIKE_KEY
+import com.example.ting.model.Album
+import com.example.ting.other.Constants.LIKE_KEY
 import retrofit2.http.GET
 import retrofit2.http.Query
 

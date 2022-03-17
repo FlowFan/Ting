@@ -1,11 +1,11 @@
-package com.example.ximalaya.repository
+package com.example.ting.repository
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
-import com.example.ximalaya.db.AppDatabase
-import com.example.ximalaya.remote.RecommendRemoteMediator
-import com.example.ximalaya.remote.RecommendService
+import com.example.ting.db.AppDatabase
+import com.example.ting.remote.RecommendRemoteMediator
+import com.example.ting.remote.RecommendService
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject

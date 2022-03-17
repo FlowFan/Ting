@@ -5,11 +5,11 @@
 
     <data>
 
-        <import type="com.example.ximalaya.other.AppHelperKt" />
+        <import type="com.example.ting.other.AppHelperKt" />
 
         <variable
             name="album"
-            type="com.example.ximalaya.model.Album" />
+            type="com.example.ting.model.Album" />
     </data>
 
     <com.google.android.material.card.MaterialCardView

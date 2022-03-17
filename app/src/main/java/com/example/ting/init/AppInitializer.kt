@@ -1,12 +1,12 @@
-package com.example.ximalaya.init
+package com.example.ting.init
 
 import android.annotation.SuppressLint
 import android.content.Context
 import androidx.startup.Initializer
-import com.example.ximalaya.other.Constants.APP_KEY
-import com.example.ximalaya.other.Constants.APP_SECRET
-import com.example.ximalaya.other.Constants.KEY_LAST_OAID
-import com.example.ximalaya.other.Constants.PACK_ID
+import com.example.ting.other.Constants.APP_KEY
+import com.example.ting.other.Constants.APP_SECRET
+import com.example.ting.other.Constants.KEY_LAST_OAID
+import com.example.ting.other.Constants.PACK_ID
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest
 import com.ximalaya.ting.android.opensdk.datatrasfer.DeviceInfoProviderDefault
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDeviceInfoProvider

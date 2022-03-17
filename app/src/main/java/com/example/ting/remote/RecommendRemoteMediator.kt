@@ -1,16 +1,16 @@
-package com.example.ximalaya.remote
+package com.example.ting.remote
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import com.example.ximalaya.db.AppDatabase
-import com.example.ximalaya.init.AppInitializer
-import com.example.ximalaya.model.Album
-import com.example.ximalaya.other.Constants.LIKE_KEY
-import com.example.ximalaya.other.isConnectedNetwork
-import com.example.ximalaya.other.sig
+import com.example.ting.db.AppDatabase
+import com.example.ting.init.AppInitializer
+import com.example.ting.model.Album
+import com.example.ting.other.Constants.LIKE_KEY
+import com.example.ting.other.isConnectedNetwork
+import com.example.ting.other.sig
 import com.ximalaya.ting.android.opensdk.datatrasfer.AccessTokenManager
 import java.lang.Exception
 

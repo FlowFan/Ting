@@ -1,4 +1,4 @@
-package com.example.ximalaya.init
+package com.example.ting.init
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp

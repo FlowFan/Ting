@@ -1,4 +1,4 @@
-package com.example.ximalaya.model
+package com.example.ting.model
 
 import android.os.Parcelable
 import androidx.room.Entity

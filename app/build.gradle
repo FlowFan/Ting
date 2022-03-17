@@ -5,16 +5,17 @@ plugins {
     id 'dagger.hilt.android.plugin'
     id 'kotlin-parcelize'
     id 'kotlinx-serialization'
+    id 'androidx.navigation.safeargs'
 }
 
 android {
-    compileSdk 31
+    compileSdk 32
     buildToolsVersion '32.0.0'
 
     defaultConfig {
-        applicationId "com.example.ximalaya"
+        applicationId 'com.example.ting'
         minSdk 23
-        targetSdk 31
+        targetSdk 32
         versionCode 1
         versionName "1.0"
 
@@ -43,13 +44,11 @@ android {
     buildFeatures {
         dataBinding true
     }
-    namespace 'com.example.ximalaya'
+    namespace 'com.example.ting'
 }
 
 dependencies {
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     ext {
-        navigation_version = '2.4.1'
         viewModel_version = '2.4.1'
         room_version = '2.4.2'
     }
@@ -80,7 +79,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$viewModel_version"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$viewModel_version"
     //Paging3
-    implementation 'androidx.paging:paging-runtime-ktx:3.1.0'
+    implementation 'androidx.paging:paging-runtime-ktx:3.1.1'
     //SwipeRefresh
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
     //Startup

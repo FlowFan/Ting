@@ -1,11 +1,11 @@
-package com.example.ximalaya.di
+package com.example.ting.di
 
 import android.content.Context
 import androidx.room.Room
-import com.example.ximalaya.db.AppDatabase
-import com.example.ximalaya.other.Constants.APP_DATABASE
-import com.example.ximalaya.other.Constants.BASE_URL
-import com.example.ximalaya.remote.RecommendService
+import com.example.ting.db.AppDatabase
+import com.example.ting.other.Constants.APP_DATABASE
+import com.example.ting.other.Constants.BASE_URL
+import com.example.ting.remote.RecommendService
 import com.retrofit2.converter.JsonConverterFactory
 import dagger.Module
 import dagger.Provides

@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/recommendFragment"
-        android:name="com.example.ximalaya.fragment.RecommendFragment"
+        android:name="com.example.ting.fragment.RecommendFragment"
         android:label="RecommendFragment">
         <action
             android:id="@+id/action_recommendFragment_to_detailFragment"
@@ -14,6 +14,10 @@
     </fragment>
     <fragment
         android:id="@+id/detailFragment"
-        android:name="com.example.ximalaya.fragment.DetailFragment"
-        android:label="DetailFragment" />
+        android:name="com.example.ting.fragment.DetailFragment"
+        android:label="DetailFragment">
+        <argument
+            android:name="albumId"
+            app:argType="integer" />
+    </fragment>
 </navigation>
