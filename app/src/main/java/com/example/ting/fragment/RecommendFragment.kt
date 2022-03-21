@@ -9,7 +9,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.paging.LoadState
+import com.example.ting.R
 import com.example.ting.adapter.FooterAdapter
 import com.example.ting.adapter.RecommendListAdapter
 import com.example.ting.databinding.FragmentRecommendBinding
@@ -42,10 +44,12 @@ class RecommendFragment : Fragment() {
             adapter =
                 recommendListAdapter.withLoadStateFooter(FooterAdapter { recommendListAdapter.retry() })
             setOnItemClickListener { view, i ->
-                val action = RecommendFragmentDirections.actionRecommendFragmentToDetailFragment(
-                    recommendListAdapter.peek(i)!!.id
+                val action = MainFragmentDirections.actionMainFragmentToDetailFragment(
+                    recommendListAdapter.peek(i)
                 )
-                view.findNavController().navigate(action)
+                view.transitionName = getString(R.string.image_description)
+                val extras = FragmentNavigatorExtras(view to getString(R.string.image_description))
+                view.findNavController().navigate(action, extras)
             }
         }
         viewModel.albumList.observe(viewLifecycleOwner) {

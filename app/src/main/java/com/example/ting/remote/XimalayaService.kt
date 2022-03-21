@@ -7,6 +7,8 @@ import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDataCallBack
 import com.ximalaya.ting.android.opensdk.model.album.Album
 import com.ximalaya.ting.android.opensdk.model.album.GussLikeAlbumList
+import com.ximalaya.ting.android.opensdk.model.track.Track
+import com.ximalaya.ting.android.opensdk.model.track.TrackList
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
@@ -27,18 +29,19 @@ object XimalayaService {
         })
     }
 
-//    suspend fun getAlbumDetail(albumId: Int) = suspendCoroutine<> {
-//        val map = HashMap<String, String>()
-//        map[DTransferConstants.ALBUM_ID] = albumId.toString()
-//        CommonRequest.getInstanse().defaultPagesize = 200
-//        CommonRequest.getTracks(map, object : IDataCallBack<TrackList> {
-//            override fun onSuccess(p0: TrackList?) {
-//                it.resume(p0)
-//            }
-//
-//            override fun onError(p0: Int, p1: String?) {
-//                TODO("Not yet implemented")
-//            }
-//        })
-//    }
+    suspend fun getAlbumDetail(albumId: Int) = suspendCoroutine<List<Track>> {
+        val map = HashMap<String, String>()
+        map[DTransferConstants.ALBUM_ID] = albumId.toString()
+        CommonRequest.getInstanse().defaultPagesize = 200
+        CommonRequest.getTracks(map, object : IDataCallBack<TrackList> {
+            override fun onSuccess(p0: TrackList?) {
+                it.resume(p0?.tracks!!)
+            }
+
+            override fun onError(p0: Int, p1: String?) {
+                Log.d("Hello", "onError: $p0")
+                Log.d("Hello", "onError: $p1")
+            }
+        })
+    }
 }

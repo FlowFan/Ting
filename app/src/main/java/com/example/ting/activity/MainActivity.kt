@@ -8,17 +8,17 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.navigation.fragment.NavHostFragment
 import com.example.ting.R
 import com.example.ting.databinding.ActivityMainBinding
-import com.example.ting.fragment.MainFragment
 import com.example.ting.other.Constants.KEY_FIRST_START
 import com.example.ting.other.dataStore
-import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -30,11 +30,13 @@ import kotlinx.coroutines.runBlocking
 class MainActivity : AppCompatActivity() {
     val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
     private val dataStore by lazy { applicationContext.dataStore }
+    private val ioDispatcher by lazy { Dispatchers.IO }
+    private val navController by lazy { binding.fragmentContainerView.getFragment<NavHostFragment>().navController }
     private var isFirstStart: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        runBlocking(Dispatchers.IO) {
+        runBlocking(ioDispatcher) {
             isFirstStart = dataStore.data.map {
                 it[booleanPreferencesKey(KEY_FIRST_START)] ?: true
             }.first()
@@ -60,7 +62,7 @@ class MainActivity : AppCompatActivity() {
                         ).show()
                         splashScreen.view.setOnClickListener {
                             start()
-                            lifecycleScope.launch(Dispatchers.IO) {
+                            lifecycleScope.launch(ioDispatcher) {
                                 dataStore.edit {
                                     it[booleanPreferencesKey(KEY_FIRST_START)] = false
                                 }
@@ -72,17 +74,15 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        setContentView(binding.root)
-        val tabTitles = resources.getStringArray(R.array.tab_title)
-        binding.viewPager.adapter = object : FragmentStateAdapter(this) {
-            override fun getItemCount() = tabTitles.size
-
-            override fun createFragment(position: Int): Fragment {
-                return MainFragment()
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id == R.id.detailFragment) {
+                WindowCompat.setDecorFitsSystemWindows(window, false)
+                ViewCompat.getWindowInsetsController(binding.root)?.systemBarsBehavior =
+                    BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            } else {
+                WindowCompat.setDecorFitsSystemWindows(window, true)
             }
         }
-        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            tab.text = tabTitles[position]
-        }.attach()
+        setContentView(binding.root)
     }
 }

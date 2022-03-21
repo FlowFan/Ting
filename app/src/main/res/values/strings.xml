@@ -2,7 +2,7 @@
     <string name="app_name">听书</string>
     <string name="toast_first_start">点击进入应用</string>
     <string name="toast_quit">再按一次返回键退出</string>
-    <string name="image_description">图片</string>
+    <string name="image_description">image</string>
     <string name="footer_loading">正在加载</string>
     <string name="footer_error">加载出错，点击重试</string>
     <string name="footer_success">加载完毕</string>

@@ -2,14 +2,14 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/navigation"
-    app:startDestination="@id/recommendFragment">
+    app:startDestination="@id/mainFragment">
 
     <fragment
-        android:id="@+id/recommendFragment"
-        android:name="com.example.ting.fragment.RecommendFragment"
-        android:label="RecommendFragment">
+        android:id="@+id/mainFragment"
+        android:name="com.example.ting.fragment.MainFragment"
+        android:label="MainFragment">
         <action
-            android:id="@+id/action_recommendFragment_to_detailFragment"
+            android:id="@+id/action_mainFragment_to_detailFragment"
             app:destination="@id/detailFragment" />
     </fragment>
     <fragment
@@ -17,7 +17,8 @@
         android:name="com.example.ting.fragment.DetailFragment"
         android:label="DetailFragment">
         <argument
-            android:name="albumId"
-            app:argType="integer" />
+            android:name="album"
+            app:argType="com.example.ting.model.Album"
+            app:nullable="true" />
     </fragment>
 </navigation>
