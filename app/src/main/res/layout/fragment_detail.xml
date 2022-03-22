@@ -10,12 +10,13 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:transitionName="@string/image_description">
+        android:transitionName="@string/item_description">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbar"
             android:layout_width="match_parent"
-            android:layout_height="192dp">
+            android:layout_height="192dp"
+            android:transitionName="@string/image_description">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:layout_width="match_parent"
@@ -36,7 +37,7 @@
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="120dp" />
+                    android:layout_height="80dp" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -59,27 +60,26 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="10dp"
                         android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="3dp"
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
+                        app:layout_constraintBottom_toTopOf="@+id/album_author_tv"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/image"
-                        app:layout_constraintTop_toTopOf="@+id/image"
                         tools:text="拿破仑拿破仑拿破仑拿破仑拿破仑" />
 
                     <TextView
                         android:id="@+id/album_author_tv"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="3dp"
+                        android:layout_marginBottom="10dp"
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                        app:layout_constraintBottom_toBottomOf="@+id/image"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@+id/album_title_tv"
                         app:layout_constraintStart_toStartOf="@+id/album_title_tv"
-                        app:layout_constraintTop_toBottomOf="@+id/album_title_tv"
-                        app:layout_constraintVertical_bias="1.0"
                         tools:text="拿破仑拿破仑拿破仑拿破仑拿破仑" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.appbar.CollapsingToolbarLayout>

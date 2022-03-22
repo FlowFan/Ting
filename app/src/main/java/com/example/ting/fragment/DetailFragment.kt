@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
@@ -13,7 +14,9 @@ import coil.transform.BlurTransformation
 import com.example.ting.R
 import com.example.ting.adapter.DetailListAdapter
 import com.example.ting.databinding.FragmentDetailBinding
+import com.example.ting.other.setOnItemClickListener
 import com.example.ting.viewmodel.TingViewModel
+import com.google.android.material.appbar.AppBarLayout
 
 class DetailFragment : Fragment() {
     private var _binding: FragmentDetailBinding? = null
@@ -41,8 +44,15 @@ class DetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.recyclerView.apply {
             adapter = detailListAdapter
-
+            setOnItemClickListener { i, holder ->
+                detailListAdapter.peek(i)
+            }
         }
+        binding.appbar.addOnOffsetChangedListener(
+            AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+                binding.image.isVisible = verticalOffset != -308
+                binding.albumAuthorTv.isVisible = verticalOffset != -308
+            })
         args.album?.apply {
             binding.appBarImage.load(coverUrl) {
                 transformations(BlurTransformation(requireContext()))

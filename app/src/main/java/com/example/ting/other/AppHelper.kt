@@ -5,7 +5,6 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities.NET_CAPABILITY_VALIDATED
 import android.view.GestureDetector
 import android.view.MotionEvent
-import android.view.View
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -32,7 +31,7 @@ fun Long.convertNumber() = when (toString().length) {
 
 fun String.sig(): String = MD5.md5(HMACSHA1.HmacSHA1Encrypt(BASE64Encoder.encode(this), APP_SECRET))
 
-fun RecyclerView.setOnItemClickListener(listener: (View, Int) -> Unit) {
+fun RecyclerView.setOnItemClickListener(listener: (Int, RecyclerView.ViewHolder) -> Unit) {
     addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
         val gestureDetector = GestureDetector(context, object : GestureDetector.OnGestureListener {
             override fun onDown(p0: MotionEvent?) = false
@@ -43,7 +42,7 @@ fun RecyclerView.setOnItemClickListener(listener: (View, Int) -> Unit) {
             override fun onSingleTapUp(p0: MotionEvent?): Boolean {
                 p0?.let {
                     findChildViewUnder(it.x, it.y)?.let { child ->
-                        listener(child, getChildAdapterPosition(child))
+                        listener(getChildAdapterPosition(child), getChildViewHolder(child))
                     }
                 }
                 return false

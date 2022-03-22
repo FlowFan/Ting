@@ -43,13 +43,18 @@ class RecommendFragment : Fragment() {
         binding.recommendList.apply {
             adapter =
                 recommendListAdapter.withLoadStateFooter(FooterAdapter { recommendListAdapter.retry() })
-            setOnItemClickListener { view, i ->
+            setOnItemClickListener { i, holder ->
+                holder as RecommendListAdapter.RecommendListViewHolder
                 val action = MainFragmentDirections.actionMainFragmentToDetailFragment(
                     recommendListAdapter.peek(i)
                 )
-                view.transitionName = getString(R.string.image_description)
-                val extras = FragmentNavigatorExtras(view to getString(R.string.image_description))
-                view.findNavController().navigate(action, extras)
+                holder.itemView.transitionName = getString(R.string.item_description)
+                holder.binding.albumCover.transitionName = getString(R.string.image_description)
+                val extras = FragmentNavigatorExtras(
+                    holder.itemView to getString(R.string.item_description),
+                    holder.binding.albumCover to getString(R.string.image_description)
+                )
+                holder.itemView.findNavController().navigate(action, extras)
             }
         }
         viewModel.albumList.observe(viewLifecycleOwner) {
