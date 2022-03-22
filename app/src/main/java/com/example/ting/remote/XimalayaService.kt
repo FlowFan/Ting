@@ -29,10 +29,10 @@ object XimalayaService {
         })
     }
 
-    suspend fun getAlbumDetail(albumId: Int) = suspendCoroutine<List<Track>> {
+    suspend fun getAlbumDetail(albumId: Int, page: Int) = suspendCoroutine<List<Track>> {
         val map = HashMap<String, String>()
         map[DTransferConstants.ALBUM_ID] = albumId.toString()
-        CommonRequest.getInstanse().defaultPagesize = 200
+        map[DTransferConstants.PAGE] = page.toString()
         CommonRequest.getTracks(map, object : IDataCallBack<TrackList> {
             override fun onSuccess(p0: TrackList?) {
                 it.resume(p0?.tracks!!)
