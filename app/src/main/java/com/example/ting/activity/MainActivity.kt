@@ -8,9 +8,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+import androidx.core.view.isVisible
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.lifecycleScope
@@ -75,13 +74,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.detailFragment) {
-                WindowCompat.setDecorFitsSystemWindows(window, false)
-                ViewCompat.getWindowInsetsController(binding.root)?.systemBarsBehavior =
-                    BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-            } else {
-                WindowCompat.setDecorFitsSystemWindows(window, true)
-            }
+            WindowCompat.setDecorFitsSystemWindows(window, destination.id != R.id.detailFragment)
+            binding.floatingActionButton.isVisible = destination.id != R.id.playerFragment
+        }
+        binding.floatingActionButton.setOnClickListener {
+            navController.navigate(R.id.playerFragment)
         }
         setContentView(binding.root)
     }
