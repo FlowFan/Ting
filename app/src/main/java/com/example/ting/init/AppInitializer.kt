@@ -10,6 +10,7 @@ import com.example.ting.other.Constants.PACK_ID
 import com.ximalaya.ting.android.opensdk.datatrasfer.CommonRequest
 import com.ximalaya.ting.android.opensdk.datatrasfer.DeviceInfoProviderDefault
 import com.ximalaya.ting.android.opensdk.datatrasfer.IDeviceInfoProvider
+import com.ximalaya.ting.android.opensdk.player.XmPlayerManager
 import com.ximalaya.ting.android.opensdk.util.SharedPreferencesUtil
 
 @SuppressLint("StaticFieldLeak")
@@ -17,20 +18,22 @@ class AppInitializer : Initializer<Unit> {
     companion object {
         lateinit var mContext: Context
             private set
+        lateinit var mXmPlayerManager: XmPlayerManager
+            private set
     }
 
     private lateinit var oaid: String
 
     override fun create(context: Context) {
-        val mXimalaya = CommonRequest.getInstanse()
         mContext = context.applicationContext
-        oaid = SharedPreferencesUtil.getInstance(context.applicationContext)
-            .getString(KEY_LAST_OAID)
-        mXimalaya.apply {
+        oaid = SharedPreferencesUtil.getInstance(mContext).getString(KEY_LAST_OAID)
+        CommonRequest.getInstanse().apply {
             setAppkey(APP_KEY)
             setPackid(PACK_ID)
-            init(context, APP_SECRET, true, getDeviceInfoProvider(context))
+            init(mContext, APP_SECRET, true, getDeviceInfoProvider(mContext))
         }
+        mXmPlayerManager = XmPlayerManager.getInstance(mContext)
+        mXmPlayerManager.init()
     }
 
     private fun getDeviceInfoProvider(context: Context): IDeviceInfoProvider {

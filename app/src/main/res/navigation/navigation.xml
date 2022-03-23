@@ -1,26 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/navigation"
-    app:startDestination="@id/mainFragment">
-
-    <fragment
-        android:id="@+id/mainFragment"
-        android:name="com.example.ting.fragment.MainFragment"
-        android:label="MainFragment">
+    app:startDestination="@id/navigation">
+    <navigation
+        android:id="@+id/navigation"
+        app:startDestination="@id/mainFragment">
+        <fragment
+            android:id="@+id/mainFragment"
+            android:name="com.example.ting.fragment.MainFragment"
+            android:label="MainFragment">
+            <action
+                android:id="@+id/action_mainFragment_to_detailFragment"
+                app:destination="@id/detailFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/detailFragment"
+            android:name="com.example.ting.fragment.DetailFragment"
+            android:label="DetailFragment">
+            <argument
+                android:name="album"
+                app:argType="com.example.ting.model.Album"
+                app:nullable="true" />
+        </fragment>
         <action
-            android:id="@+id/action_mainFragment_to_detailFragment"
-            app:destination="@id/detailFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/detailFragment"
-        android:name="com.example.ting.fragment.DetailFragment"
-        android:label="DetailFragment">
-        <argument
-            android:name="album"
-            app:argType="com.example.ting.model.Album"
-            app:nullable="true" />
-    </fragment>
+            android:id="@+id/action_global_playerFragment"
+            app:destination="@id/playerFragment"
+            app:enterAnim="@anim/sigmob_dialog_slide_in_bottom"
+            app:exitAnim="@anim/sigmob_dialog_slide_out_bottom"
+            app:popEnterAnim="@anim/sigmob_dialog_slide_in_bottom"
+            app:popExitAnim="@anim/sigmob_dialog_slide_out_bottom" />
+    </navigation>
     <fragment
         android:id="@+id/playerFragment"
         android:name="com.example.ting.fragment.PlayerFragment"

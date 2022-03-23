@@ -30,8 +30,10 @@ class MainFragment : Fragment() {
             object : FragmentStateAdapter(childFragmentManager, viewLifecycleOwner.lifecycle) {
                 override fun getItemCount() = tabTitles.size
 
-                override fun createFragment(position: Int): Fragment {
-                    return RecommendFragment()
+                override fun createFragment(position: Int) = when (position) {
+                    0 -> RecommendFragment()
+                    1 -> MusicFragment()
+                    else -> RecommendFragment()
                 }
             }
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->

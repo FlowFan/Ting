@@ -14,6 +14,7 @@ import coil.transform.BlurTransformation
 import com.example.ting.R
 import com.example.ting.adapter.DetailListAdapter
 import com.example.ting.databinding.FragmentDetailBinding
+import com.example.ting.init.AppInitializer
 import com.example.ting.other.setOnItemClickListener
 import com.example.ting.viewmodel.TingViewModel
 import com.google.android.material.appbar.AppBarLayout
@@ -45,7 +46,7 @@ class DetailFragment : Fragment() {
         binding.recyclerView.apply {
             adapter = detailListAdapter
             setOnItemClickListener { i, holder ->
-                detailListAdapter.peek(i)
+                AppInitializer.mXmPlayerManager.playList(detailListAdapter.snapshot().items, i)
             }
         }
         binding.appbar.addOnOffsetChangedListener(

@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
             binding.floatingActionButton.isVisible = destination.id != R.id.playerFragment
         }
         binding.floatingActionButton.setOnClickListener {
-            navController.navigate(R.id.playerFragment)
+            navController.navigate(R.id.action_global_playerFragment)
         }
         setContentView(binding.root)
     }
