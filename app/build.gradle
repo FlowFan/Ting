@@ -70,20 +70,18 @@ dependencies {
 
     //Compose
     implementation "androidx.compose.ui:ui:$compose_version"
+    implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
     implementation 'androidx.compose.material3:material3:1.0.0-alpha07'
     implementation 'androidx.paging:paging-compose:1.0.0-alpha14'
     implementation 'androidx.constraintlayout:constraintlayout-compose:1.0.0'
     implementation 'io.coil-kt:coil-compose:1.4.0'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
     //Gson
     implementation 'com.google.code.gson:gson:2.9.0'
-//    implementation 'com.squareup.okhttp3:okhttp:4.9.3'
-//    implementation 'com.squareup.okio:okio:3.0.0'
     //ShimmerLayout
     implementation 'io.supercharge:shimmerlayout:2.1.0'
     //Retrofit2
@@ -120,6 +118,9 @@ dependencies {
     //Accompanist
     implementation "com.google.accompanist:accompanist-insets-ui:$accompanist_version"
     implementation "com.google.accompanist:accompanist-pager-indicators:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-placeholder-material:$accompanist_version"
+    //Krypto
+    implementation 'com.soywiz.korlibs.krypto:krypto-android:2.6.3'
     //ExoPlayer
     implementation "com.google.android.exoplayer:exoplayer-core:$exoPlayer_version"
     implementation "com.google.android.exoplayer:extension-mediasession:$exoPlayer_version"

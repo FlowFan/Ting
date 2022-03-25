@@ -5,6 +5,8 @@ import androidx.room.Room
 import com.example.ting.db.AppDatabase
 import com.example.ting.other.Constants.APP_DATABASE
 import com.example.ting.other.Constants.BASE_URL
+import com.example.ting.remote.HitokotoService
+import com.example.ting.remote.MusicWeService
 import com.example.ting.remote.RecommendService
 import com.retrofit2.converter.JsonConverterFactory
 import dagger.Module
@@ -36,4 +38,32 @@ object AppModule {
             }))
             .build()
             .create(RecommendService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideRetrofit(): Retrofit =
+        Retrofit.Builder()
+            .client(OkHttpClient())
+            .baseUrl("https://music.163.com")
+            .addConverterFactory(JsonConverterFactory.create(Json {
+                ignoreUnknownKeys = true
+            }))
+            .build()
+
+    @Singleton
+    @Provides
+    fun provideMusicWeService(retrofit: Retrofit): MusicWeService =
+        retrofit.create(MusicWeService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideHitokotoService(): HitokotoService =
+        Retrofit.Builder()
+            .client(OkHttpClient())
+            .baseUrl("https://v1.hitokoto.cn")
+            .addConverterFactory(JsonConverterFactory.create(Json {
+                ignoreUnknownKeys = true
+            }))
+            .build()
+            .create(HitokotoService::class.java)
 }

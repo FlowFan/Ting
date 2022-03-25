@@ -17,7 +17,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -31,10 +30,6 @@ import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
-import com.google.android.exoplayer2.Player
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlin.math.roundToLong
 
 class PlayerFragment : Fragment() {
     private var _binding: FragmentPlayerBinding? = null
@@ -321,9 +316,9 @@ private fun PlayerUI(
                             state = listState
                         ) {
 //                            if (lyricLines?.isEmpty() != false) {
-//                                item {
-//                                    Text(text = "没有歌词")
-//                                }
+                            item {
+                                Text(text = "没有歌词")
+                            }
 //                            }
 
 //                            lyric.readSafely()?.parse()?.let { lines ->
