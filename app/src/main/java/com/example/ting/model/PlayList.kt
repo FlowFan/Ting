@@ -9,16 +9,16 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PlayList(
     @SerialName("result")
-    val result: List<Result>
+    val result: List<Result> = listOf()
 ) : Parcelable {
     @Parcelize
     @Serializable
     data class Result(
         @SerialName("id")
-        val id: Long,
+        val id: Long = 0,
         @SerialName("name")
-        val name: String,
+        val name: String = "",
         @SerialName("picUrl")
-        val picUrl: String
+        val picUrl: String = ""
     ) : Parcelable
 }

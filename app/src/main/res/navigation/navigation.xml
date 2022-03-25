@@ -12,6 +12,13 @@
             <action
                 android:id="@+id/action_mainFragment_to_detailFragment"
                 app:destination="@id/detailFragment" />
+            <action
+                android:id="@+id/action_mainFragment_to_songListFragment"
+                app:destination="@id/SongListFragment"
+                app:enterAnim="@android:anim/slide_in_left"
+                app:exitAnim="@android:anim/slide_out_right"
+                app:popEnterAnim="@android:anim/slide_in_left"
+                app:popExitAnim="@android:anim/slide_out_right" />
         </fragment>
         <fragment
             android:id="@+id/detailFragment"
@@ -21,6 +28,14 @@
                 android:name="album"
                 app:argType="com.example.ting.model.Album"
                 app:nullable="true" />
+        </fragment>
+        <fragment
+            android:id="@+id/SongListFragment"
+            android:name="com.example.ting.fragment.SongListFragment"
+            android:label="SongListFragment" >
+            <argument
+                android:name="id"
+                app:argType="long" />
         </fragment>
         <action
             android:id="@+id/action_global_playerFragment"

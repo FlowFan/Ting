@@ -15,7 +15,7 @@ class DetailPagingSource(private val albumId: Int) : PagingSource<Int, Track>() 
             val nextKey = if (album.isNotEmpty()) currentPage + 1 else null
             LoadResult.Page(album, prevKey, nextKey)
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.stackTraceToString()
             LoadResult.Error(e)
         }
 }

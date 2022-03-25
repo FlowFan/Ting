@@ -12,7 +12,6 @@ import com.example.ting.other.Constants.LIKE_KEY
 import com.example.ting.other.isConnectedNetwork
 import com.example.ting.other.sig
 import com.ximalaya.ting.android.opensdk.datatrasfer.AccessTokenManager
-import java.lang.Exception
 
 @OptIn(ExperimentalPagingApi::class)
 class RecommendRemoteMediator(
@@ -44,7 +43,7 @@ class RecommendRemoteMediator(
                 }
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.stackTraceToString()
             MediatorResult.Error(e)
         }
     }

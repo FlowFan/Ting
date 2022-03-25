@@ -45,7 +45,7 @@ class TingRepository @Inject constructor(
             )
             emit(playList)
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.stackTraceToString()
         }
     }
 
@@ -53,7 +53,7 @@ class TingRepository @Inject constructor(
         try {
             emit(hitokotoService.getDailyWord())
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.stackTraceToString()
         }
     }.flowOn(Dispatchers.IO)
 
@@ -68,7 +68,7 @@ class TingRepository @Inject constructor(
             )
             emit(newSong)
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.stackTraceToString()
         }
     }
 
@@ -76,7 +76,23 @@ class TingRepository @Inject constructor(
         try {
             emit(musicWeService.getTopList())
         } catch (e: Exception) {
-            e.printStackTrace()
+            e.stackTraceToString()
+        }
+    }
+
+    fun getSongList(id: Long) = liveData(Dispatchers.IO) {
+        try {
+            val songList = musicWeService.getSongList(
+                mapOf(
+                    "id" to "$id",
+                    "n" to "5000",
+                    "s" to "8"
+                )
+            )
+            println(songList.playlist.tracks.size)
+            emit(songList)
+        } catch (e: Exception) {
+            e.stackTraceToString()
         }
     }
 }

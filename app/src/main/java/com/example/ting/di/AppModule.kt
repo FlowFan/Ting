@@ -5,6 +5,8 @@ import androidx.room.Room
 import com.example.ting.db.AppDatabase
 import com.example.ting.other.Constants.APP_DATABASE
 import com.example.ting.other.Constants.BASE_URL
+import com.example.ting.other.HttpsInterceptor
+import com.example.ting.other.UserAgentInterceptor
 import com.example.ting.remote.HitokotoService
 import com.example.ting.remote.MusicWeService
 import com.example.ting.remote.RecommendService
@@ -14,9 +16,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 @Module
@@ -33,21 +35,29 @@ object AppModule {
         Retrofit.Builder()
             .client(OkHttpClient())
             .baseUrl(BASE_URL)
-            .addConverterFactory(JsonConverterFactory.create(Json {
-                ignoreUnknownKeys = true
-            }))
+            .addConverterFactory(JsonConverterFactory.create())
             .build()
             .create(RecommendService::class.java)
 
     @Singleton
     @Provides
-    fun provideRetrofit(): Retrofit =
+    fun provideHttpClient(): OkHttpClient =
+        OkHttpClient.Builder()
+            .connectTimeout(15, TimeUnit.SECONDS)
+            .readTimeout(5, TimeUnit.SECONDS)
+            .writeTimeout(5, TimeUnit.SECONDS)
+            .retryOnConnectionFailure(true)
+            .addInterceptor(HttpsInterceptor())
+            .addInterceptor(UserAgentInterceptor())
+            .build()
+
+    @Singleton
+    @Provides
+    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit =
         Retrofit.Builder()
-            .client(OkHttpClient())
+            .client(okHttpClient)
             .baseUrl("https://music.163.com")
-            .addConverterFactory(JsonConverterFactory.create(Json {
-                ignoreUnknownKeys = true
-            }))
+            .addConverterFactory(JsonConverterFactory.create())
             .build()
 
     @Singleton
@@ -61,9 +71,7 @@ object AppModule {
         Retrofit.Builder()
             .client(OkHttpClient())
             .baseUrl("https://v1.hitokoto.cn")
-            .addConverterFactory(JsonConverterFactory.create(Json {
-                ignoreUnknownKeys = true
-            }))
+            .addConverterFactory(JsonConverterFactory.create())
             .build()
             .create(HitokotoService::class.java)
 }

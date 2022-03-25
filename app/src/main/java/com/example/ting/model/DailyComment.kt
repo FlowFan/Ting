@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DailyWord(
     @SerialName("hitokoto")
-    val hitokoto: String,
+    val hitokoto: String = "",
     @SerialName("from")
-    val from: String
+    val from: String = ""
 ) : Parcelable

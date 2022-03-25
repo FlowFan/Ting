@@ -9,16 +9,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class TopList(
     @SerialName("list")
-    val list: List<Result>
+    val list: List<Result> = listOf()
 ) : Parcelable {
     @Parcelize
     @Serializable
     data class Result(
         @SerialName("coverImgUrl")
-        val coverImgUrl: String,
-        @SerialName("id")
-        val id: Long,
+        val coverImgUrl: String = "",
         @SerialName("name")
-        val name: String
+        val name: String = ""
     ) : Parcelable
 }

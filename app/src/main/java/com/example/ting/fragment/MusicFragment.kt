@@ -30,6 +30,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
@@ -71,7 +73,7 @@ class MusicFragment : Fragment() {
                         contentPadding = PaddingValues(16.dp)
                     ) {
                         item {
-                            PlayList(viewModel)
+                            PlayList(viewModel, findNavController())
                         }
                         item {
                             LargeButton()
@@ -99,8 +101,11 @@ class MusicFragment : Fragment() {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalCoilApi::class)
 @Composable
-private fun PlayList(viewModel: TingViewModel) {
-    val playList by viewModel.playList.observeAsState(PlayList(emptyList()))
+private fun PlayList(
+    viewModel: TingViewModel,
+    navController: NavController
+) {
+    val playList by viewModel.playList.observeAsState(PlayList())
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -131,7 +136,11 @@ private fun PlayList(viewModel: TingViewModel) {
                             modifier = Modifier
                                 .clip(RoundedCornerShape(13.dp))
                                 .clickable {
-                                    // TODO:
+                                    navController.navigate(
+                                        MainFragmentDirections.actionMainFragmentToSongListFragment(
+                                            it.id
+                                        )
+                                    )
                                 }
                                 .padding(8.dp)
                                 .width(IntrinsicSize.Min),
@@ -229,7 +238,6 @@ fun LargeButton() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DailyWord(viewModel: TingViewModel) {
-    viewModel.refreshDailyWord()
     val dailyWord by viewModel.dailyWord.collectAsState()
     val clipboardManager = LocalClipboardManager.current
     Column(
@@ -292,7 +300,7 @@ private fun DailyWord(viewModel: TingViewModel) {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalCoilApi::class)
 @Composable
 fun NewSong(viewModel: TingViewModel) {
-    val newSong by viewModel.newSong.observeAsState(NewSong(listOf()))
+    val newSong by viewModel.newSong.observeAsState(NewSong())
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -365,7 +373,7 @@ fun NewSong(viewModel: TingViewModel) {
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalCoilApi::class)
 @Composable
 private fun TopList(viewModel: TingViewModel) {
-    val topList by viewModel.topList.observeAsState(TopList(listOf()))
+    val topList by viewModel.topList.observeAsState(TopList())
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
