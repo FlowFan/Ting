@@ -9,7 +9,9 @@ import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.ting.R
 import com.example.ting.databinding.FragmentMainBinding
 import com.google.android.material.tabs.TabLayoutMediator
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainFragment : Fragment() {
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
@@ -34,7 +36,7 @@ class MainFragment : Fragment() {
                     override fun createFragment(position: Int) = when (position) {
                         0 -> RecommendFragment()
                         1 -> MusicFragment()
-                        else -> RecommendFragment()
+                        else -> UserFragment()
                     }
                 }
             setCurrentItem(1, false)

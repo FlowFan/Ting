@@ -45,8 +45,10 @@ import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class SongListFragment : Fragment() {
     private var _binding: FragmentSongListBinding? = null
     private val binding get() = _binding!!

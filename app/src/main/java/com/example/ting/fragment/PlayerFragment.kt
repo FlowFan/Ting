@@ -30,7 +30,9 @@ import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class PlayerFragment : Fragment() {
     private var _binding: FragmentPlayerBinding? = null
     private val binding get() = _binding!!
@@ -141,7 +143,7 @@ private fun PlayerUI(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    val percent: Float = 0f
+                    val percent = 0f
 //                        progress?.let { (it.first * 100f / it.second) / 100f } ?: 0f
                     Text(text = "00:00")
 //                    Text(text = progress?.first?.formatAsPlayerTime() ?: "00:00")

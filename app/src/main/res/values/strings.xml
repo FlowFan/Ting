@@ -11,6 +11,6 @@
     <string-array name="tab_title">
         <item>推荐</item>
         <item>音乐</item>
-        <item>历史</item>
+        <item>我的</item>
     </string-array>
 </resources>

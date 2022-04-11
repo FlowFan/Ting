@@ -18,7 +18,9 @@ import com.example.ting.init.AppInitializer
 import com.example.ting.other.setOnItemClickListener
 import com.example.ting.viewmodel.TingViewModel
 import com.google.android.material.appbar.AppBarLayout
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class DetailFragment : Fragment() {
     private var _binding: FragmentDetailBinding? = null
     private val binding get() = _binding!!
