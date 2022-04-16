@@ -36,7 +36,7 @@ class MainFragment : Fragment() {
                     override fun createFragment(position: Int) = when (position) {
                         0 -> RecommendFragment()
                         1 -> MusicFragment()
-                        else -> UserFragment()
+                        else -> UserCenterFragment()
                     }
                 }
             setCurrentItem(1, false)

@@ -5,10 +5,12 @@ import android.net.ConnectivityManager
 import android.net.NetworkCapabilities.NET_CAPABILITY_VALIDATED
 import android.view.GestureDetector
 import android.view.MotionEvent
+import android.widget.Toast
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.recyclerview.widget.RecyclerView
+import com.example.ting.init.AppInitializer
 import com.example.ting.other.Constants.APP_SECRET
 import com.example.ting.other.Constants.SHP_DATASTORE
 import com.ximalaya.ting.android.opensdk.httputil.util.BASE64Encoder
@@ -30,6 +32,8 @@ fun Long.convertNumber() = when (toString().length) {
 }
 
 fun String.sig(): String = MD5.md5(HMACSHA1.HmacSHA1Encrypt(BASE64Encoder.encode(this), APP_SECRET))
+
+fun String.toast() = Toast.makeText(AppInitializer.mContext, this, Toast.LENGTH_SHORT).show()
 
 fun RecyclerView.setOnItemClickListener(listener: (Int, RecyclerView.ViewHolder) -> Unit) {
     addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {

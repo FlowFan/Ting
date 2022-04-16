@@ -13,13 +13,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
-import com.example.ting.databinding.FragmentUserBinding
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
+import com.example.ting.R
+import com.example.ting.databinding.FragmentUserCenterBinding
 import com.example.ting.ui.theme.TingTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class UserFragment : Fragment() {
-    private var _binding: FragmentUserBinding? = null
+class UserCenterFragment : Fragment() {
+    private var _binding: FragmentUserCenterBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -27,7 +30,7 @@ class UserFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        _binding = FragmentUserBinding.inflate(inflater, container, false)
+        _binding = FragmentUserCenterBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -37,7 +40,7 @@ class UserFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 TingTheme(false) {
-                    RequireLoginVisible()
+                    RequireLoginVisible(findNavController())
                 }
             }
         }
@@ -51,25 +54,23 @@ class UserFragment : Fragment() {
 
 @Composable
 fun RequireLoginVisible(
-    notLoginUI: @Composable () -> Unit = {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = "点击此处进行登录",
-                modifier = Modifier.clickable {
-
-                }
-            )
-        }
-    },
 //    content: @Composable () -> Unit
+    navController: NavController
 ) {
 //    val userData = LocalUserData.current
 //    if (!userData.isVisitor) {
 //        content()
 //    } else {
-    notLoginUI()
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "点击此处进行登录",
+            modifier = Modifier.clickable {
+                navController.navigate(R.id.action_mainFragment_to_loginFragment)
+            }
+        )
+    }
 //    }
 }

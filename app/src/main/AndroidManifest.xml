@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.ting">
+
+    <uses-sdk tools:overrideLibrary="dev.burnoo.compose.rememberpreference" />
     <!--连接网络-->
     <uses-permission android:name="android.permission.INTERNET" />
     <!--用于管理监听网络状态的变化-->
@@ -24,10 +26,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Ting.MyStyle">
+        android:theme="@style/Theme.Ting.MyStyle.Base">
         <activity
             android:name="com.example.ting.activity.MainActivity"
-            android:exported="true">
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:exported="true"
+            android:launchMode="singleInstance"
+            android:theme="@style/Theme.Ting.MyStyle"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

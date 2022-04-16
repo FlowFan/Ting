@@ -6,7 +6,7 @@ buildscript {
         hilt_version = '2.41'
         room_version = '2.4.2'
         viewModel_version = '2.4.1'
-        navigation_version = '2.4.1'
+        navigation_version = '2.4.2'
         accompanist_version = '0.23.1'
         exoPlayer_version = '2.17.1'
     }

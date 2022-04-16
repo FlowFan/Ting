@@ -4,7 +4,6 @@ import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnticipateInterpolator
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -18,6 +17,7 @@ import com.example.ting.R
 import com.example.ting.databinding.ActivityMainBinding
 import com.example.ting.other.Constants.KEY_FIRST_START
 import com.example.ting.other.dataStore
+import com.example.ting.other.toast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -54,11 +54,7 @@ class MainActivity : AppCompatActivity() {
                         splashScreen.remove()
                     }
                     if (isFirstStart) {
-                        Toast.makeText(
-                            this@MainActivity,
-                            getString(R.string.toast_first_start),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        getString(R.string.toast_first_start).toast()
                         splashScreen.view.setOnClickListener {
                             start()
                             lifecycleScope.launch(ioDispatcher) {
