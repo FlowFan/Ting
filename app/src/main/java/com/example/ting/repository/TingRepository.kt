@@ -1,10 +1,12 @@
 package com.example.ting.repository
 
+import android.content.Context
 import androidx.lifecycle.liveData
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.example.ting.db.AppDatabase
+import com.example.ting.init.AppInitializer
 import com.example.ting.other.encryptWeAPI
 import com.example.ting.remote.*
 import kotlinx.coroutines.Dispatchers
@@ -89,10 +91,72 @@ class TingRepository @Inject constructor(
                     "s" to "8"
                 )
             )
-            println(songList.playlist.tracks.size)
             emit(songList)
         } catch (e: Exception) {
             e.stackTraceToString()
         }
     }
+
+    fun getTypeList() = liveData(Dispatchers.IO) {
+        try {
+            val result = musicWeService.getTypeList(
+                mapOf<String, String>().encryptWeAPI()
+            )
+            emit(result)
+        } catch (e: Exception) {
+            e.stackTraceToString()
+        }
+    }
+
+    fun getHotPlaylistTags() = flow {
+        try {
+            val sharedPreferences = AppInitializer.mContext.getSharedPreferences(
+                "playlist_category",
+                Context.MODE_PRIVATE
+            )
+            val result = if (sharedPreferences.contains("data")) {
+                // 载入用户自定义歌单category
+                sharedPreferences.getString("data", "")?.split(",") ?: emptyList()
+            } else {
+                // 载入热门category
+                musicWeService.getHotPlaylistTags(
+                    mapOf<String, String>().encryptWeAPI()
+                ).tags.map { it.name }
+            }
+            emit(result)
+        } catch (e: Exception) {
+            e.stackTraceToString()
+        }
+    }.flowOn(Dispatchers.IO)
+
+    fun getHighQualityPlaylist() = liveData(Dispatchers.IO) {
+        try {
+            val result = musicWeService.getHighQualityPlaylist(
+                mapOf(
+                    "cat" to "全部",
+                    "limit" to "100",
+                    "lasttime" to "0",
+                    "total" to "true"
+                )
+            )
+            emit(result)
+        } catch (e: Exception) {
+            e.stackTraceToString()
+        }
+    }
+
+    fun getTopPlaylist(
+        category: String
+    ) = Pager(
+        config = PagingConfig(
+            pageSize = 20,
+            prefetchDistance = 3,
+            initialLoadSize = 20
+        )
+    ) {
+        TopPlaylistPagingSource(
+            category = category,
+            musicService = musicWeService
+        )
+    }.flow.flowOn(Dispatchers.IO)
 }

@@ -1,5 +1,7 @@
 package com.example.ting.remote
 
+import android.annotation.SuppressLint
+import android.provider.Settings
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
@@ -22,8 +24,15 @@ class RecommendRemoteMediator(
     private val recommendSig by lazy { "access_token=$accessToken&$LIKE_KEY".sig() }
     private val recommendDao by lazy { database.recommendDao() }
 
+    @SuppressLint("HardwareIds")
     override suspend fun load(loadType: LoadType, state: PagingState<Int, Album>): MediatorResult {
         return try {
+            println(
+                Settings.Secure.getString(
+                    AppInitializer.mContext.contentResolver,
+                    Settings.Secure.ANDROID_ID
+                )
+            )
             val album = recommendService.searchRecommendData(accessToken, recommendSig)
             if (!AppInitializer.mContext.isConnectedNetwork()) {
                 return MediatorResult.Success(true)

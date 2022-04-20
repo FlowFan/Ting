@@ -76,7 +76,7 @@ class MusicFragment : Fragment() {
                             PlayList(viewModel, findNavController())
                         }
                         item {
-                            LargeButton()
+                            LargeButton(findNavController())
                         }
                         item {
                             DailyWord(viewModel)
@@ -174,7 +174,7 @@ private fun PlayList(
 }
 
 @Composable
-fun LargeButton() {
+fun LargeButton(navController: NavController) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -188,7 +188,7 @@ fun LargeButton() {
                     .weight(1f)
                     .clip(RoundedCornerShape(8.dp))
                     .clickable {
-                        // TODO:  
+                        navController.navigate(MainFragmentDirections.actionMainFragmentToTypeFragment())
                     },
                 shape = RoundedCornerShape(8.dp),
                 tonalElevation = 12.dp

@@ -15,7 +15,6 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import com.example.ting.R
 import com.example.ting.databinding.FragmentUserCenterBinding
 import com.example.ting.ui.theme.TingTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -68,7 +67,7 @@ fun RequireLoginVisible(
         Text(
             text = "点击此处进行登录",
             modifier = Modifier.clickable {
-                navController.navigate(R.id.action_mainFragment_to_loginFragment)
+                navController.navigate(MainFragmentDirections.actionMainFragmentToLoginFragment())
             }
         )
     }

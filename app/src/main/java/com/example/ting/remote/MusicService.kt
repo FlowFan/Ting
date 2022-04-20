@@ -1,9 +1,6 @@
 package com.example.ting.remote
 
-import com.example.ting.model.NewSong
-import com.example.ting.model.PlayList
-import com.example.ting.model.SongList
-import com.example.ting.model.TopList
+import com.example.ting.model.*
 import retrofit2.http.FieldMap
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -30,4 +27,28 @@ interface MusicWeService {
     suspend fun getSongList(
         @FieldMap body: Map<String, String>
     ): SongList
+
+    @POST("/weapi/playlist/catalogue")
+    @FormUrlEncoded
+    suspend fun getTypeList(
+        @FieldMap body: Map<String, String>
+    ): TypeList
+
+    @POST("/weapi/playlist/hottags")
+    @FormUrlEncoded
+    suspend fun getHotPlaylistTags(
+        @FieldMap body: Map<String, String>
+    ): HotPlaylistTag
+
+    @POST("/api/playlist/highquality/list")
+    @FormUrlEncoded
+    suspend fun getHighQualityPlaylist(
+        @FieldMap body: Map<String, String>
+    ): HighQualityPlaylist
+
+    @POST("/weapi/playlist/list")
+    @FormUrlEncoded
+    suspend fun getTopPlaylist(
+        @FieldMap body: Map<String, String>
+    ): TopPlaylists
 }

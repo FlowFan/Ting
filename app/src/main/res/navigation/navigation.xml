@@ -26,6 +26,13 @@
                 app:exitAnim="@android:anim/slide_out_right"
                 app:popEnterAnim="@android:anim/slide_in_left"
                 app:popExitAnim="@android:anim/slide_out_right" />
+            <action
+                android:id="@+id/action_mainFragment_to_typeFragment"
+                app:destination="@id/typeFragment"
+                app:enterAnim="@android:anim/slide_in_left"
+                app:exitAnim="@android:anim/slide_out_right"
+                app:popEnterAnim="@android:anim/slide_in_left"
+                app:popExitAnim="@android:anim/slide_out_right" />
         </fragment>
         <fragment
             android:id="@+id/detailFragment"
@@ -48,6 +55,18 @@
             android:id="@+id/loginFragment"
             android:name="com.example.ting.fragment.LoginFragment"
             android:label="LoginFragment" />
+        <fragment
+            android:id="@+id/typeFragment"
+            android:name="com.example.ting.fragment.TypeFragment"
+            android:label="TypeFragment" >
+            <action
+                android:id="@+id/action_typeFragment_to_songListFragment"
+                app:destination="@id/songListFragment"
+                app:enterAnim="@android:anim/slide_in_left"
+                app:exitAnim="@android:anim/slide_out_right"
+                app:popEnterAnim="@android:anim/slide_in_left"
+                app:popExitAnim="@android:anim/slide_out_right" />
+        </fragment>
         <action
             android:id="@+id/action_global_playerFragment"
             app:destination="@id/playerFragment"

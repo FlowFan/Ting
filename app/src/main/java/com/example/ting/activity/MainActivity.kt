@@ -13,6 +13,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
+import com.example.ting.NavigationDirections
 import com.example.ting.R
 import com.example.ting.databinding.ActivityMainBinding
 import com.example.ting.other.Constants.KEY_FIRST_START
@@ -74,7 +75,7 @@ class MainActivity : AppCompatActivity() {
             binding.floatingActionButton.isVisible = destination.id != R.id.playerFragment
         }
         binding.floatingActionButton.setOnClickListener {
-            navController.navigate(R.id.action_global_playerFragment)
+            navController.navigate(NavigationDirections.actionGlobalPlayerFragment())
         }
         setContentView(binding.root)
     }
