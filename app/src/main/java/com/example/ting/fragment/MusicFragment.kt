@@ -109,7 +109,7 @@ private fun PlayList(
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(text = "推荐歌单", style = MaterialTheme.typography.headlineSmall)
+        Text(text = "推荐声音", style = MaterialTheme.typography.headlineSmall)
         ElevatedCard(
             shape = RoundedCornerShape(12.dp)
         ) {
@@ -202,7 +202,7 @@ fun LargeButton(navController: NavController) {
                 ) {
                     Icon(Icons.Rounded.Album, null)
                     Text(
-                        text = "歌单分类",
+                        text = "声音分类",
                         style = MaterialTheme.typography.titleLarge
                     )
                 }
@@ -377,7 +377,7 @@ private fun TopList(viewModel: TingViewModel) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(text = "榜单", style = MaterialTheme.typography.headlineSmall)
+        Text(text = "声音榜单", style = MaterialTheme.typography.headlineSmall)
         ElevatedCard(
             shape = RoundedCornerShape(12.dp)
         ) {

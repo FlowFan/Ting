@@ -10,7 +10,7 @@
     <string name="footer_success">加载完毕</string>
     <string-array name="tab_title">
         <item>推荐</item>
-        <item>音乐</item>
+        <item>声音</item>
         <item>我的</item>
     </string-array>
 </resources>

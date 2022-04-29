@@ -172,7 +172,7 @@ private fun CategoryEditor(
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Text(
-                text = "自定义歌单类型",
+                text = "自定义声音类型",
                 modifier = Modifier.weight(1f),
                 style = MaterialTheme.typography.headlineSmall
             )

@@ -83,7 +83,7 @@ class SongListFragment : Fragment() {
                                     )
                                 ),
                                 title = {
-                                    Text(text = "歌单详情")
+                                    Text(text = "声音详情")
                                 },
                                 navigationIcon = {
                                     IconButton(onClick = {
@@ -269,7 +269,7 @@ private fun SongIcon(playlist: SongList.Playlist) {
         }
         Text(
             modifier = Modifier.weight(1f),
-            text = "共 ${playlist.trackCount} 首歌",
+            text = "共 ${playlist.trackCount} 首声音",
             textAlign = TextAlign.End
         )
     }
