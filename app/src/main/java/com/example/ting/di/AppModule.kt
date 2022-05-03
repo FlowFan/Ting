@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.example.ting.db.AppDatabase
 import com.example.ting.other.Constants.APP_DATABASE
 import com.example.ting.other.Constants.BASE_URL
+import com.example.ting.other.CookieHelper
 import com.example.ting.other.HttpsInterceptor
 import com.example.ting.other.UserAgentInterceptor
 import com.example.ting.remote.HitokotoService
@@ -49,6 +50,7 @@ object AppModule {
             .retryOnConnectionFailure(true)
             .addInterceptor(HttpsInterceptor())
             .addInterceptor(UserAgentInterceptor())
+            .cookieJar(CookieHelper)
             .build()
 
     @Singleton

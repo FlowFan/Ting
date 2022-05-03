@@ -121,8 +121,6 @@ fun DiscoverPage(indexViewModel: TingViewModel, navController: NavController) {
                     ScrollableTabRow(
                         modifier = Modifier.weight(1f),
                         selectedTabIndex = pagerState.currentPage,
-                        containerColor = MaterialTheme.colorScheme.background,
-                        contentColor = MaterialTheme.colorScheme.primary,
                         edgePadding = 0.dp
                     ) {
                         category.forEachIndexed { index, sub ->

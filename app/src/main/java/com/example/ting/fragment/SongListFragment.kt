@@ -73,6 +73,7 @@ class SongListFragment : Fragment() {
                 TingTheme(false) {
                     val lazyListState = rememberLazyListState()
                     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+                    val songList by viewModel.getSongList(args.id).observeAsState(SongList())
                     Scaffold(
                         topBar = {
                             SmallTopAppBar(
@@ -113,7 +114,6 @@ class SongListFragment : Fragment() {
                             }
                         }
                     ) {
-                        val songList by viewModel.getSongList(args.id).observeAsState(SongList())
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxSize()
