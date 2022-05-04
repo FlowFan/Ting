@@ -32,12 +32,11 @@ class MainActivity : AppCompatActivity() {
     private val dataStore by lazy { applicationContext.dataStore }
     private val ioDispatcher by lazy { Dispatchers.IO }
     private val navController by lazy { binding.fragmentContainerView.getFragment<NavHostFragment>().navController }
-    private var isFirstStart: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        runBlocking(ioDispatcher) {
-            isFirstStart = dataStore.data.map {
+        val isFirstStart = runBlocking(ioDispatcher) {
+            dataStore.data.map {
                 it[booleanPreferencesKey(KEY_FIRST_START)] ?: true
             }.first()
         }

@@ -9,7 +9,9 @@ import com.example.ting.db.AppDatabase
 import com.example.ting.init.AppInitializer
 import com.example.ting.other.encryptWeAPI
 import com.example.ting.remote.*
+import com.soywiz.krypto.md5
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
@@ -159,4 +161,24 @@ class TingRepository @Inject constructor(
             musicService = musicWeService
         )
     }.flow.flowOn(Dispatchers.IO)
+
+    fun loginCellphone(
+        phone: String,
+        password: String
+    ) = flow {
+        delay(500)
+        try {
+            val result = musicWeService.loginCellphone(
+                mapOf(
+                    "phone" to phone,
+                    "countrycode" to "86",
+                    "password" to password.toByteArray().md5().hex,
+                    "rememberLogin" to "true"
+                ).encryptWeAPI()
+            )
+            emit(result)
+        } catch (e: Exception) {
+            e.stackTraceToString()
+        }
+    }.flowOn(Dispatchers.IO)
 }

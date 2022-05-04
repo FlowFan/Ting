@@ -15,29 +15,32 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import coil.compose.rememberImagePainter
 import com.example.ting.R
 import com.example.ting.databinding.FragmentLoginBinding
 import com.example.ting.other.toast
 import com.example.ting.ui.theme.TingTheme
+import com.example.ting.viewmodel.TingViewModel
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.navigationBarsWithImePadding
 import com.google.accompanist.insets.rememberInsetsPaddingValues
 import dagger.hilt.android.AndroidEntryPoint
 import dev.burnoo.compose.rememberpreference.rememberStringPreference
-import kotlinx.coroutines.flow.MutableStateFlow
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
+    private val viewModel by activityViewModels<TingViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,7 +57,7 @@ class LoginFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 TingTheme(false) {
-                    LoginScreen()
+                    LoginScreen(viewModel, findNavController())
                 }
             }
         }
@@ -69,7 +72,8 @@ class LoginFragment : Fragment() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
-//    loginViewModel: LoginViewModel = hiltViewModel()
+    loginViewModel: TingViewModel,
+    navController: NavController
 ) {
     Scaffold(
         topBar = {
@@ -94,24 +98,19 @@ fun LoginScreen(
                 .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Body(
-//                loginViewModel
-            )
+            Body(loginViewModel, navController)
         }
     }
 }
 
 @Composable
 private fun Body(
-//    loginViewModel: LoginViewModel
+    loginViewModel: TingViewModel,
+    navController: NavController
 ) {
-    val context = LocalContext.current
-//    val navController = LocalNavController.current
-//    val loginState by loginViewModel.loginState.collectAsState()
-    val loginState by MutableStateFlow(0).collectAsState()
-    var showDialog by remember {
-        mutableStateOf(false)
-    }
+    val loginState by loginViewModel.loginState.collectAsState()
+    println(loginState.code)
+    var showDialog by remember { mutableStateOf(false) }
 
     AnimatedVisibility(showDialog) {
         AlertDialog(
@@ -125,41 +124,25 @@ private fun Body(
                 Text(text = "登录")
             },
             text = {
-                when (loginState) {
-                    1 -> {
-                        Text("登录中, 请稍等...")
-                    }
-                    -1 -> {
-                        Text("登录时发生错误，请检查你的网络连接")
-                    }
-                    2 -> {
-                        Text("密码错误!")
-                    }
-                    3 -> {
-                        Text("没有此账号!")
-                    }
-                    1000 -> {
-                        Text("登录成功")
-                    }
-                    else -> {
-                        Text("未知错误: $loginState")
-                    }
+                when (loginState.code) {
+                    0 -> Text("登录中, 请稍等...")
+                    200 -> Text("登录成功！")
+                    400 -> Text("没有此账号!")
+                    502 -> Text("密码错误!")
+                    501 -> Text("登录时发生错误，请检查你的网络连接！")
+                    509 -> Text("请求频繁，请稍后重试！")
+                    else -> Text("未知错误: ${loginState.code}")
                 }
             }
         )
     }
 
     LaunchedEffect(loginState) {
-        showDialog = loginState != 0
-        if (loginState == 1000) {
+        showDialog = loginState.code != 0
+        if (loginState.code == 200) {
             // 登录成功
             "登录成功".toast()
-//            navController.navigate("index") {
-//                popUpTo("login") {
-//                    inclusive = true
-//                }
-//            }
-//            (context as RouteActivity).retryInit()
+            navController.navigateUp()
         }
     }
 
@@ -243,10 +226,11 @@ private fun Body(
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-//                loginViewModel.loginCellPhone(
-//                    phone = username,
-//                    password = password
-//                )
+                showDialog = true
+                loginViewModel.loginCellPhone(
+                    phone = username,
+                    password = password
+                )
             }
         ) {
             Text(text = "登录")

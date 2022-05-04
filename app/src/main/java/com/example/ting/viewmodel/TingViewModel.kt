@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.ting.model.DailyWord
+import com.example.ting.model.LoginResponse
 import com.example.ting.model.Playlists
 import com.example.ting.repository.TingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +31,8 @@ class TingViewModel @Inject constructor(
     val categorySelected: StateFlow<List<String>> get() = _categorySelected
     val highQualityPlaylist by lazy { tingRepository.getHighQualityPlaylist() }
     val playlistCatPager by lazy { mutableMapOf<String, Flow<PagingData<Playlists>>>() }
+    private val _loginState by lazy { MutableStateFlow(LoginResponse()) }
+    val loginState: StateFlow<LoginResponse> get() = _loginState
     fun getTopPlaylist(category: String) =
         tingRepository.getTopPlaylist(category).cachedIn(viewModelScope)
 
@@ -46,6 +49,11 @@ class TingViewModel @Inject constructor(
     }
 
     fun getSongList(id: Long) = tingRepository.getSongList(id)
+    fun loginCellPhone(phone: String, password: String) {
+        tingRepository.loginCellphone(phone, password).onEach {
+            _loginState.value = it
+        }.launchIn(viewModelScope)
+    }
 
     init {
         refreshDailyWord()

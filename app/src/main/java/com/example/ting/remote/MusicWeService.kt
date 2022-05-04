@@ -51,4 +51,10 @@ interface MusicWeService {
     suspend fun getTopPlaylist(
         @FieldMap body: Map<String, String>
     ): TopPlaylists
+
+    @POST("/weapi/login/cellphone")
+    @FormUrlEncoded
+    suspend fun loginCellphone(
+        @FieldMap body: Map<String, String>
+    ): LoginResponse
 }
