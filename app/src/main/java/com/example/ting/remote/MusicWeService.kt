@@ -1,6 +1,7 @@
 package com.example.ting.remote
 
 import com.example.ting.model.*
+import kotlinx.serialization.json.JsonObject
 import retrofit2.http.FieldMap
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
@@ -57,4 +58,19 @@ interface MusicWeService {
     suspend fun loginCellphone(
         @FieldMap body: Map<String, String>
     ): LoginResponse
+
+    @POST("/weapi/login/token/refresh")
+    @FormUrlEncoded
+    suspend fun refreshLogin(
+        @FieldMap body: Map<String, String>
+    ): JsonObject
+
+    @GET("/api/nuser/account/get")
+    suspend fun getAccountDetail(): AccountDetail
+
+    @POST("/api/user/playlist")
+    @FormUrlEncoded
+    suspend fun getUserPlaylist(
+        @FieldMap body: Map<String, String>
+    ): UserPlaylist
 }

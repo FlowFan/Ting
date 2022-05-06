@@ -5,9 +5,8 @@ import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.example.ting.model.DailyWord
-import com.example.ting.model.LoginResponse
-import com.example.ting.model.Playlists
+import com.example.ting.model.*
+import com.example.ting.other.toast
 import com.example.ting.repository.TingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
@@ -33,6 +32,12 @@ class TingViewModel @Inject constructor(
     val playlistCatPager by lazy { mutableMapOf<String, Flow<PagingData<Playlists>>>() }
     private val _loginState by lazy { MutableStateFlow(LoginResponse()) }
     val loginState: StateFlow<LoginResponse> get() = _loginState
+    private val _userData by lazy { MutableStateFlow(AccountDetail()) }
+    val userData: StateFlow<AccountDetail> get() = _userData
+    private val _isReady by lazy { MutableStateFlow(false) }
+    val isReady: StateFlow<Boolean> get() = _isReady
+    private val _userPlaylist by lazy { MutableStateFlow(UserPlaylist()) }
+    val userPlaylist: StateFlow<UserPlaylist> get() = _userPlaylist
     fun getTopPlaylist(category: String) =
         tingRepository.getTopPlaylist(category).cachedIn(viewModelScope)
 
@@ -55,8 +60,28 @@ class TingViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
+    fun refreshLibraryPage(id: Long) {
+        tingRepository.getUserPlaylists(id).onEach {
+            _userPlaylist.value = it
+        }.launchIn(viewModelScope)
+    }
+
+    fun init() {
+        combine(tingRepository.refreshLogin(), tingRepository.getAccountDetail()) { a, b ->
+            a to b
+        }.onEach {
+            if (it.first["code"].toString() == "301") {
+                "未登录".toast()
+            }
+            _userData.value = it.second
+        }.onCompletion {
+            _isReady.value = true
+        }.launchIn(viewModelScope)
+    }
+
     init {
         refreshDailyWord()
         refreshSelectedCategory()
+        init()
     }
 }

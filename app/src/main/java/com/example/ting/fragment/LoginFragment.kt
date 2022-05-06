@@ -109,7 +109,6 @@ private fun Body(
     navController: NavController
 ) {
     val loginState by loginViewModel.loginState.collectAsState()
-    println(loginState.code)
     var showDialog by remember { mutableStateOf(false) }
 
     AnimatedVisibility(showDialog) {
@@ -124,15 +123,17 @@ private fun Body(
                 Text(text = "登录")
             },
             text = {
-                when (loginState.code) {
-                    0 -> Text("登录中, 请稍等...")
-                    200 -> Text("登录成功！")
-                    400 -> Text("没有此账号!")
-                    502 -> Text("密码错误!")
-                    501 -> Text("登录时发生错误，请检查你的网络连接！")
-                    509 -> Text("请求频繁，请稍后重试！")
-                    else -> Text("未知错误: ${loginState.code}")
-                }
+                Text(
+                    when (loginState.code) {
+                        0 -> "登录中, 请稍等..."
+                        200 -> "登录成功！"
+                        400 -> "没有此账号!"
+                        502 -> "密码错误!"
+                        501 -> "登录时发生错误，请检查你的网络连接！"
+                        509 -> "请求频繁，请稍后重试！"
+                        else -> "未知错误: ${loginState.code}"
+                    }
+                )
             }
         )
     }
@@ -142,6 +143,7 @@ private fun Body(
         if (loginState.code == 200) {
             // 登录成功
             "登录成功".toast()
+            loginViewModel.init()
             navController.navigateUp()
         }
     }
@@ -172,12 +174,10 @@ private fun Body(
         OutlinedTextField(
             value = username,
             onValueChange = {
-                username = it.let {
-                    if (it.length > 11) {
-                        it.substring(0..10)
-                    } else {
-                        it
-                    }
+                username = if (it.length > 11) {
+                    it.substring(0..10)
+                } else {
+                    it
                 }
             },
             singleLine = true,

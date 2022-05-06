@@ -12,6 +12,7 @@ import com.example.ting.remote.*
 import com.soywiz.krypto.md5
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
@@ -180,5 +181,34 @@ class TingRepository @Inject constructor(
         } catch (e: Exception) {
             e.stackTraceToString()
         }
+    }.flowOn(Dispatchers.IO)
+
+    fun refreshLogin() = flow {
+        val result = musicWeService.refreshLogin(
+            mapOf<String, String>().encryptWeAPI()
+        )
+        emit(result)
+    }.catch {
+        it.stackTraceToString()
+    }.flowOn(Dispatchers.IO)
+
+    fun getAccountDetail() = flow {
+        val result = musicWeService.getAccountDetail()
+        emit(result)
+    }.catch {
+        it.stackTraceToString()
+    }.flowOn(Dispatchers.IO)
+
+    fun getUserPlaylists(id: Long) = flow {
+        val result = musicWeService.getUserPlaylist(
+            mapOf(
+                "uid" to "$id",
+                "limit" to "1000",
+                "includeVideo" to "false"
+            )
+        )
+        emit(result)
+    }.catch {
+        it.stackTraceToString()
     }.flowOn(Dispatchers.IO)
 }

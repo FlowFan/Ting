@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.view.View
 import android.view.animation.AnticipateInterpolator
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -19,6 +20,7 @@ import com.example.ting.databinding.ActivityMainBinding
 import com.example.ting.other.Constants.KEY_FIRST_START
 import com.example.ting.other.dataStore
 import com.example.ting.other.toast
+import com.example.ting.viewmodel.TingViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -32,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private val dataStore by lazy { applicationContext.dataStore }
     private val ioDispatcher by lazy { Dispatchers.IO }
     private val navController by lazy { binding.fragmentContainerView.getFragment<NavHostFragment>().navController }
+    private val viewModel by viewModels<TingViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +71,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+            setKeepOnScreenCondition { !viewModel.isReady.value }
         }
         navController.addOnDestinationChangedListener { _, destination, _ ->
             WindowCompat.setDecorFitsSystemWindows(window, destination.id != R.id.detailFragment)
