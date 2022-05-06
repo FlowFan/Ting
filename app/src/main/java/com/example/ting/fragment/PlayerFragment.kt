@@ -23,6 +23,8 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import coil.compose.rememberImagePainter
 import com.example.ting.databinding.FragmentPlayerBinding
 import com.example.ting.ui.theme.TingTheme
@@ -46,14 +48,13 @@ class PlayerFragment : Fragment() {
         return binding.root
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.composeView.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 TingTheme(false) {
-                    PlayerUI()
+                    PlayerUI(findNavController())
                 }
             }
         }
@@ -65,12 +66,10 @@ class PlayerFragment : Fragment() {
     }
 }
 
-@OptIn(ExperimentalPagerApi::class)
-@ExperimentalMaterial3Api
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPagerApi::class)
 @Composable
 private fun PlayerUI(
-//    player: Player,
-//    playerScreenViewModel: PlayerScreenViewModel
+    navController: NavController
 ) {
     val context = LocalContext.current
 //    val pagerState = rememberPagerState()
@@ -100,7 +99,7 @@ private fun PlayerUI(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 IconButton(onClick = {
-                    // TODO:
+                    navController.navigateUp()
                 }) {
                     Icon(Icons.Rounded.Close, "Back")
                 }

@@ -43,13 +43,7 @@ fun sharedPreferencesOf(
     name: String
 ): SharedPreferences = AppInitializer.mContext.getSharedPreferences(name, Context.MODE_PRIVATE)
 
-object CookieHelper : CookieJar {
-    fun logout() {
-        sharedPreferencesOf("cookie").edit {
-            clear()
-        }
-    }
-
+class CookieHelper : CookieJar {
     override fun loadForRequest(url: HttpUrl): List<Cookie> {
         val cookies = sharedPreferencesOf("cookie").all.map { (k, v) ->
             Cookie.Builder()

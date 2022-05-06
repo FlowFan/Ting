@@ -20,7 +20,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -93,9 +92,7 @@ class SongListFragment : Fragment() {
                                         Icon(Icons.Rounded.ArrowBack, "Back")
                                     }
                                 },
-                                colors = TopAppBarDefaults.smallTopAppBarColors(
-                                    containerColor = Color.Transparent
-                                ),
+                                colors = TopAppBarDefaults.smallTopAppBarColors(),
                                 scrollBehavior = scrollBehavior
                             )
                         },
@@ -175,16 +172,16 @@ private fun SongInfo(playlist: SongList.Playlist) {
         horizontalArrangement = Arrangement.spacedBy(32.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val imagePainter = rememberImagePainter(data = playlist.coverImgUrl)
+        val painter = rememberImagePainter(data = playlist.coverImgUrl)
         Image(
             modifier = Modifier
                 .size(150.dp)
                 .clip(RoundedCornerShape(8.dp))
                 .placeholder(
-                    visible = imagePainter.state is ImagePainter.State.Loading,
+                    visible = painter.state is ImagePainter.State.Loading,
                     highlight = PlaceholderHighlight.shimmer()
                 ),
-            painter = imagePainter,
+            painter = painter,
             contentDescription = null,
             contentScale = ContentScale.FillBounds
         )

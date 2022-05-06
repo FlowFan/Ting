@@ -50,7 +50,7 @@ object AppModule {
             .retryOnConnectionFailure(true)
             .addInterceptor(HttpsInterceptor())
             .addInterceptor(UserAgentInterceptor())
-            .cookieJar(CookieHelper)
+            .cookieJar(CookieHelper())
             .build()
 
     @Singleton

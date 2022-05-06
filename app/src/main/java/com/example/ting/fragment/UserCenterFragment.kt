@@ -10,8 +10,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Logout
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -21,9 +23,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.dp
+import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
@@ -33,8 +37,11 @@ import coil.compose.ImagePainter
 import coil.compose.rememberImagePainter
 import com.example.ting.databinding.FragmentUserCenterBinding
 import com.example.ting.model.UserPlaylist
+import com.example.ting.other.sharedPreferencesOf
 import com.example.ting.ui.theme.TingTheme
 import com.example.ting.viewmodel.TingViewModel
+import com.google.accompanist.insets.LocalWindowInsets
+import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
@@ -73,7 +80,11 @@ class UserCenterFragment : Fragment() {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(
+    ExperimentalMaterial3Api::class,
+    ExperimentalFoundationApi::class,
+    ExperimentalCoilApi::class
+)
 @Composable
 fun RequireLoginVisible(
     viewModel: TingViewModel,
@@ -87,26 +98,73 @@ fun RequireLoginVisible(
                 viewModel.refreshLibraryPage(userData.account.id)
             }
         }
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(vertical = 8.dp)
-        ) {
-            playlists.playlist.groupBy {
-                it.creator.userId == userData.account.id
-            }.forEach {
-                stickyHeader {
-                    Surface(modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = if (it.component1()) "创建的歌单" else "收藏的歌单",
-                            style = MaterialTheme.typography.headlineSmall,
-                            modifier = Modifier.padding(16.dp)
+        Scaffold(
+            topBar = {
+                SmallTopAppBar(
+                    modifier = Modifier.padding(
+                        rememberInsetsPaddingValues(
+                            insets = LocalWindowInsets.current.statusBars,
+                            applyBottom = false
                         )
+                    ),
+                    title = {
+                        Text(text = userData.profile.nickname)
+                    },
+                    navigationIcon = {
+                        val painter = rememberImagePainter(data = userData.profile.avatarUrl)
+                        Icon(
+                            modifier = Modifier
+                                .padding(16.dp)
+                                .clip(CircleShape)
+                                .placeholder(
+                                    visible = painter.state is ImagePainter.State.Loading,
+                                    highlight = PlaceholderHighlight.shimmer()
+                                )
+                                .size(50.dp),
+                            painter = painter,
+                            contentDescription = null,
+                            tint = Color.Unspecified
+                        )
+                    },
+                    actions = {
+                        Icon(
+                            modifier = Modifier
+                                .clickable {
+                                    sharedPreferencesOf("cookie").edit {
+                                        clear()
+                                    }
+                                    viewModel.init()
+                                }
+                                .padding(8.dp),
+                            imageVector = Icons.Rounded.Logout,
+                            contentDescription = "Search"
+                        )
+                    },
+                    colors = TopAppBarDefaults.smallTopAppBarColors()
+                )
+            }
+        ) {
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(vertical = 8.dp)
+            ) {
+                playlists.playlist.groupBy {
+                    it.creator.userId == userData.account.id
+                }.forEach {
+                    stickyHeader {
+                        Surface(modifier = Modifier.fillMaxWidth()) {
+                            Text(
+                                text = if (it.component1()) "创建的声音单" else "收藏的声音单",
+                                style = MaterialTheme.typography.headlineSmall,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
                     }
-                }
 
-                items(it.component2()) { item ->
-                    PlayListItem(item, navController)
+                    items(it.component2()) { item ->
+                        PlayListItem(item, navController)
+                    }
                 }
             }
         }
@@ -152,9 +210,7 @@ fun PlayListItem(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val painter = rememberImagePainter(
-                data = playlist.coverImgUrl
-            )
+            val painter = rememberImagePainter(data = playlist.coverImgUrl)
             Image(
                 painter = painter,
                 contentDescription = null,
@@ -179,7 +235,7 @@ fun PlayListItem(
                     maxLines = 1
                 )
                 Text(
-                    text = "${playlist.trackCount} 首音乐 ${playlist.playCount} 次播放",
+                    text = "${playlist.trackCount} 首声音 ${playlist.playCount} 次播放",
                     style = MaterialTheme.typography.labelMedium,
                     maxLines = 1
                 )
