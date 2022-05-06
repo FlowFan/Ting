@@ -85,7 +85,7 @@ class MusicFragment : Fragment() {
                             NewSong(viewModel)
                         }
                         item {
-                            TopList(viewModel)
+                            TopList(viewModel, findNavController())
                         }
                     }
                 }
@@ -379,7 +379,8 @@ private fun NewSong(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalCoilApi::class)
 @Composable
 private fun TopList(
-    viewModel: TingViewModel
+    viewModel: TingViewModel,
+    navController: NavController
 ) {
     val topList by viewModel.topList.observeAsState(TopList())
     Column(
@@ -412,7 +413,11 @@ private fun TopList(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(4.dp))
                                 .clickable {
-                                    // TODO:
+                                    navController.navigate(
+                                        MainFragmentDirections.actionMainFragmentToSongListFragment(
+                                            it.id
+                                        )
+                                    )
                                 },
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
