@@ -143,7 +143,9 @@ class SongListFragment : Fragment() {
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-private fun SongInfo(playlist: SongList.Playlist) {
+private fun SongInfo(
+    playlist: SongList.Playlist
+) {
     var showPlaylistDetailDialog by remember { mutableStateOf(false) }
     if (showPlaylistDetailDialog) {
         AlertDialog(
@@ -217,7 +219,9 @@ private fun SongInfo(playlist: SongList.Playlist) {
 }
 
 @Composable
-private fun SongIcon(playlist: SongList.Playlist) {
+private fun SongIcon(
+    playlist: SongList.Playlist
+) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -274,7 +278,9 @@ private fun SongIcon(playlist: SongList.Playlist) {
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-private fun SongList(index: Int, track: SongList.Playlist.Track) {
+private fun SongList(
+    index: Int, track: SongList.Playlist.Track
+) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         tonalElevation = 16.dp,

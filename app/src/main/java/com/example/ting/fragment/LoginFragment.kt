@@ -71,8 +71,8 @@ class LoginFragment : Fragment() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(
-    loginViewModel: TingViewModel,
+private fun LoginScreen(
+    viewModel: TingViewModel,
     navController: NavController
 ) {
     Scaffold(
@@ -98,17 +98,17 @@ fun LoginScreen(
                 .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            Body(loginViewModel, navController)
+            Body(viewModel, navController)
         }
     }
 }
 
 @Composable
 private fun Body(
-    loginViewModel: TingViewModel,
+    viewModel: TingViewModel,
     navController: NavController
 ) {
-    val loginState by loginViewModel.loginState.collectAsState()
+    val loginState by viewModel.loginState.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
 
     AnimatedVisibility(showDialog) {
@@ -143,7 +143,7 @@ private fun Body(
         if (loginState.code == 200) {
             // 登录成功
             "登录成功".toast()
-            loginViewModel.init()
+            viewModel.init()
             navController.navigateUp()
         }
     }
@@ -227,7 +227,7 @@ private fun Body(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
                 showDialog = true
-                loginViewModel.loginCellPhone(
+                viewModel.loginCellPhone(
                     phone = username,
                     password = password
                 )

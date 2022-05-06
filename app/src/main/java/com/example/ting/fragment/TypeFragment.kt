@@ -89,11 +89,14 @@ class TypeFragment : Fragment() {
 
 @OptIn(ExperimentalPagerApi::class, ExperimentalAnimationApi::class)
 @Composable
-fun DiscoverPage(indexViewModel: TingViewModel, navController: NavController) {
+private fun DiscoverPage(
+    viewModel: TingViewModel,
+    navController: NavController
+) {
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
-    val categoryAll by indexViewModel.categoryAll.observeAsState(TypeList())
-    val categorySelect by indexViewModel.categorySelected.collectAsState()
+    val categoryAll by viewModel.categoryAll.observeAsState(TypeList())
+    val categorySelect by viewModel.categorySelected.collectAsState()
     var editing by remember { mutableStateOf(false) }
     val category = listOf("全部", "官方", "精品") + categorySelect
 
@@ -109,7 +112,7 @@ fun DiscoverPage(indexViewModel: TingViewModel, navController: NavController) {
                 ).edit {
                     putString("data", it.distinct().joinToString(","))
                 }
-                indexViewModel.refreshSelectedCategory()
+                viewModel.refreshSelectedCategory()
                 "保存成功".toast()
                 editing = false
             }
@@ -145,7 +148,7 @@ fun DiscoverPage(indexViewModel: TingViewModel, navController: NavController) {
                     count = category.size,
                     state = pagerState
                 ) {
-                    TopPlaylist(indexViewModel, category[it], navController)
+                    TopPlaylist(viewModel, category[it], navController)
                 }
             }
         }
@@ -229,12 +232,12 @@ private fun CategoryEditor(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun TopPlaylist(
-    indexViewModel: TingViewModel,
+    viewModel: TingViewModel,
     category: String,
     navController: NavController
 ) {
     if (category == "精品") {
-        val highQualityPlaylist by indexViewModel.highQualityPlaylist.observeAsState(
+        val highQualityPlaylist by viewModel.highQualityPlaylist.observeAsState(
             HighQualityPlaylist()
         )
         LazyVerticalGrid(
@@ -248,9 +251,9 @@ private fun TopPlaylist(
         return
     }
 
-    val items = (indexViewModel.playlistCatPager[category] ?: run {
-        indexViewModel.getTopPlaylist(category).also {
-            indexViewModel.playlistCatPager[category] = it
+    val items = (viewModel.playlistCatPager[category] ?: run {
+        viewModel.getTopPlaylist(category).also {
+            viewModel.playlistCatPager[category] = it
         }
     }).collectAsLazyPagingItems()
     LazyVerticalGrid(
@@ -265,7 +268,10 @@ private fun TopPlaylist(
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-private fun PlaylistItem(playlist: Playlists, navController: NavController) {
+private fun PlaylistItem(
+    playlist: Playlists,
+    navController: NavController
+) {
     Column(
         modifier = Modifier
             .clip(RoundedCornerShape(4.dp))

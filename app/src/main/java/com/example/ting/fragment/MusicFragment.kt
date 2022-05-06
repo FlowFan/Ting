@@ -174,7 +174,9 @@ private fun PlayList(
 }
 
 @Composable
-fun LargeButton(navController: NavController) {
+private fun LargeButton(
+    navController: NavController
+) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -237,7 +239,9 @@ fun LargeButton(navController: NavController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DailyWord(viewModel: TingViewModel) {
+private fun DailyWord(
+    viewModel: TingViewModel
+) {
     val dailyWord by viewModel.dailyWord.collectAsState()
     val clipboardManager = LocalClipboardManager.current
     Column(
@@ -299,7 +303,9 @@ private fun DailyWord(viewModel: TingViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalCoilApi::class)
 @Composable
-fun NewSong(viewModel: TingViewModel) {
+private fun NewSong(
+    viewModel: TingViewModel
+) {
     val newSong by viewModel.newSong.observeAsState(NewSong())
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -372,7 +378,9 @@ fun NewSong(viewModel: TingViewModel) {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalCoilApi::class)
 @Composable
-private fun TopList(viewModel: TingViewModel) {
+private fun TopList(
+    viewModel: TingViewModel
+) {
     val topList by viewModel.topList.observeAsState(TopList())
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)

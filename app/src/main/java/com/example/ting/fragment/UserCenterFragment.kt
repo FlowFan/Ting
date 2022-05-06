@@ -86,7 +86,7 @@ class UserCenterFragment : Fragment() {
     ExperimentalCoilApi::class
 )
 @Composable
-fun RequireLoginVisible(
+private fun RequireLoginVisible(
     viewModel: TingViewModel,
     navController: NavController
 ) {
@@ -185,7 +185,7 @@ fun RequireLoginVisible(
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
-fun PlayListItem(
+private fun PlayListItem(
     playlist: UserPlaylist.Playlist,
     navController: NavController
 ) {
