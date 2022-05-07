@@ -83,20 +83,18 @@ class TingRepository @Inject constructor(
         }
     }
 
-    fun getSongList(id: Long) = liveData(Dispatchers.IO) {
-        try {
-            val songList = musicWeService.getSongList(
-                mapOf(
-                    "id" to "$id",
-                    "n" to "5000",
-                    "s" to "8"
-                )
+    fun getSongList(id: Long) = flow {
+        val songList = musicWeService.getSongList(
+            mapOf(
+                "id" to "$id",
+                "n" to "5000",
+                "s" to "8"
             )
-            emit(songList)
-        } catch (e: Exception) {
-            e.stackTraceToString()
-        }
-    }
+        )
+        emit(songList)
+    }.catch {
+        it.stackTraceToString()
+    }.flowOn(Dispatchers.IO)
 
     fun getTypeList() = liveData(Dispatchers.IO) {
         try {
@@ -192,6 +190,16 @@ class TingRepository @Inject constructor(
                 "limit" to "1000",
                 "includeVideo" to "false"
             )
+        )
+        emit(result)
+    }.catch {
+        it.stackTraceToString()
+    }.flowOn(Dispatchers.IO)
+
+    fun subPlaylist(id: Long, sub: Boolean) = flow {
+        val result = musicWeService.subPlaylist(
+            if (sub) "unsubscribe" else "subscribe",
+            mapOf("id" to "$id").encryptWeAPI()
         )
         emit(result)
     }.catch {

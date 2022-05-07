@@ -15,6 +15,7 @@ data class SongList(
         val coverImgUrl: String = "",
         val creator: Creators = Creators(),
         val description: String = "",
+        val id: Long = 0,
         val name: String = "",
         val subscribed: Boolean = false,
         val trackCount: Int = 0,

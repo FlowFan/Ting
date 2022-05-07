@@ -24,6 +24,8 @@ class TingViewModel @Inject constructor(
     private val _dailyWord by lazy { MutableStateFlow(DailyWord()) }
     val dailyWord get() = _dailyWord.asStateFlow()
     val newSong by lazy { tingRepository.getNewSong() }
+    private val _songList by lazy { MutableStateFlow(SongList()) }
+    val songList get() = _songList.asStateFlow()
     val topList by lazy { tingRepository.getTopList() }
     val categoryAll by lazy { tingRepository.getTypeList() }
     private val _categorySelected by lazy { MutableStateFlow(listOf<String>()) }
@@ -53,7 +55,12 @@ class TingViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun getSongList(id: Long) = tingRepository.getSongList(id)
+    fun getSongList(id: Long) {
+        tingRepository.getSongList(id).onEach {
+            _songList.value = it
+        }.launchIn(viewModelScope)
+    }
+
     fun loginCellPhone(phone: String, password: String) {
         tingRepository.loginCellphone(phone, password).onEach {
             _loginState.value = it
@@ -63,6 +70,14 @@ class TingViewModel @Inject constructor(
     fun refreshLibraryPage(id: Long) {
         tingRepository.getUserPlaylists(id).onEach {
             _userPlaylist.value = it
+        }.launchIn(viewModelScope)
+    }
+
+    fun subscribe(id: Long, sub: Boolean) {
+        tingRepository.subPlaylist(id, sub).onEach {
+            if (it.code == 200) {
+                getSongList(id)
+            }
         }.launchIn(viewModelScope)
     }
 

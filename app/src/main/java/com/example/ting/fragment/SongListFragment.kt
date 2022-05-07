@@ -16,10 +16,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ViewCompositionStrategy
@@ -70,9 +70,13 @@ class SongListFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 TingTheme(false) {
+                    LaunchedEffect(args.id) {
+                        viewModel.getSongList(args.id)
+                    }
+
                     val lazyListState = rememberLazyListState()
                     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
-                    val songList by viewModel.getSongList(args.id).observeAsState(SongList())
+                    val songList by viewModel.songList.collectAsState()
                     Scaffold(
                         topBar = {
                             SmallTopAppBar(
@@ -92,7 +96,7 @@ class SongListFragment : Fragment() {
                                         Icon(Icons.Rounded.ArrowBack, "Back")
                                     }
                                 },
-                                colors = TopAppBarDefaults.smallTopAppBarColors(),
+                                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.Transparent),
                                 scrollBehavior = scrollBehavior
                             )
                         },
@@ -123,7 +127,7 @@ class SongListFragment : Fragment() {
                                 SongInfo(songList.playlist)
                             }
                             item {
-                                SongIcon(songList.playlist)
+                                SongIcon(viewModel, songList.playlist)
                             }
                             itemsIndexed(songList.playlist.tracks) { index, item ->
                                 SongList(index = index, track = item)
@@ -220,6 +224,7 @@ private fun SongInfo(
 
 @Composable
 private fun SongIcon(
+    viewModel: TingViewModel,
     playlist: SongList.Playlist
 ) {
     Row(
@@ -257,7 +262,7 @@ private fun SongIcon(
         }
 
         IconButton(onClick = {
-//            playlistViewModel.subscribe(scope)
+            viewModel.subscribe(playlist.id, playlist.subscribed)
         }) {
             Icon(
                 imageVector = if (playlist.subscribed) {
