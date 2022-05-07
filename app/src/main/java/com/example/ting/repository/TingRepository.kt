@@ -55,11 +55,9 @@ class TingRepository @Inject constructor(
     }
 
     fun getDailyWord() = flow {
-        try {
-            emit(hitokotoService.getDailyWord())
-        } catch (e: Exception) {
-            e.stackTraceToString()
-        }
+        emit(hitokotoService.getDailyWord())
+    }.catch {
+        it.stackTraceToString()
     }.flowOn(Dispatchers.IO)
 
     fun getNewSong() = liveData(Dispatchers.IO) {
@@ -112,24 +110,22 @@ class TingRepository @Inject constructor(
     }
 
     fun getHotPlaylistTags() = flow {
-        try {
-            val sharedPreferences = AppInitializer.mContext.getSharedPreferences(
-                "playlist_category",
-                Context.MODE_PRIVATE
-            )
-            val result = if (sharedPreferences.contains("data")) {
-                // 载入用户自定义歌单category
-                sharedPreferences.getString("data", "")?.split(",") ?: emptyList()
-            } else {
-                // 载入热门category
-                musicWeService.getHotPlaylistTags(
-                    mapOf<String, String>().encryptWeAPI()
-                ).tags.map { it.name }
-            }
-            emit(result)
-        } catch (e: Exception) {
-            e.stackTraceToString()
+        val sharedPreferences = AppInitializer.mContext.getSharedPreferences(
+            "playlist_category",
+            Context.MODE_PRIVATE
+        )
+        val result = if (sharedPreferences.contains("data")) {
+            // 载入用户自定义歌单category
+            sharedPreferences.getString("data", "")?.split(",") ?: emptyList()
+        } else {
+            // 载入热门category
+            musicWeService.getHotPlaylistTags(
+                mapOf<String, String>().encryptWeAPI()
+            ).tags.map { it.name }
         }
+        emit(result)
+    }.catch {
+        it.stackTraceToString()
     }.flowOn(Dispatchers.IO)
 
     fun getHighQualityPlaylist() = liveData(Dispatchers.IO) {
@@ -148,39 +144,29 @@ class TingRepository @Inject constructor(
         }
     }
 
-    fun getTopPlaylist(
-        category: String
-    ) = Pager(
+    fun getTopPlaylist(category: String) = Pager(
         config = PagingConfig(
             pageSize = 20,
             prefetchDistance = 3,
             initialLoadSize = 20
         )
     ) {
-        TopPlaylistPagingSource(
-            category = category,
-            musicService = musicWeService
-        )
+        TopPlaylistPagingSource(category, musicWeService)
     }.flow.flowOn(Dispatchers.IO)
 
-    fun loginCellphone(
-        phone: String,
-        password: String
-    ) = flow {
+    fun loginCellphone(phone: String, password: String) = flow {
         delay(500)
-        try {
-            val result = musicWeService.loginCellphone(
-                mapOf(
-                    "phone" to phone,
-                    "countrycode" to "86",
-                    "password" to password.toByteArray().md5().hex,
-                    "rememberLogin" to "true"
-                ).encryptWeAPI()
-            )
-            emit(result)
-        } catch (e: Exception) {
-            e.stackTraceToString()
-        }
+        val result = musicWeService.loginCellphone(
+            mapOf(
+                "phone" to phone,
+                "countrycode" to "86",
+                "password" to password.toByteArray().md5().hex,
+                "rememberLogin" to "true"
+            ).encryptWeAPI()
+        )
+        emit(result)
+    }.catch {
+        it.stackTraceToString()
     }.flowOn(Dispatchers.IO)
 
     fun refreshLogin() = flow {

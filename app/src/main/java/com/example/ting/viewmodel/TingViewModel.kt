@@ -22,22 +22,22 @@ class TingViewModel @Inject constructor(
 
     val playList by lazy { tingRepository.getPlayList() }
     private val _dailyWord by lazy { MutableStateFlow(DailyWord()) }
-    val dailyWord: StateFlow<DailyWord> get() = _dailyWord
+    val dailyWord get() = _dailyWord.asStateFlow()
     val newSong by lazy { tingRepository.getNewSong() }
     val topList by lazy { tingRepository.getTopList() }
     val categoryAll by lazy { tingRepository.getTypeList() }
     private val _categorySelected by lazy { MutableStateFlow(listOf<String>()) }
-    val categorySelected: StateFlow<List<String>> get() = _categorySelected
+    val categorySelected get() = _categorySelected.asStateFlow()
     val highQualityPlaylist by lazy { tingRepository.getHighQualityPlaylist() }
     val playlistCatPager by lazy { mutableMapOf<String, Flow<PagingData<Playlists>>>() }
     private val _loginState by lazy { MutableStateFlow(LoginResponse()) }
-    val loginState: StateFlow<LoginResponse> get() = _loginState
+    val loginState get() = _loginState.asStateFlow()
     private val _userData by lazy { MutableStateFlow(AccountDetail()) }
-    val userData: StateFlow<AccountDetail> get() = _userData
+    val userData get() = _userData.asStateFlow()
     private val _isReady by lazy { MutableStateFlow(false) }
-    val isReady: StateFlow<Boolean> get() = _isReady
+    val isReady get() = _isReady.asStateFlow()
     private val _userPlaylist by lazy { MutableStateFlow(UserPlaylist()) }
-    val userPlaylist: StateFlow<UserPlaylist> get() = _userPlaylist
+    val userPlaylist get() = _userPlaylist.asStateFlow()
     fun getTopPlaylist(category: String) =
         tingRepository.getTopPlaylist(category).cachedIn(viewModelScope)
 
