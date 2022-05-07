@@ -122,6 +122,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-pager-indicators:$accompanist_version"
     implementation "com.google.accompanist:accompanist-placeholder-material:$accompanist_version"
     implementation "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
+    implementation "com.google.accompanist:accompanist-swiperefresh:$accompanist_version"
     //Krypto
     implementation 'com.soywiz.korlibs.krypto:krypto-android:2.7.0'
     //ExoPlayer

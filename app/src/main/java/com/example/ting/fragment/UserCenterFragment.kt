@@ -16,10 +16,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Logout
 import androidx.compose.material.icons.rounded.Menu
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,7 +42,11 @@ import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class UserCenterFragment : Fragment() {
@@ -144,26 +145,39 @@ private fun RequireLoginVisible(
                 )
             }
         ) {
-            LazyColumn(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                contentPadding = PaddingValues(vertical = 8.dp)
-            ) {
-                playlists.playlist.groupBy {
-                    it.creator.userId == userData.account.id
-                }.forEach {
-                    stickyHeader {
-                        Surface(modifier = Modifier.fillMaxWidth()) {
-                            Text(
-                                text = if (it.component1()) "创建的声音单" else "收藏的声音单",
-                                style = MaterialTheme.typography.headlineSmall,
-                                modifier = Modifier.padding(16.dp)
-                            )
-                        }
+            val state = rememberSwipeRefreshState(isRefreshing = false)
+            val scope = rememberCoroutineScope()
+            SwipeRefresh(
+                state = state,
+                onRefresh = {
+                    viewModel.refreshLibraryPage(userData.account.id)
+                    scope.launch {
+                        state.isRefreshing = true
+                        delay(500)
+                        state.isRefreshing = false
                     }
+                }) {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(vertical = 8.dp)
+                ) {
+                    playlists.playlist.groupBy {
+                        it.creator.userId == userData.account.id
+                    }.forEach {
+                        stickyHeader {
+                            Surface(modifier = Modifier.fillMaxWidth()) {
+                                Text(
+                                    text = if (it.component1()) "创建的声音单" else "收藏的声音单",
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    modifier = Modifier.padding(16.dp)
+                                )
+                            }
+                        }
 
-                    items(it.component2()) { item ->
-                        PlayListItem(item, navController)
+                        items(it.component2()) { item ->
+                            PlayListItem(item, navController)
+                        }
                     }
                 }
             }
