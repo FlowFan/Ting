@@ -1,16 +1,28 @@
+@file:Suppress("DEPRECATION")
+
 package com.example.ting.fragment
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Paint
 import android.os.Bundle
+import android.renderscript.Allocation
+import android.renderscript.Element
+import android.renderscript.RenderScript
+import android.renderscript.ScriptIntrinsicBlur
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.graphics.applyCanvas
+import androidx.core.graphics.createBitmap
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionInflater
 import coil.load
-import coil.transform.BlurTransformation
+import coil.size.Size
+import coil.transform.Transformation
 import com.example.ting.R
 import com.example.ting.adapter.DetailListAdapter
 import com.example.ting.databinding.FragmentDetailBinding
@@ -72,5 +84,82 @@ class DetailFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+}
+
+class BlurTransformation @JvmOverloads constructor(
+    private val context: Context,
+    private val radius: Float = DEFAULT_RADIUS,
+    private val sampling: Float = DEFAULT_SAMPLING
+) : Transformation {
+
+    init {
+        require(radius in 0.0..25.0) { "radius must be in [0, 25]." }
+        require(sampling > 0) { "sampling must be > 0." }
+    }
+
+    override val cacheKey: String = "${BlurTransformation::class.java.name}-$radius-$sampling"
+
+    override suspend fun transform(input: Bitmap, size: Size): Bitmap {
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG or Paint.FILTER_BITMAP_FLAG)
+
+        val scaledWidth = (input.width / sampling).toInt()
+        val scaledHeight = (input.height / sampling).toInt()
+        val output = createBitmap(scaledWidth, scaledHeight, input.config)
+        output.applyCanvas {
+            scale(1 / sampling, 1 / sampling)
+            drawBitmap(input, 0f, 0f, paint)
+        }
+
+        var script: RenderScript? = null
+        var tmpInt: Allocation? = null
+        var tmpOut: Allocation? = null
+        var blur: ScriptIntrinsicBlur? = null
+        try {
+            script = RenderScript.create(context)
+            tmpInt = Allocation.createFromBitmap(
+                script,
+                output,
+                Allocation.MipmapControl.MIPMAP_NONE,
+                Allocation.USAGE_SCRIPT
+            )
+            tmpOut = Allocation.createTyped(script, tmpInt.type)
+            blur = ScriptIntrinsicBlur.create(script, Element.U8_4(script))
+            blur.setRadius(radius)
+            blur.setInput(tmpInt)
+            blur.forEach(tmpOut)
+            tmpOut.copyTo(output)
+        } finally {
+            script?.destroy()
+            tmpInt?.destroy()
+            tmpOut?.destroy()
+            blur?.destroy()
+        }
+
+        return output
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        return other is BlurTransformation &&
+                context == other.context &&
+                radius == other.radius &&
+                sampling == other.sampling
+    }
+
+    override fun hashCode(): Int {
+        var result = context.hashCode()
+        result = 31 * result + radius.hashCode()
+        result = 31 * result + sampling.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "BlurTransformation(context=$context, radius=$radius, sampling=$sampling)"
+    }
+
+    private companion object {
+        private const val DEFAULT_RADIUS = 10f
+        private const val DEFAULT_SAMPLING = 1f
     }
 }

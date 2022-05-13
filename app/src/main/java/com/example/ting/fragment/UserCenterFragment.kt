@@ -29,9 +29,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.ImagePainter
-import coil.compose.rememberImagePainter
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.example.ting.databinding.FragmentUserCenterBinding
 import com.example.ting.model.UserPlaylist
 import com.example.ting.other.sharedPreferencesOf
@@ -81,11 +80,7 @@ class UserCenterFragment : Fragment() {
     }
 }
 
-@OptIn(
-    ExperimentalMaterial3Api::class,
-    ExperimentalFoundationApi::class,
-    ExperimentalCoilApi::class
-)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 private fun RequireLoginVisible(
     viewModel: TingViewModel,
@@ -112,13 +107,13 @@ private fun RequireLoginVisible(
                         Text(text = userData.profile.nickname)
                     },
                     navigationIcon = {
-                        val painter = rememberImagePainter(data = userData.profile.avatarUrl)
+                        val painter = rememberAsyncImagePainter(model = userData.profile.avatarUrl)
                         Icon(
                             modifier = Modifier
                                 .padding(16.dp)
                                 .clip(CircleShape)
                                 .placeholder(
-                                    visible = painter.state is ImagePainter.State.Loading,
+                                    visible = painter.state is AsyncImagePainter.State.Loading,
                                     highlight = PlaceholderHighlight.shimmer()
                                 )
                                 .size(50.dp),
@@ -197,7 +192,6 @@ private fun RequireLoginVisible(
     }
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun PlayListItem(
     playlist: UserPlaylist.Playlist,
@@ -224,7 +218,7 @@ private fun PlayListItem(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val painter = rememberImagePainter(data = playlist.coverImgUrl)
+            val painter = rememberAsyncImagePainter(model = playlist.coverImgUrl)
             Image(
                 painter = painter,
                 contentDescription = null,
@@ -234,7 +228,7 @@ private fun PlayListItem(
                     .heightIn(min = 100.dp)
                     .fillMaxHeight()
                     .placeholder(
-                        visible = painter.state is ImagePainter.State.Loading,
+                        visible = painter.state is AsyncImagePainter.State.Loading,
                         highlight = PlaceholderHighlight.shimmer()
                     ),
                 contentScale = ContentScale.FillHeight

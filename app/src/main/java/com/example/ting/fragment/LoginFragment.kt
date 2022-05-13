@@ -24,7 +24,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.example.ting.R
 import com.example.ting.databinding.FragmentLoginBinding
 import com.example.ting.other.toast
@@ -164,7 +164,7 @@ private fun Body(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Image(
-            painter = rememberImagePainter(R.mipmap.ic_launcher),
+            painter = rememberAsyncImagePainter(R.mipmap.ic_launcher),
             contentDescription = null,
             modifier = Modifier
                 .padding(32.dp)

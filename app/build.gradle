@@ -65,7 +65,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'
-    implementation 'com.google.android.material:material:1.5.0'
+    implementation 'com.google.android.material:material:1.6.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
 
     //Compose
@@ -76,7 +76,7 @@ dependencies {
     implementation 'androidx.compose.material3:material3:1.0.0-alpha09'
     implementation 'androidx.paging:paging-compose:1.0.0-alpha14'
     implementation 'androidx.constraintlayout:constraintlayout-compose:1.0.0'
-    implementation 'io.coil-kt:coil-compose:1.4.0'
+    implementation 'io.coil-kt:coil-compose:2.0.0'
     implementation 'dev.burnoo:compose-remember-preference:0.3.4'
     implementation 'com.github.fornewid.material-motion-compose:core:0.8.1'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
@@ -89,10 +89,10 @@ dependencies {
     //Retrofit2
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     //Serialization
-    implementation 'com.github.fan1138612367:converter-json:1.3.2.1'
-    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2'
+    implementation 'com.github.fan1138612367:converter-json:1.3.3'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3'
     //Coil
-    implementation 'io.coil-kt:coil:1.4.0'
+    implementation 'io.coil-kt:coil:2.0.0'
     //Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
     implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"

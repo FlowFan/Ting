@@ -31,9 +31,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.ImagePainter
-import coil.compose.rememberImagePainter
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.example.ting.databinding.FragmentSongListBinding
 import com.example.ting.model.SongList
 import com.example.ting.ui.theme.TingTheme
@@ -145,7 +144,6 @@ class SongListFragment : Fragment() {
     }
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun SongInfo(
     playlist: SongList.Playlist
@@ -178,13 +176,13 @@ private fun SongInfo(
         horizontalArrangement = Arrangement.spacedBy(32.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val painter = rememberImagePainter(data = playlist.coverImgUrl)
+        val painter = rememberAsyncImagePainter(model = playlist.coverImgUrl)
         Image(
             modifier = Modifier
                 .size(150.dp)
                 .clip(RoundedCornerShape(8.dp))
                 .placeholder(
-                    visible = painter.state is ImagePainter.State.Loading,
+                    visible = painter.state is AsyncImagePainter.State.Loading,
                     highlight = PlaceholderHighlight.shimmer()
                 ),
             painter = painter,
@@ -281,7 +279,6 @@ private fun SongIcon(
     }
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun SongList(
     index: Int, track: SongList.Playlist.Track
@@ -297,12 +294,12 @@ private fun SongList(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = "${index + 1}")
-            val painter = rememberImagePainter(data = track.al.picUrl)
+            val painter = rememberAsyncImagePainter(model = track.al.picUrl)
             Image(
                 modifier = Modifier
                     .clip(RoundedCornerShape(4.dp))
                     .placeholder(
-                        visible = painter.state is ImagePainter.State.Loading,
+                        visible = painter.state is AsyncImagePainter.State.Loading,
                         highlight = PlaceholderHighlight.shimmer()
                     )
                     .size(50.dp),

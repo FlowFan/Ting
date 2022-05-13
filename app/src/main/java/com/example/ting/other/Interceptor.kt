@@ -14,7 +14,7 @@ class HttpsInterceptor : Interceptor {
             if (isHttps) {
                 this
             } else {
-                newBuilder().url(url().toHttps()).build()
+                newBuilder().url(url.toHttps()).build()
             }
         }
         return chain.proceed(request)
@@ -53,7 +53,7 @@ class CookieHelper : CookieJar {
                 .build()
         }.toMutableList()
         if (!cookies.any {
-                it.name() == "os"
+                it.name == "os"
             }) {
             cookies += Cookie.Builder()
                 .domain("music.163.com")
@@ -62,7 +62,7 @@ class CookieHelper : CookieJar {
                 .build()
         }
         if (!cookies.any {
-                it.name() == "appver"
+                it.name == "appver"
             }) {
             cookies += Cookie.Builder()
                 .domain("music.163.com")
@@ -73,7 +73,7 @@ class CookieHelper : CookieJar {
         return cookies.also {
             Log.d(
                 "CookieHelper",
-                "loadForRequest: ${cookies.joinToString(separator = ",") { it.name() }}"
+                "loadForRequest: ${cookies.joinToString(separator = ",") { it.name }}"
             )
         }
     }
@@ -82,14 +82,14 @@ class CookieHelper : CookieJar {
         sharedPreferencesOf("cookie").let {
             cookies
                 .filter {
-                    it.domain() == "music.163.com"
+                    it.domain == "music.163.com"
                 }
                 .forEach { cookie ->
                     it.edit {
-                        putString(cookie.name(), cookie.value())
+                        putString(cookie.name, cookie.value)
                         Log.i(
                             "CookieHelper",
-                            "saveFromResponse: saved cookie: ${cookie.name()}=${cookie.value()}"
+                            "saveFromResponse: saved cookie: ${cookie.name}=${cookie.value}"
                         )
                     }
                 }

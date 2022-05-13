@@ -32,9 +32,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.ImagePainter
-import coil.compose.rememberImagePainter
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.example.ting.databinding.FragmentMusicBinding
 import com.example.ting.model.NewSong
 import com.example.ting.model.PlayList
@@ -99,7 +98,7 @@ class MusicFragment : Fragment() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalCoilApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PlayList(
     viewModel: TingViewModel,
@@ -146,12 +145,12 @@ private fun PlayList(
                                 .width(IntrinsicSize.Min),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            val painter = rememberImagePainter(data = it.picUrl)
+                            val painter = rememberAsyncImagePainter(model = it.picUrl)
                             Image(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(4.dp))
                                     .placeholder(
-                                        visible = painter.state is ImagePainter.State.Loading,
+                                        visible = painter.state is AsyncImagePainter.State.Loading,
                                         highlight = PlaceholderHighlight.shimmer()
                                     )
                                     .size(100.dp),
@@ -301,7 +300,7 @@ private fun DailyWord(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalCoilApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NewSong(
     viewModel: TingViewModel
@@ -343,12 +342,12 @@ private fun NewSong(
                                 .width(IntrinsicSize.Min),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            val painter = rememberImagePainter(data = it.picUrl)
+                            val painter = rememberAsyncImagePainter(model = it.picUrl)
                             Image(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(4.dp))
                                     .placeholder(
-                                        visible = painter.state is ImagePainter.State.Loading,
+                                        visible = painter.state is AsyncImagePainter.State.Loading,
                                         highlight = PlaceholderHighlight.shimmer()
                                     )
                                     .size(100.dp),
@@ -376,7 +375,7 @@ private fun NewSong(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalCoilApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopList(
     viewModel: TingViewModel,
@@ -421,12 +420,12 @@ private fun TopList(
                                 },
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            val painter = rememberImagePainter(data = it.coverImgUrl)
+                            val painter = rememberAsyncImagePainter(model = it.coverImgUrl)
                             Image(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(4.dp))
                                     .placeholder(
-                                        visible = painter.state is ImagePainter.State.Loading,
+                                        visible = painter.state is AsyncImagePainter.State.Loading,
                                         highlight = PlaceholderHighlight.shimmer()
                                     )
                                     .size(100.dp),

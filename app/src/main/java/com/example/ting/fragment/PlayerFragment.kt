@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.example.ting.databinding.FragmentPlayerBinding
 import com.example.ting.ui.theme.TingTheme
 import com.google.accompanist.insets.navigationBarsPadding
@@ -271,7 +271,7 @@ private fun PlayerUI(
                                 .fillMaxWidth(0.5f)
                                 .aspectRatio(1f)
                                 .background(Color.Black),
-                            painter = rememberImagePainter(""),
+                            painter = rememberAsyncImagePainter(""),
 //                            painter = rememberImagePainter(
 //                                data = musicDetail.readSafely()?.songs?.get(0)?.al?.picUrl
 //                            ),

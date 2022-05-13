@@ -32,9 +32,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.paging.compose.collectAsLazyPagingItems
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.ImagePainter
-import coil.compose.rememberImagePainter
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
 import com.example.ting.databinding.FragmentTypeBinding
 import com.example.ting.init.AppInitializer
 import com.example.ting.model.HighQualityPlaylist
@@ -266,7 +265,6 @@ private fun TopPlaylist(
     }
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 private fun PlaylistItem(
     playlist: Playlists,
@@ -286,12 +284,12 @@ private fun PlaylistItem(
             .width(IntrinsicSize.Min),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val painter = rememberImagePainter(data = playlist.coverImgUrl)
+        val painter = rememberAsyncImagePainter(model = playlist.coverImgUrl)
         Image(
             modifier = Modifier
                 .clip(RoundedCornerShape(4.dp))
                 .placeholder(
-                    visible = painter.state is ImagePainter.State.Loading,
+                    visible = painter.state is AsyncImagePainter.State.Loading,
                     highlight = PlaceholderHighlight.shimmer()
                 )
                 .size(100.dp),
