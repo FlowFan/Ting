@@ -8,7 +8,7 @@ import androidx.room.Query
 import com.example.ting.model.Album
 
 @Dao
-interface RecommendDao {
+interface AlbumDao {
     @Insert(entity = Album::class, onConflict = IGNORE)
     suspend fun insertRecommend(vararg album: Album)
 

@@ -49,13 +49,16 @@ class TingRepository @Inject constructor(
                 ).encryptWeAPI()
             )
             emit(playList)
+            database.playListDao().insertPlayList(playList.result)
         } catch (e: Exception) {
             e.stackTraceToString()
         }
     }
 
     fun getDailyWord() = flow {
-        emit(hitokotoService.getDailyWord())
+        val result = hitokotoService.getDailyWord()
+        emit(result)
+        database.dailyWordDao().insertDailyWord(result)
     }.catch {
         it.stackTraceToString()
     }.flowOn(Dispatchers.IO)
@@ -163,6 +166,7 @@ class TingRepository @Inject constructor(
             ).encryptWeAPI()
         )
         emit(result)
+        database.loginResponseDao().insertLoginResponse(result)
     }.catch {
         it.stackTraceToString()
     }.flowOn(Dispatchers.IO)
@@ -179,6 +183,7 @@ class TingRepository @Inject constructor(
     fun getAccountDetail() = flow {
         val result = musicWeService.getAccountDetail()
         emit(result)
+        database.accountDetailDao().insertAccountDetail(result)
     }.catch {
         it.stackTraceToString()
     }.flowOn(Dispatchers.IO)
