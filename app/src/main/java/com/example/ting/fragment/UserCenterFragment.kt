@@ -112,10 +112,6 @@ private fun RequireLoginVisible(
                             modifier = Modifier
                                 .padding(16.dp)
                                 .clip(CircleShape)
-                                .placeholder(
-                                    visible = painter.state is AsyncImagePainter.State.Loading,
-                                    highlight = PlaceholderHighlight.shimmer()
-                                )
                                 .size(50.dp),
                             painter = painter,
                             contentDescription = null,
