@@ -77,4 +77,29 @@ interface MusicWeService {
         @Path("action") action: String,
         @FieldMap body: Map<String, String>
     ): SubPlaylistResult
+
+    @POST("/api/radio/like")
+    @FormUrlEncoded
+    suspend fun like(
+        @Header("like") like: Boolean,
+        @FieldMap body: Map<String, String>
+    ): LikeResult
+
+    @POST("/weapi/song/like/get")
+    @FormUrlEncoded
+    suspend fun getLikeList(
+        @FieldMap body: Map<String, String>
+    ): LikeList
+
+    @POST("/api/v3/song/detail")
+    @FormUrlEncoded
+    suspend fun getMusicDetail(
+        @FieldMap body: Map<String, String>
+    ): MusicDetail
+
+    @POST("/api/song/lyric")
+    @FormUrlEncoded
+    suspend fun getLyric(
+        @FieldMap body: Map<String, String>
+    ): Lyric
 }

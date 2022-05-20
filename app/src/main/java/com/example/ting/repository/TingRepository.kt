@@ -7,6 +7,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.example.ting.db.AppDatabase
 import com.example.ting.init.AppInitializer
+import com.example.ting.other.encryptEApi
 import com.example.ting.other.encryptWeAPI
 import com.example.ting.remote.*
 import com.soywiz.krypto.md5
@@ -20,6 +21,7 @@ import javax.inject.Inject
 class TingRepository @Inject constructor(
     private val recommendService: RecommendService,
     private val musicWeService: MusicWeService,
+    private val urlService: UrlService,
     private val hitokotoService: HitokotoService,
     private val database: AppDatabase
 ) {
@@ -205,6 +207,67 @@ class TingRepository @Inject constructor(
         val result = musicWeService.subPlaylist(
             if (sub) "unsubscribe" else "subscribe",
             mapOf("id" to "$id").encryptWeAPI()
+        )
+        emit(result)
+    }.catch {
+        it.stackTraceToString()
+    }.flowOn(Dispatchers.IO)
+
+    fun likeMusic(id: Long, like: Boolean) = flow {
+        val result = musicWeService.like(
+            like,
+            mapOf(
+                "alg" to "itembased",
+                "trackId" to "$id",
+                "like" to "$like",
+                "time" to "3"
+            )
+        )
+        emit(result)
+    }.catch {
+        it.stackTraceToString()
+    }.flowOn(Dispatchers.IO)
+
+    fun getLikeList(id: Long) = flow {
+        val result = musicWeService.getLikeList(
+            mapOf("uid" to "$id").encryptWeAPI()
+        )
+        emit(result)
+    }.catch {
+        it.stackTraceToString()
+    }.flowOn(Dispatchers.IO)
+
+    fun getMusicDetail(id: Long) = flow {
+        val result = musicWeService.getMusicDetail(
+            mapOf(
+                "c" to "[{\"id\":$id}]"
+            )
+        )
+        emit(result)
+    }.catch {
+        it.stackTraceToString()
+    }.flowOn(Dispatchers.IO)
+
+    fun getLyric(id: Long) = flow {
+        val result = musicWeService.getLyric(
+            mapOf(
+                "id" to "$id",
+                "lv" to "-1",
+                "kv" to "-1",
+                "tv" to "-1"
+            )
+        )
+        emit(result)
+    }.catch {
+        it.stackTraceToString()
+    }.flowOn(Dispatchers.IO)
+
+    fun getMusicUrl(id: Long) = flow {
+        val result = urlService.getMusicUrl(
+            mapOf(
+                "ids" to "[$id]",
+                "br" to "999000"
+            ).encryptEApi()
         )
         emit(result)
     }.catch {

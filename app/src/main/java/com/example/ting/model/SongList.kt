@@ -30,6 +30,7 @@ data class SongList(
         @Parcelize
         @Serializable
         data class Track(
+            val id: Long = 0,
             val al: Al = Al(),
             val ar: List<Ar> = listOf(),
             val name: String = ""

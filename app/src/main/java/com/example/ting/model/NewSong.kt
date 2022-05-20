@@ -12,6 +12,7 @@ data class NewSong(
     @Parcelize
     @Serializable
     data class Result(
+        val id: Long = 0,
         val name: String = "",
         val picUrl: String = "",
         val song: Song = Song()

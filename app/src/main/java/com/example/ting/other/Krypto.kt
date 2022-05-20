@@ -5,10 +5,12 @@ import com.soywiz.krypto.AES
 import com.soywiz.krypto.Padding
 import com.soywiz.krypto.encoding.hex
 import com.soywiz.krypto.encoding.toBase64
+import com.soywiz.krypto.md5
 import java.math.BigInteger
 
 private const val presetKey = "0CoJUm6Qyw8W8jud"
 private const val iv = "0102030405060708"
+private const val eapiKey = "e82ckenh8dichen8"
 
 fun Map<String, String>.encryptWeAPI(): Map<String, String> {
     val rawJson = JsonObject().apply {
@@ -38,6 +40,24 @@ fun Map<String, String>.encryptWeAPI(): Map<String, String> {
         "encSecKey" to rsaEncrypt(
             key
         )
+    )
+}
+
+fun Map<String, String>.encryptEApi(): Map<String, String> {
+    val rawJson = JsonObject().apply {
+        forEach { (t, u) ->
+            addProperty(t, u)
+        }
+    }.toString()
+    val url = "/api/song/enhance/player/url"
+    val message = "nobody" + url + "use" + rawJson + "md5forencrypt"
+    val digest: String = message.toByteArray().md5().hex
+    return mapOf(
+        "params" to AES.encryptAesEcb(
+            data = "$url-36cd479b6b5-$rawJson-36cd479b6b5-$digest".toByteArray(),
+            key = eapiKey.toByteArray(),
+            padding = Padding.PKCS7Padding
+        ).hex
     )
 }
 

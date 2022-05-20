@@ -1,5 +1,6 @@
 package com.example.ting.fragment
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -34,7 +36,10 @@ import androidx.navigation.fragment.navArgs
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.example.ting.databinding.FragmentSongListBinding
+import com.example.ting.exoplayer.MusicService
 import com.example.ting.model.SongList
+import com.example.ting.other.*
+import com.example.ting.other.Constants.TING_PROTOCOL
 import com.example.ting.ui.theme.TingTheme
 import com.example.ting.viewmodel.TingViewModel
 import com.google.accompanist.insets.LocalWindowInsets
@@ -44,7 +49,10 @@ import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import okhttp3.HttpUrl.Companion.toHttpUrl
 
 @AndroidEntryPoint
 class SongListFragment : Fragment() {
@@ -225,36 +233,42 @@ private fun SongIcon(
     viewModel: TingViewModel,
     playlist: SongList.Playlist
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Button(onClick = {
-//            context.asyncGetSessionPlayer(MusicService::class.java) {
-//                it.apply {
-//                    scope.launch {
-//                        stop()
-//                        clearMediaItems()
-//                        val mediaList = withContext(Dispatchers.Default) {
-//                            playlistDetail.readSafely()?.playlist?.tracks?.map { track ->
-//                                buildMediaItem(track.id.toString()) {
-//                                    metadata {
-//                                        setTitle(track.name)
-//                                        setArtist(track.ar.joinToString(", ") { ar -> ar.name })
-//                                        setMediaUri(Uri.parse("$RainMusicProtocol://music?id=${track.id}"))
-//                                        setArtworkUri(Uri.parse(track.al.picUrl.https))
-//                                    }
-//                                }
-//                            } ?: emptyList()
-//                        }
-//                        addMediaItems(mediaList)
-//                        prepare()
-//                        play()
-//                        context.toast("开始播放该歌单")
-//                    }
-//                }
-//            }
+            context.asyncGetSessionPlayer(MusicService::class.java) {
+                it.apply {
+                    scope.launch {
+                        stop()
+                        clearMediaItems()
+                        val mediaList = withContext(Dispatchers.Default) {
+                            playlist.tracks.map { track ->
+                                buildMediaItem(track.id.toString()) {
+                                    metadata {
+                                        setTitle(track.name)
+                                        setArtist(track.ar.joinToString(", ") { ar -> ar.name })
+                                        setMediaUri(Uri.parse("$TING_PROTOCOL://music?id=${track.id}"))
+                                        setArtworkUri(
+                                            Uri.parse(
+                                                track.al.picUrl.toHttpUrl().toHttps()
+                                            )
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        addMediaItems(mediaList)
+                        prepare()
+                        play()
+                        "开始播放该声音单".toast()
+                    }
+                }
+            }
         }) {
             Text(text = "播放")
         }
@@ -283,6 +297,7 @@ private fun SongIcon(
 private fun SongList(
     index: Int, track: SongList.Playlist.Track
 ) {
+    val context = LocalContext.current
     Surface(
         modifier = Modifier.fillMaxWidth(),
         tonalElevation = 16.dp,
@@ -324,24 +339,24 @@ private fun SongList(
                 )
             }
             IconButton(onClick = {
-//                context.asyncGetSessionPlayer(MusicService::class.java) {
-//                    it.apply {
-//                        stop()
-//                        clearMediaItems()
-//                        addMediaItem(
-//                            buildMediaItem(track.id.toString()) {
-//                                metadata {
-//                                    setTitle(track.name)
-//                                    setArtist(track.ar.joinToString(", ") { ar -> ar.name })
-//                                    setMediaUri(Uri.parse("$RainMusicProtocol://music?id=${track.id}"))
-//                                    setArtworkUri(Uri.parse(track.al.picUrl))
-//                                }
-//                            }
-//                        )
-//                        prepare()
-//                        play()
-//                    }
-//                }
+                context.asyncGetSessionPlayer(MusicService::class.java) {
+                    it.apply {
+                        stop()
+                        clearMediaItems()
+                        addMediaItem(
+                            buildMediaItem(track.id.toString()) {
+                                metadata {
+                                    setTitle(track.name)
+                                    setArtist(track.ar.joinToString(", ") { ar -> ar.name })
+                                    setMediaUri(Uri.parse("$TING_PROTOCOL://music?id=${track.id}"))
+                                    setArtworkUri(Uri.parse(track.al.picUrl))
+                                }
+                            }
+                        )
+                        prepare()
+                        play()
+                    }
+                }
             }) {
                 Icon(Icons.Rounded.PlayArrow, null)
             }

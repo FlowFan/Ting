@@ -21,4 +21,6 @@ object Constants {
     const val LIKE_COUNT = 10
     const val LIKE_KEY =
         "app_key=$APP_KEY&client_os_type=$CLIENT_OS_TYPE&device_id=$DEVICE_ID&device_id_type=$DEVICE_ID_TYPE&device_type=$DEVICE_TYPE&like_count=$LIKE_COUNT&pack_id=$PACK_ID&sdk_client_type=$SDK_CLIENT_TYPE&sdk_version=$SDK_VERSION"
+
+    const val TING_PROTOCOL = "ting"
 }

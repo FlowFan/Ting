@@ -11,6 +11,7 @@ import com.example.ting.other.UserAgentInterceptor
 import com.example.ting.remote.HitokotoService
 import com.example.ting.remote.MusicWeService
 import com.example.ting.remote.RecommendService
+import com.example.ting.remote.UrlService
 import com.retrofit2.converter.JsonConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -55,25 +56,31 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit =
+    fun provideMusicWeService(okHttpClient: OkHttpClient): MusicWeService =
         Retrofit.Builder()
             .client(okHttpClient)
             .baseUrl("https://music.163.com")
             .addConverterFactory(JsonConverterFactory.create())
             .build()
+            .create(MusicWeService::class.java)
 
     @Singleton
     @Provides
-    fun provideMusicWeService(retrofit: Retrofit): MusicWeService =
-        retrofit.create(MusicWeService::class.java)
-
-    @Singleton
-    @Provides
-    fun provideHitokotoService(): HitokotoService =
+    fun provideHitokotoService(okHttpClient: OkHttpClient): HitokotoService =
         Retrofit.Builder()
-            .client(OkHttpClient())
+            .client(okHttpClient)
             .baseUrl("https://v1.hitokoto.cn")
             .addConverterFactory(JsonConverterFactory.create())
             .build()
             .create(HitokotoService::class.java)
+
+    @Singleton
+    @Provides
+    fun provideUrlService(okHttpClient: OkHttpClient): UrlService =
+        Retrofit.Builder()
+            .client(okHttpClient)
+            .baseUrl("https://interface3.music.163.com")
+            .addConverterFactory(JsonConverterFactory.create())
+            .build()
+            .create(UrlService::class.java)
 }

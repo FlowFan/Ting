@@ -1,5 +1,6 @@
 package com.example.ting.fragment
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
@@ -35,9 +37,14 @@ import androidx.navigation.findNavController
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.example.ting.databinding.FragmentMusicBinding
+import com.example.ting.exoplayer.MusicService
 import com.example.ting.model.NewSong
 import com.example.ting.model.PlayList
 import com.example.ting.model.TopList
+import com.example.ting.other.Constants.TING_PROTOCOL
+import com.example.ting.other.asyncGetSessionPlayer
+import com.example.ting.other.buildMediaItem
+import com.example.ting.other.metadata
 import com.example.ting.ui.theme.TingTheme
 import com.example.ting.viewmodel.TingViewModel
 import com.google.accompanist.placeholder.PlaceholderHighlight
@@ -306,6 +313,7 @@ private fun NewSong(
     viewModel: TingViewModel
 ) {
     val newSong by viewModel.newSong.observeAsState(NewSong())
+    val context = LocalContext.current
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -331,18 +339,33 @@ private fun NewSong(
                         )
                     }
                 } else {
-                    items(newSong.result) {
+                    items(newSong.result) { songList ->
                         Column(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(13.dp))
                                 .clickable {
-                                    // TODO:
+                                    context.asyncGetSessionPlayer(MusicService::class.java) {
+                                        it.apply {
+                                            stop()
+                                            clearMediaItems()
+                                            addMediaItem(buildMediaItem(songList.id.toString()) {
+                                                metadata {
+                                                    setTitle(songList.name)
+                                                    setArtist(songList.song.artists.joinToString(",") { ar -> ar.name })
+                                                    setMediaUri(Uri.parse("$TING_PROTOCOL://music?id=${songList.id}"))
+                                                    setArtworkUri(Uri.parse(songList.picUrl))
+                                                }
+                                            })
+                                            prepare()
+                                            play()
+                                        }
+                                    }
                                 }
                                 .padding(8.dp)
                                 .width(IntrinsicSize.Min),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            val painter = rememberAsyncImagePainter(model = it.picUrl)
+                            val painter = rememberAsyncImagePainter(model = songList.picUrl)
                             Image(
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(4.dp))
@@ -356,13 +379,13 @@ private fun NewSong(
                                 contentScale = ContentScale.FillBounds
                             )
                             Text(
-                                text = it.name,
+                                text = songList.name,
                                 overflow = TextOverflow.Ellipsis,
                                 maxLines = 1,
                                 style = MaterialTheme.typography.labelLarge
                             )
                             Text(
-                                text = it.song.artists.joinToString(", ") { it.name },
+                                text = songList.song.artists.joinToString(", ") { it.name },
                                 overflow = TextOverflow.Ellipsis,
                                 maxLines = 1,
                                 style = MaterialTheme.typography.labelSmall

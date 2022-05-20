@@ -40,6 +40,12 @@ class TingViewModel @Inject constructor(
     val isReady get() = _isReady.asStateFlow()
     private val _userPlaylist by lazy { MutableStateFlow(UserPlaylist()) }
     val userPlaylist get() = _userPlaylist.asStateFlow()
+    private val _likeList by lazy { MutableStateFlow(LikeList()) }
+    val likeList get() = _likeList.asStateFlow()
+    private val _musicDetail by lazy { MutableStateFlow(MusicDetail()) }
+    val musicDetail get() = _musicDetail.asStateFlow()
+    private val _lyric by lazy { MutableStateFlow(Lyric()) }
+    val lyric get() = _lyric.asStateFlow()
     fun getTopPlaylist(category: String) =
         tingRepository.getTopPlaylist(category).cachedIn(viewModelScope)
 
@@ -78,6 +84,38 @@ class TingViewModel @Inject constructor(
             if (it.code == 200) {
                 getSongList(id)
             }
+        }.launchIn(viewModelScope)
+    }
+
+    fun like(id: Long) {
+        tingRepository.likeMusic(
+            musicDetail.value.songs[0].id,
+            likeList.value.ids.contains(id)
+        ).onEach {
+            if (it.code == 200) {
+                loadLikeList(id)
+            }
+        }.launchIn(viewModelScope)
+    }
+
+    fun loadLikeList(id: Long) {
+        if (id <= 0) return
+        tingRepository.getLikeList(id).onEach {
+            _likeList.value = it
+        }.launchIn(viewModelScope)
+    }
+
+    fun loadMusicDetail(id: Long) {
+        if (id == 0L) {
+            _musicDetail.value = MusicDetail()
+            _lyric.value = Lyric()
+            return
+        }
+        tingRepository.getMusicDetail(id).onEach {
+            _musicDetail.value = it
+        }.launchIn(viewModelScope)
+        tingRepository.getLyric(id).onEach {
+            _lyric.value = it
         }.launchIn(viewModelScope)
     }
 
