@@ -110,6 +110,7 @@ private fun Body(
 ) {
     val loginState by viewModel.loginState.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
+    val isSend by viewModel.isSend.collectAsState()
 
     AnimatedVisibility(showDialog) {
         AlertDialog(
@@ -198,47 +199,79 @@ private fun Body(
         var passwordVisible by remember {
             mutableStateOf(false)
         }
-        OutlinedTextField(
-            value = password,
-            onValueChange = {
-                password = it
-            },
-            label = {
-                Text(text = "密码")
-            },
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                IconButton(onClick = {
-                    passwordVisible = !passwordVisible
-                }) {
-                    Icon(
-                        imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                        contentDescription = null
-                    )
-                }
-            },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Password
+        if (!isSend) {
+            OutlinedTextField(
+                value = password,
+                onValueChange = {
+                    password = if (it.length > 16) {
+                        it.substring(0..15)
+                    } else {
+                        it
+                    }
+                },
+                label = {
+                    Text(text = "密码")
+                },
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    IconButton(onClick = {
+                        passwordVisible = !passwordVisible
+                    }) {
+                        Icon(
+                            imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            contentDescription = null
+                        )
+                    }
+                },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password
+                )
             )
-        )
+        } else {
+            OutlinedTextField(
+                value = password,
+                onValueChange = {
+                    password = if (it.length > 4) {
+                        it.substring(0..3)
+                    } else {
+                        it
+                    }
+                },
+                label = {
+                    Text(text = "验证码")
+                },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number
+                )
+            )
+        }
 
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
                 showDialog = true
-                viewModel.loginCellPhone(
-                    phone = username,
-                    password = password
-                )
+                if (!isSend) {
+                    viewModel.loginCellPhone(
+                        phone = username,
+                        password = password
+                    )
+                } else {
+                    viewModel.loginCaptcha(username, password)
+                }
             }
         ) {
             Text(text = "登录")
         }
 
-        Text(
-            modifier = Modifier.padding(16.dp),
-            text = "本APP不提供 注册/修改资料 等功能！"
-        )
+        Button(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = {
+                viewModel.sendCaptcha(username)
+            }
+        ) {
+            Text(text = "获取验证码")
+        }
     }
 }

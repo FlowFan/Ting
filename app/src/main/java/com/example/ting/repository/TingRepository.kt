@@ -173,6 +173,33 @@ class TingRepository @Inject constructor(
         it.stackTraceToString()
     }.flowOn(Dispatchers.IO)
 
+    fun loginCaptcha(phone: String, captcha: String) = flow {
+        delay(500)
+        val result = musicWeService.loginCellphone(
+            mapOf(
+                "phone" to phone,
+                "captcha" to captcha,
+                "countrycode" to "86",
+                "rememberLogin" to "true"
+            ).encryptWeAPI()
+        )
+        emit(result)
+        database.loginResponseDao().insertLoginResponse(result)
+    }.catch {
+        it.stackTraceToString()
+    }.flowOn(Dispatchers.IO)
+
+    fun sendCaptcha(phone: String) = flow {
+        val result = musicWeService.sendCaptcha(
+            mapOf(
+                "cellphone" to phone
+            ).encryptWeAPI()
+        )
+        emit(result)
+    }.catch {
+        it.stackTraceToString()
+    }.flowOn(Dispatchers.IO)
+
     fun refreshLogin() = flow {
         val result = musicWeService.refreshLogin(
             mapOf<String, String>().encryptWeAPI()

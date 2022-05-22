@@ -56,6 +56,12 @@ interface MusicWeService {
         @FieldMap body: Map<String, String>
     ): LoginResponse
 
+    @POST("/weapi/sms/captcha/sent")
+    @FormUrlEncoded
+    suspend fun sendCaptcha(
+        @FieldMap body: Map<String, String>
+    ): JsonObject
+
     @POST("/weapi/login/token/refresh")
     @FormUrlEncoded
     suspend fun refreshLogin(

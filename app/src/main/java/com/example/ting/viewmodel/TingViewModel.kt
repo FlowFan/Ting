@@ -9,6 +9,7 @@ import com.example.ting.model.*
 import com.example.ting.other.toast
 import com.example.ting.repository.TingRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -38,6 +39,8 @@ class TingViewModel @Inject constructor(
     val userData get() = _userData.asStateFlow()
     private val _isReady by lazy { MutableStateFlow(false) }
     val isReady get() = _isReady.asStateFlow()
+    private val _isSend by lazy { MutableStateFlow(false) }
+    val isSend get() = _isSend.asStateFlow()
     private val _userPlaylist by lazy { MutableStateFlow(UserPlaylist()) }
     val userPlaylist get() = _userPlaylist.asStateFlow()
     private val _likeList by lazy { MutableStateFlow(LikeList()) }
@@ -70,6 +73,23 @@ class TingViewModel @Inject constructor(
     fun loginCellPhone(phone: String, password: String) {
         tingRepository.loginCellphone(phone, password).onEach {
             _loginState.value = it
+        }.launchIn(viewModelScope)
+    }
+
+    fun loginCaptcha(phone: String, captcha: String) {
+        tingRepository.loginCaptcha(phone, captcha).onEach {
+            _loginState.value = it
+        }.launchIn(viewModelScope)
+    }
+
+    fun sendCaptcha(phone: String) {
+        tingRepository.sendCaptcha(phone).onEach {
+            if (it["code"].toString() == "200") {
+                "验证码发送成功".toast()
+                _isSend.value = true
+                delay(60000)
+                _isSend.value = false
+            }
         }.launchIn(viewModelScope)
     }
 
