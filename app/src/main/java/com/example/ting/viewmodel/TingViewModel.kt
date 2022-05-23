@@ -108,9 +108,11 @@ class TingViewModel @Inject constructor(
     }
 
     fun like(id: Long) {
+        val uid = musicDetail.value.songs[0].id
+        val like = likeList.value.ids.contains(uid)
         tingRepository.likeMusic(
-            musicDetail.value.songs[0].id,
-            likeList.value.ids.contains(id)
+            uid,
+            !like
         ).onEach {
             if (it.code == 200) {
                 loadLikeList(id)
