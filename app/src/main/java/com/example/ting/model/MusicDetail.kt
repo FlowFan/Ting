@@ -12,8 +12,8 @@ data class MusicDetail(
     @Parcelize
     @Serializable
     data class Song(
-        val al: Al = Al(),
         val id: Long = 0,
+        val al: Al = Al()
     ) : Parcelable {
         @Parcelize
         @Serializable

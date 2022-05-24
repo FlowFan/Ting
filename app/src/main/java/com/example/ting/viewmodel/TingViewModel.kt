@@ -28,6 +28,7 @@ class TingViewModel @Inject constructor(
     private val _songList by lazy { MutableStateFlow(SongList()) }
     val songList get() = _songList.asStateFlow()
     val topList by lazy { tingRepository.getTopList() }
+    val dailyList by lazy { tingRepository.getDailyList() }
     val categoryAll by lazy { tingRepository.getTypeList() }
     private val _categorySelected by lazy { MutableStateFlow(listOf<String>()) }
     val categorySelected get() = _categorySelected.asStateFlow()

@@ -88,6 +88,14 @@ class TingRepository @Inject constructor(
         }
     }
 
+    fun getDailyList() = liveData(Dispatchers.IO) {
+        try {
+            emit(musicWeService.getDailyList())
+        } catch (e: Exception) {
+            e.stackTraceToString()
+        }
+    }
+
     fun getSongList(id: Long) = flow {
         val songList = musicWeService.getSongList(
             mapOf(

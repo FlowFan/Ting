@@ -33,6 +33,13 @@
                 app:exitAnim="@android:anim/slide_out_right"
                 app:popEnterAnim="@android:anim/slide_in_left"
                 app:popExitAnim="@android:anim/slide_out_right" />
+            <action
+                android:id="@+id/action_mainFragment_to_dailyListFragment"
+                app:destination="@id/dailyListFragment"
+                app:enterAnim="@android:anim/slide_in_left"
+                app:exitAnim="@android:anim/slide_out_right"
+                app:popEnterAnim="@android:anim/slide_in_left"
+                app:popExitAnim="@android:anim/slide_out_right" />
         </fragment>
         <fragment
             android:id="@+id/detailFragment"
@@ -58,7 +65,7 @@
         <fragment
             android:id="@+id/typeFragment"
             android:name="com.example.ting.fragment.TypeFragment"
-            android:label="TypeFragment" >
+            android:label="TypeFragment">
             <action
                 android:id="@+id/action_typeFragment_to_songListFragment"
                 app:destination="@id/songListFragment"
@@ -67,6 +74,10 @@
                 app:popEnterAnim="@android:anim/slide_in_left"
                 app:popExitAnim="@android:anim/slide_out_right" />
         </fragment>
+        <fragment
+            android:id="@+id/dailyListFragment"
+            android:name="com.example.ting.fragment.DailyListFragment"
+            android:label="DailyListFragment" />
         <action
             android:id="@+id/action_global_playerFragment"
             app:destination="@id/playerFragment"

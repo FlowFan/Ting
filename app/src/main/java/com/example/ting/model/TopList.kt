@@ -12,8 +12,8 @@ data class TopList(
     @Parcelize
     @Serializable
     data class Result(
-        val coverImgUrl: String = "",
         val id: Long = 0,
+        val coverImgUrl: String = "",
         val name: String = ""
     ) : Parcelable
 }

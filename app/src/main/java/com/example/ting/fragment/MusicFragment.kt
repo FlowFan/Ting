@@ -220,7 +220,7 @@ private fun LargeButton(
                     .weight(1f)
                     .clip(RoundedCornerShape(8.dp))
                     .clickable {
-                        // TODO:
+                        navController.navigate(MainFragmentDirections.actionMainFragmentToDailyListFragment())
                     },
                 shape = RoundedCornerShape(8.dp),
                 tonalElevation = 12.dp

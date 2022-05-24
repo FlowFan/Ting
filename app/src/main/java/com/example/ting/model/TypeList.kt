@@ -39,8 +39,8 @@ data class HighQualityPlaylist(
 @Parcelize
 @Serializable
 data class Playlists(
-    val coverImgUrl: String = "",
     val id: Long = 0,
+    val coverImgUrl: String = "",
     val name: String = ""
 ) : Parcelable
 

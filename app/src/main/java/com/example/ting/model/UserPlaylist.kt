@@ -12,9 +12,9 @@ data class UserPlaylist(
     @Parcelize
     @Serializable
     data class Playlist(
+        val id: Long = 0,
         val coverImgUrl: String = "",
         val creator: Creators = Creators(),
-        val id: Long = 0,
         val name: String = "",
         val playCount: Long = 0,
         val trackCount: Int = 0

@@ -6,30 +6,17 @@ import kotlinx.serialization.Serializable
 
 @Parcelize
 @Serializable
-data class SongList(
-    val playlist: Playlist = Playlist()
+data class DailyList(
+    val data: Data = Data()
 ) : Parcelable {
     @Parcelize
     @Serializable
-    data class Playlist(
-        val id: Long = 0,
-        val coverImgUrl: String = "",
-        val creator: Creators = Creators(),
-        val description: String = "",
-        val name: String = "",
-        val subscribed: Boolean = false,
-        val trackCount: Int = 0,
-        val tracks: List<Track> = listOf()
+    data class Data(
+        val dailySongs: List<DailySong> = listOf()
     ) : Parcelable {
         @Parcelize
         @Serializable
-        data class Creators(
-            val nickname: String = ""
-        ) : Parcelable
-
-        @Parcelize
-        @Serializable
-        data class Track(
+        data class DailySong(
             val id: Long = 0,
             val al: Al = Al(),
             val ar: List<Ar> = listOf(),

@@ -20,6 +20,9 @@ interface MusicWeService {
     @GET("/api/toplist")
     suspend fun getTopList(): TopList
 
+    @GET("/api/v3/discovery/recommend/songs")
+    suspend fun getDailyList(): DailyList
+
     @POST("/api/v6/playlist/detail")
     @FormUrlEncoded
     suspend fun getSongList(
