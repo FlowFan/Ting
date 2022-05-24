@@ -22,6 +22,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionInflater
 import coil.load
 import coil.size.Size
+import coil.transform.RoundedCornersTransformation
 import coil.transform.Transformation
 import com.example.ting.R
 import com.example.ting.adapter.DetailListAdapter
@@ -59,21 +60,28 @@ class DetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding.recyclerView.apply {
             adapter = detailListAdapter
-            setOnItemClickListener { i, holder ->
+            setOnItemClickListener { i, _ ->
                 AppInitializer.mXmPlayerManager.playList(detailListAdapter.snapshot().items, i)
             }
         }
         binding.appbar.addOnOffsetChangedListener(
-            AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
-                binding.image.isVisible = verticalOffset != -308
-                binding.albumAuthorTv.isVisible = verticalOffset != -308
+            AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
+                println(verticalOffset)
+                binding.group.isVisible = verticalOffset != -198
+                binding.group2.isVisible = verticalOffset == -198
             })
         args.album?.apply {
             binding.appBarImage.load(coverUrl) {
-                transformations(BlurTransformation(requireContext()))
+                transformations(BlurTransformation(requireContext(), 25f, 50f))
             }
-            binding.image.load(coverUrl)
+            binding.image.load(coverUrl) {
+                transformations(RoundedCornersTransformation(30f))
+            }
             binding.albumTitleTv.text = albumTitle
+            binding.image2.load(coverUrl) {
+                transformations(RoundedCornersTransformation(30f))
+            }
+            binding.albumTitleTv2.text = albumTitle
             binding.albumAuthorTv.text = albumIntro
             viewModel.getTrackList(id).observe(viewLifecycleOwner) {
                 detailListAdapter.submitData(viewLifecycleOwner.lifecycle, it)

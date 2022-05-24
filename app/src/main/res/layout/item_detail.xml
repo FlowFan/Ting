@@ -15,14 +15,14 @@
     <com.google.android.material.card.MaterialCardView
         style="@style/Widget.Material3.CardView.Elevated"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="70dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="5dp"
         android:clickable="true"
         android:focusable="true"
-        app:cardCornerRadius="13dp">
+        app:cardCornerRadius="8dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -30,8 +30,8 @@
 
             <io.supercharge.shimmerlayout.ShimmerLayout
                 android:id="@+id/shimmerLayout"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_marginStart="5dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
@@ -58,49 +58,32 @@
                 android:maxLines="1"
                 android:text="@{track.trackTitle}"
                 android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/button_play"
                 app:layout_constraintStart_toEndOf="@+id/shimmerLayout"
                 app:layout_constraintTop_toTopOf="@+id/shimmerLayout"
                 tools:text="拿破仑拿破仑拿破仑拿破仑拿破仑" />
 
-            <TextView
-                android:id="@+id/album_description_tv"
-                android:layout_width="0dp"
+            <ImageView
+                android:id="@+id/button_play"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="3dp"
-                android:layout_marginBottom="3dp"
-                android:ellipsize="end"
-                android:maxLines="2"
-                android:text="@{track.trackIntro}"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                app:layout_constraintBottom_toTopOf="@+id/album_play_count"
-                app:layout_constraintEnd_toEndOf="@+id/album_title_tv"
-                app:layout_constraintStart_toStartOf="@+id/album_title_tv"
-                app:layout_constraintTop_toBottomOf="@+id/album_title_tv"
-                tools:text="拿破仑拿破仑拿破仑拿破仑拿破仑拿破仑拿破仑拿破仑拿破仑拿破仑拿破仑拿破仑拿破仑拿破仑" />
+                android:layout_marginEnd="16dp"
+                android:contentDescription="@string/image_description"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_baseline_play_arrow_24" />
 
             <TextView
                 android:id="@+id/album_play_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{AppHelperKt.convertNumber(track.playCount)}"
+                android:text="@{`播放次数：` + AppHelperKt.convertNumber(track.playCount)}"
                 android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
                 android:textSize="11sp"
                 app:layout_constraintBottom_toBottomOf="@+id/shimmerLayout"
-                app:layout_constraintStart_toStartOf="@+id/album_description_tv"
-                tools:text="243.5万" />
-
-            <TextView
-                android:id="@+id/album_content_size"
-                android:layout_width="45dp"
-                android:layout_height="wrap_content"
-                android:text="@{track.downloadCount + `次`}"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                android:textSize="11sp"
-                app:layout_constraintBottom_toBottomOf="@+id/album_play_count"
-                app:layout_constraintEnd_toEndOf="@+id/album_description_tv"
-                app:layout_constraintTop_toTopOf="@+id/album_play_count"
-                tools:text="23集" />
+                app:layout_constraintStart_toStartOf="@+id/album_title_tv"
+                tools:text="播放次数：243.5万" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -42,7 +42,7 @@ fun bindingImage(imageView: ImageView, url: String?) {
         imageView.load(url) {
             crossfade(1000)
             placeholder(R.drawable.shape_r13_white)
-            transformations(RoundedCornersTransformation(30f))
+            transformations(RoundedCornersTransformation(20f))
         }
     }
 }

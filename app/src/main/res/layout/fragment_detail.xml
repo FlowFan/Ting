@@ -37,7 +37,7 @@
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
-                    android:layout_height="80dp" />
+                    android:layout_height="120dp" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
@@ -45,6 +45,46 @@
 
                     <ImageView
                         android:id="@+id/image"
+                        android:layout_width="80dp"
+                        android:layout_height="100dp"
+                        android:layout_marginStart="15dp"
+                        android:layout_marginTop="24dp"
+                        android:contentDescription="@string/image_description"
+                        android:paddingTop="20dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:srcCompat="@android:drawable/sym_def_app_icon" />
+
+                    <TextView
+                        android:id="@+id/album_title_tv"
+                        style="@style/Widget.MaterialComponents.Snackbar.TextView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="8dp"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/image"
+                        app:layout_constraintTop_toTopOf="@+id/image"
+                        tools:text="拿破仑拿破仑拿破仑拿破仑拿破仑" />
+
+                    <TextView
+                        android:id="@+id/album_author_tv"
+                        style="@style/Widget.Material3.Snackbar.TextView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:ellipsize="end"
+                        android:maxLines="5"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/image"
+                        app:layout_constraintTop_toBottomOf="@+id/album_title_tv"
+                        tools:text="拿破仑拿破仑拿破仑拿破仑拿破仑" />
+
+                    <ImageView
+                        android:id="@+id/image2"
                         android:layout_width="80dp"
                         android:layout_height="80dp"
                         android:layout_marginStart="15dp"
@@ -55,32 +95,30 @@
                         tools:srcCompat="@android:drawable/sym_def_app_icon" />
 
                     <TextView
-                        android:id="@+id/album_title_tv"
+                        android:id="@+id/album_title_tv2"
+                        style="@style/Widget.MaterialComponents.Snackbar.TextView"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginBottom="3dp"
                         android:ellipsize="end"
                         android:maxLines="1"
                         android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
-                        app:layout_constraintBottom_toTopOf="@+id/album_author_tv"
+                        app:layout_constraintBottom_toBottomOf="@+id/image2"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/image"
+                        app:layout_constraintStart_toEndOf="@+id/image2"
+                        app:layout_constraintTop_toTopOf="@+id/image2"
                         tools:text="拿破仑拿破仑拿破仑拿破仑拿破仑" />
 
-                    <TextView
-                        android:id="@+id/album_author_tv"
-                        android:layout_width="0dp"
+                    <androidx.constraintlayout.widget.Group
+                        android:id="@+id/group"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
-                        android:ellipsize="end"
-                        android:maxLines="1"
-                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="@+id/album_title_tv"
-                        app:layout_constraintStart_toStartOf="@+id/album_title_tv"
-                        tools:text="拿破仑拿破仑拿破仑拿破仑拿破仑" />
+                        app:constraint_referenced_ids="image,album_title_tv,album_author_tv" />
+
+                    <androidx.constraintlayout.widget.Group
+                        android:id="@+id/group2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:constraint_referenced_ids="image2,album_title_tv2" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </com.google.android.material.appbar.CollapsingToolbarLayout>
         </com.google.android.material.appbar.AppBarLayout>
@@ -93,6 +131,6 @@
             android:splitMotionEvents="false"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-            tools:listitem="@layout/item_recommend" />
+            tools:listitem="@layout/item_detail" />
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
