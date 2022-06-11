@@ -41,8 +41,6 @@ import com.example.ting.other.buildMediaItem
 import com.example.ting.other.metadata
 import com.example.ting.ui.theme.TingTheme
 import com.example.ting.viewmodel.TingViewModel
-import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
@@ -70,16 +68,15 @@ class DailyListFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 TingTheme(false) {
-                    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+                    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
+                        rememberTopAppBarScrollState()
+                    )
                     val dailyList by viewModel.dailyList.observeAsState(DailyList())
                     Scaffold(
                         topBar = {
                             LargeTopAppBar(
                                 modifier = Modifier.padding(
-                                    rememberInsetsPaddingValues(
-                                        insets = LocalWindowInsets.current.statusBars,
-                                        applyBottom = false
-                                    )
+                                    WindowInsets.statusBars.asPaddingValues()
                                 ),
                                 title = {
                                     Text(text = "每日推荐")

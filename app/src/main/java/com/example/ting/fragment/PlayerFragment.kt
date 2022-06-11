@@ -41,10 +41,6 @@ import com.example.ting.other.rememberPlayProgress
 import com.example.ting.other.rememberPlayState
 import com.example.ting.ui.theme.TingTheme
 import com.example.ting.viewmodel.TingViewModel
-import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.navigationBarsPadding
-import com.google.accompanist.insets.rememberInsetsPaddingValues
-import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -107,10 +103,7 @@ private fun NotConnectScreen(
         topBar = {
             SmallTopAppBar(
                 modifier = Modifier.padding(
-                    rememberInsetsPaddingValues(
-                        insets = LocalWindowInsets.current.statusBars,
-                        applyBottom = false
-                    )
+                    WindowInsets.statusBars.asPaddingValues()
                 ),
                 title = {
                     Text(text = "播放器")

@@ -36,8 +36,6 @@ import com.example.ting.model.UserPlaylist
 import com.example.ting.other.sharedPreferencesOf
 import com.example.ting.ui.theme.TingTheme
 import com.example.ting.viewmodel.TingViewModel
-import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
@@ -98,10 +96,7 @@ private fun RequireLoginVisible(
             topBar = {
                 SmallTopAppBar(
                     modifier = Modifier.padding(
-                        rememberInsetsPaddingValues(
-                            insets = LocalWindowInsets.current.statusBars,
-                            applyBottom = false
-                        )
+                        WindowInsets.statusBars.asPaddingValues()
                     ),
                     title = {
                         Text(text = userData.profile.nickname)
@@ -112,6 +107,10 @@ private fun RequireLoginVisible(
                             modifier = Modifier
                                 .padding(16.dp)
                                 .clip(CircleShape)
+                                .placeholder(
+                                    visible = painter.state is AsyncImagePainter.State.Loading,
+                                    highlight = PlaceholderHighlight.shimmer()
+                                )
                                 .size(50.dp),
                             painter = painter,
                             contentDescription = null,

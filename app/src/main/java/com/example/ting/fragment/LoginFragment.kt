@@ -30,9 +30,6 @@ import com.example.ting.databinding.FragmentLoginBinding
 import com.example.ting.other.toast
 import com.example.ting.ui.theme.TingTheme
 import com.example.ting.viewmodel.TingViewModel
-import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.navigationBarsWithImePadding
-import com.google.accompanist.insets.rememberInsetsPaddingValues
 import dagger.hilt.android.AndroidEntryPoint
 import dev.burnoo.compose.rememberpreference.rememberStringPreference
 
@@ -79,10 +76,7 @@ private fun LoginScreen(
         topBar = {
             SmallTopAppBar(
                 modifier = Modifier.padding(
-                    rememberInsetsPaddingValues(
-                        insets = LocalWindowInsets.current.statusBars,
-                        applyBottom = false
-                    )
+                    WindowInsets.statusBars.asPaddingValues()
                 ),
                 title = {
                     Text(text = "登录")
@@ -93,8 +87,9 @@ private fun LoginScreen(
     ) {
         Box(
             modifier = Modifier
-                .padding(it)
-                .navigationBarsWithImePadding()
+                .padding()
+                .navigationBarsPadding()
+                .imePadding()
                 .fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {

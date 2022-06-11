@@ -42,9 +42,6 @@ import com.example.ting.other.*
 import com.example.ting.other.Constants.TING_PROTOCOL
 import com.example.ting.ui.theme.TingTheme
 import com.example.ting.viewmodel.TingViewModel
-import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.navigationBarsPadding
-import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.placeholder
 import com.google.accompanist.placeholder.material.shimmer
@@ -82,16 +79,15 @@ class SongListFragment : Fragment() {
                     }
 
                     val lazyListState = rememberLazyListState()
-                    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+                    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
+                        rememberTopAppBarScrollState()
+                    )
                     val songList by viewModel.songList.collectAsState()
                     Scaffold(
                         topBar = {
                             SmallTopAppBar(
                                 modifier = Modifier.padding(
-                                    rememberInsetsPaddingValues(
-                                        insets = LocalWindowInsets.current.statusBars,
-                                        applyBottom = false
-                                    )
+                                    WindowInsets.statusBars.asPaddingValues()
                                 ),
                                 title = {
                                     Text(text = "声音详情")
