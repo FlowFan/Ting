@@ -106,7 +106,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$viewModel_version"
 
     //Paging3
-    implementation 'androidx.paging:paging-runtime-ktx:3.1.1'
+    implementation 'androidx.paging:paging-runtime-ktx:3.2.0-alpha01'
 
     //SwipeRefresh
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
