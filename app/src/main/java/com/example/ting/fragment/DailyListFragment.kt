@@ -20,7 +20,6 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -68,11 +67,11 @@ class DailyListFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 TingTheme(false) {
-                    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
-                        rememberTopAppBarScrollState()
-                    )
+                    val scrollBehavior =
+                        TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarScrollState())
                     val dailyList by viewModel.dailyList.observeAsState(DailyList())
                     Scaffold(
+                        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                         topBar = {
                             LargeTopAppBar(
                                 modifier = Modifier.padding(
@@ -114,16 +113,22 @@ class DailyListFragment : Fragment() {
                                         Icon(Icons.Rounded.PlayArrow, null)
                                     }
                                 },
-                                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.Transparent),
+                                colors = TopAppBarDefaults.largeTopAppBarColors(
+                                    containerColor = MaterialTheme.colorScheme.background,
+                                    scrolledContainerColor = MaterialTheme.colorScheme.background
+                                ),
                                 scrollBehavior = scrollBehavior
                             )
                         }
-                    ) {
+                    ) { innerPadding ->
                         LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .nestedScroll(scrollBehavior.nestedScrollConnection),
-                            contentPadding = PaddingValues(16.dp),
+                            modifier = Modifier.fillMaxSize(),
+                            contentPadding = PaddingValues(
+                                start = 16.dp,
+                                top = innerPadding.calculateTopPadding() + 16.dp,
+                                end = 16.dp,
+                                bottom = 16.dp
+                            ),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             itemsIndexed(dailyList.data.dailySongs) { index, item ->

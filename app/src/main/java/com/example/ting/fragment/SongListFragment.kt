@@ -20,7 +20,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -30,7 +29,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.compose.AsyncImagePainter
@@ -79,11 +77,12 @@ class SongListFragment : Fragment() {
                     }
 
                     val lazyListState = rememberLazyListState()
-                    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(
-                        rememberTopAppBarScrollState()
-                    )
+                    val scrollBehavior =
+                        TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarScrollState())
                     val songList by viewModel.songList.collectAsState()
+                    val scope = rememberCoroutineScope()
                     Scaffold(
+                        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                         topBar = {
                             SmallTopAppBar(
                                 modifier = Modifier.padding(
@@ -99,7 +98,10 @@ class SongListFragment : Fragment() {
                                         Icon(Icons.Rounded.ArrowBack, "Back")
                                     }
                                 },
-                                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = Color.Transparent),
+                                colors = TopAppBarDefaults.smallTopAppBarColors(
+                                    containerColor = MaterialTheme.colorScheme.background,
+                                    scrolledContainerColor = MaterialTheme.colorScheme.background
+                                ),
                                 scrollBehavior = scrollBehavior
                             )
                         },
@@ -108,7 +110,7 @@ class SongListFragment : Fragment() {
                                 FloatingActionButton(
                                     modifier = Modifier.navigationBarsPadding(),
                                     onClick = {
-                                        viewLifecycleOwner.lifecycleScope.launch {
+                                        scope.launch {
                                             lazyListState.scrollToItem(0)
                                         }
                                     }
@@ -117,13 +119,16 @@ class SongListFragment : Fragment() {
                                 }
                             }
                         }
-                    ) {
+                    ) { innerPadding ->
                         LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .nestedScroll(scrollBehavior.nestedScrollConnection),
+                            modifier = Modifier.fillMaxSize(),
                             state = lazyListState,
-                            contentPadding = PaddingValues(16.dp),
+                            contentPadding = PaddingValues(
+                                start = 16.dp,
+                                top = innerPadding.calculateTopPadding() + 16.dp,
+                                end = 16.dp,
+                                bottom = 16.dp
+                            ),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
                             item {

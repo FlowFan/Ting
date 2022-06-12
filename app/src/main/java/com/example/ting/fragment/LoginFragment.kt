@@ -84,10 +84,10 @@ private fun LoginScreen(
                 colors = TopAppBarDefaults.smallTopAppBarColors()
             )
         }
-    ) {
+    ) { innerPadding ->
         Box(
             modifier = Modifier
-                .padding()
+                .padding(innerPadding)
                 .navigationBarsPadding()
                 .imePadding()
                 .fillMaxSize(),
