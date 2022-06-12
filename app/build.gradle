@@ -1,15 +1,16 @@
 plugins {
     id 'com.android.application'
-    id 'kotlin-android'
-    id 'kotlin-kapt'
+    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.plugin.parcelize'
+    id 'org.jetbrains.kotlin.plugin.serialization'
+    id 'org.jetbrains.kotlin.kapt'
     id 'com.google.devtools.ksp'
     id 'com.google.dagger.hilt.android'
-    id 'kotlin-parcelize'
-    id 'kotlinx-serialization'
     id 'androidx.navigation.safeargs'
 }
 
 android {
+    namespace 'com.example.ting'
     compileSdk 32
     buildToolsVersion '32.0.0'
 
@@ -58,11 +59,11 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
-    namespace 'com.example.ting'
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
+
     implementation 'androidx.core:core-ktx:1.8.0'
     implementation 'androidx.appcompat:appcompat:1.4.2'
     implementation 'com.google.android.material:material:1.6.1'
@@ -82,51 +83,68 @@ dependencies {
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
+
     //Gson
     implementation 'com.google.code.gson:gson:2.9.0'
+
     //Retrofit2
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+
     //Serialization
     implementation 'com.github.fan1138612367:converter-json:1.3.3'
     implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3'
+
     //Coil
     implementation 'io.coil-kt:coil:2.1.0'
+
     //Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
     implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
+
     //ViewModel
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$viewModel_version"
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$viewModel_version"
+
     //Paging3
     implementation 'androidx.paging:paging-runtime-ktx:3.1.1'
+
     //SwipeRefresh
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+
     //Startup
     implementation 'androidx.startup:startup-runtime:1.1.1'
+
     //SplashScreen
     implementation 'androidx.core:core-splashscreen:1.0.0-rc01'
+
     //DataStore
     implementation 'androidx.datastore:datastore-preferences:1.0.0'
+
     //Hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
+
     //Room
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
     implementation "androidx.room:room-paging:$room_version"
     ksp "androidx.room:room-compiler:$room_version"
+
     //Accompanist
     implementation "com.google.accompanist:accompanist-insets-ui:$accompanist_version"
     implementation "com.google.accompanist:accompanist-pager-indicators:$accompanist_version"
     implementation "com.google.accompanist:accompanist-placeholder-material:$accompanist_version"
     implementation "com.google.accompanist:accompanist-flowlayout:$accompanist_version"
     implementation "com.google.accompanist:accompanist-swiperefresh:$accompanist_version"
+
     //Krypto
     implementation 'com.soywiz.korlibs.krypto:krypto-android:2.7.0'
+
     //Media3
     implementation "androidx.media3:media3-exoplayer:$media3_version"
     implementation "androidx.media3:media3-ui:$media3_version"
     implementation "androidx.media3:media3-session:$media3_version"
+
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
