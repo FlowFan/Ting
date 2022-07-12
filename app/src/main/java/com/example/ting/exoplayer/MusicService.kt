@@ -17,6 +17,8 @@ import androidx.media3.session.MediaSession
 import com.example.ting.other.Constants.TING_PROTOCOL
 import com.example.ting.other.toHttps
 import com.example.ting.repository.TingRepository
+import com.google.common.util.concurrent.Futures
+import com.google.common.util.concurrent.ListenableFuture
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -54,7 +56,6 @@ class MusicService : MediaLibraryService() {
         player.repeatMode = Player.REPEAT_MODE_ALL
 
         mediaSession = MediaLibrarySession.Builder(this, player, LibrarySessionCallback())
-            .setMediaItemFiller(CustomMediaItemFiller())
             .setSessionActivity(
                 PendingIntent.getActivity(
                     this,
@@ -79,19 +80,20 @@ class MusicService : MediaLibraryService() {
         return mediaSession
     }
 
-    inner class CustomMediaItemFiller : MediaSession.MediaItemFiller {
-        override fun fillInLocalConfiguration(
-            session: MediaSession,
+    class LibrarySessionCallback : MediaLibrarySession.Callback {
+        override fun onAddMediaItems(
+            mediaSession: MediaSession,
             controller: MediaSession.ControllerInfo,
-            mediaItem: MediaItem
-        ): MediaItem {
-            return mediaItem.buildUpon()
-                .setUri(mediaItem.mediaMetadata.mediaUri)
-                .build()
+            mediaItems: MutableList<MediaItem>
+        ): ListenableFuture<List<MediaItem>> {
+            val updatedMediaItems = mediaItems.map {
+                it.buildUpon()
+                    .setUri(it.requestMetadata.mediaUri)
+                    .build()
+            }
+            return Futures.immediateFuture(updatedMediaItems)
         }
     }
-
-    class LibrarySessionCallback : MediaLibrarySession.MediaLibrarySessionCallback
 
     inner class MusicResolver : ResolvingDataSource.Resolver {
         override fun resolveDataSpec(dataSpec: DataSpec): DataSpec {

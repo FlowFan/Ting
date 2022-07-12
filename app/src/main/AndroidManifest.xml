@@ -47,6 +47,7 @@
             android:process=":player" />
         <service
             android:name=".exoplayer.MusicService"
+            android:foregroundServiceType="mediaPlayback"
             android:exported="false">
             <intent-filter>
                 <action android:name="androidx.media3.session.MediaLibraryService" />

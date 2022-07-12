@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.media3.common.MediaItem
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.compose.AsyncImagePainter
@@ -253,7 +254,11 @@ private fun SongIcon(
                                     metadata {
                                         setTitle(track.name)
                                         setArtist(track.ar.joinToString(", ") { ar -> ar.name })
-                                        setMediaUri(Uri.parse("$TING_PROTOCOL://music?id=${track.id}"))
+                                        setRequestMetadata(
+                                            MediaItem.RequestMetadata.Builder()
+                                                .setMediaUri(Uri.parse("$TING_PROTOCOL://music?id=${track.id}"))
+                                                .build()
+                                        )
                                         setArtworkUri(
                                             Uri.parse(
                                                 track.al.picUrl.toHttpUrl().toHttps()
@@ -349,7 +354,11 @@ private fun SongList(
                                 metadata {
                                     setTitle(track.name)
                                     setArtist(track.ar.joinToString(", ") { ar -> ar.name })
-                                    setMediaUri(Uri.parse("$TING_PROTOCOL://music?id=${track.id}"))
+                                    setRequestMetadata(
+                                        MediaItem.RequestMetadata.Builder()
+                                            .setMediaUri(Uri.parse("$TING_PROTOCOL://music?id=${track.id}"))
+                                            .build()
+                                    )
                                     setArtworkUri(Uri.parse(track.al.picUrl))
                                 }
                             }

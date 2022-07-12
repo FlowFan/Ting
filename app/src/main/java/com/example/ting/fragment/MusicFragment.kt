@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.media3.common.MediaItem
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import coil.compose.AsyncImagePainter
@@ -352,7 +353,11 @@ private fun NewSong(
                                                 metadata {
                                                     setTitle(songList.name)
                                                     setArtist(songList.song.artists.joinToString(",") { ar -> ar.name })
-                                                    setMediaUri(Uri.parse("$TING_PROTOCOL://music?id=${songList.id}"))
+                                                    setRequestMetadata(
+                                                        MediaItem.RequestMetadata.Builder()
+                                                            .setMediaUri(Uri.parse("$TING_PROTOCOL://music?id=${songList.id}"))
+                                                            .build()
+                                                    )
                                                     setArtworkUri(Uri.parse(songList.picUrl))
                                                 }
                                             })
