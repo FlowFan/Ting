@@ -78,8 +78,7 @@ class SongListFragment : Fragment() {
                     }
 
                     val lazyListState = rememberLazyListState()
-                    val scrollBehavior =
-                        TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarScrollState())
+                    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
                     val songList by viewModel.songList.collectAsState()
                     val scope = rememberCoroutineScope()
                     Scaffold(
@@ -107,7 +106,7 @@ class SongListFragment : Fragment() {
                             )
                         },
                         floatingActionButton = {
-                            if (lazyListState.firstVisibleItemIndex > 10) {
+                            if (remember { derivedStateOf { lazyListState.firstVisibleItemIndex } }.value > 10) {
                                 FloatingActionButton(
                                     modifier = Modifier.navigationBarsPadding(),
                                     onClick = {

@@ -68,8 +68,7 @@ class DailyListFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 TingTheme(false) {
-                    val scrollBehavior =
-                        TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarScrollState())
+                    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
                     val dailyList by viewModel.dailyList.observeAsState(DailyList())
                     Scaffold(
                         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
