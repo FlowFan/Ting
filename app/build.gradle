@@ -11,13 +11,13 @@ plugins {
 
 android {
     namespace 'com.example.ting'
-    compileSdk 32
+    compileSdk 33
     buildToolsVersion '33.0.0'
 
     defaultConfig {
         applicationId 'com.example.ting'
         minSdk 23
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -51,7 +51,7 @@ android {
         dataBinding true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion "1.3.0-rc01"
+        kotlinCompilerExtensionVersion "1.3.0"
     }
     packagingOptions {
         resources {
@@ -64,7 +64,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
 
     implementation 'androidx.core:core-ktx:1.8.0'
-    implementation 'androidx.appcompat:appcompat:1.4.2'
+    implementation 'androidx.appcompat:appcompat:1.5.0'
     implementation 'com.google.android.material:material:1.6.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
@@ -73,12 +73,12 @@ dependencies {
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
-    implementation 'androidx.compose.material3:material3:1.0.0-alpha15'
-    implementation 'androidx.paging:paging-compose:1.0.0-alpha15'
+    implementation 'androidx.compose.material3:material3:1.0.0-alpha16'
+    implementation 'androidx.paging:paging-compose:1.0.0-alpha16'
     implementation 'androidx.constraintlayout:constraintlayout-compose:1.0.1'
-    implementation 'io.coil-kt:coil-compose:2.1.0'
-    implementation 'dev.burnoo:compose-remember-preference:0.3.4'
-    implementation 'io.github.fornewid:material-motion-compose-core:0.9.0'
+    implementation 'io.coil-kt:coil-compose:2.2.0'
+    implementation 'dev.burnoo:compose-remember-preference:0.3.5'
+    implementation 'io.github.fornewid:material-motion-compose-core:0.9.1'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
@@ -90,11 +90,11 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
 
     //Serialization
-    implementation 'com.github.fan1138612367:converter-json:1.3.3'
-    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.3'
+    implementation 'com.github.fan1138612367:converter-json:1.4.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.4.0'
 
     //Coil
-    implementation 'io.coil-kt:coil:2.1.0'
+    implementation 'io.coil-kt:coil:2.2.0'
 
     //Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
@@ -105,7 +105,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$viewModel_version"
 
     //Paging3
-    implementation 'androidx.paging:paging-runtime-ktx:3.2.0-alpha01'
+    implementation 'androidx.paging:paging-runtime-ktx:3.1.1'
 
     //SwipeRefresh
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
@@ -137,7 +137,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-swiperefresh:$accompanist_version"
 
     //Krypto
-    implementation 'com.soywiz.korlibs.krypto:krypto-android:2.7.0'
+    implementation 'com.soywiz.korlibs.krypto:krypto-android:3.0.0'
 
     //Media3
     implementation "androidx.media3:media3-exoplayer:$media3_version"

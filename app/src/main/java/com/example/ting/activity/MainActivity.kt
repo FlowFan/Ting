@@ -24,9 +24,9 @@ import com.example.ting.viewmodel.TingViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -35,14 +35,14 @@ class MainActivity : AppCompatActivity() {
     private val ioDispatcher by lazy { Dispatchers.IO }
     private val navController by lazy { binding.fragmentContainerView.getFragment<NavHostFragment>().navController }
     private val viewModel by viewModels<TingViewModel>()
+    private val isFirstStart by lazy {
+        dataStore.data.map {
+            it[booleanPreferencesKey(KEY_FIRST_START)] ?: true
+        }.flowOn(ioDispatcher)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val isFirstStart = runBlocking(ioDispatcher) {
-            dataStore.data.map {
-                it[booleanPreferencesKey(KEY_FIRST_START)] ?: true
-            }.first()
-        }
         installSplashScreen().apply {
             setOnExitAnimationListener { splashScreen ->
                 ObjectAnimator.ofFloat(
@@ -56,18 +56,20 @@ class MainActivity : AppCompatActivity() {
                     doOnEnd {
                         splashScreen.remove()
                     }
-                    if (isFirstStart) {
-                        getString(R.string.toast_first_start).toast()
-                        splashScreen.view.setOnClickListener {
-                            start()
-                            lifecycleScope.launch(ioDispatcher) {
-                                dataStore.edit {
-                                    it[booleanPreferencesKey(KEY_FIRST_START)] = false
+                    lifecycleScope.launch {
+                        if (isFirstStart.first()) {
+                            getString(R.string.toast_first_start).toast()
+                            splashScreen.view.setOnClickListener {
+                                start()
+                                lifecycleScope.launch {
+                                    dataStore.edit {
+                                        it[booleanPreferencesKey(KEY_FIRST_START)] = false
+                                    }
                                 }
                             }
+                        } else {
+                            start()
                         }
-                    } else {
-                        start()
                     }
                 }
             }

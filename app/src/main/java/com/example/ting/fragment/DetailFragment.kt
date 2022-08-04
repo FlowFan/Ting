@@ -30,7 +30,6 @@ import com.example.ting.databinding.FragmentDetailBinding
 import com.example.ting.init.AppInitializer
 import com.example.ting.other.setOnItemClickListener
 import com.example.ting.viewmodel.TingViewModel
-import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -64,12 +63,10 @@ class DetailFragment : Fragment() {
                 AppInitializer.mXmPlayerManager.playList(detailListAdapter.snapshot().items, i)
             }
         }
-        binding.appbar.addOnOffsetChangedListener(
-            AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
-                println(verticalOffset)
-                binding.group.isVisible = verticalOffset != -198
-                binding.group2.isVisible = verticalOffset == -198
-            })
+        binding.appbar.addOnOffsetChangedListener { _, verticalOffset ->
+            binding.group.isVisible = verticalOffset != -198
+            binding.group2.isVisible = verticalOffset == -198
+        }
         args.album?.apply {
             binding.appBarImage.load(coverUrl) {
                 transformations(BlurTransformation(requireContext(), 25f, 50f))

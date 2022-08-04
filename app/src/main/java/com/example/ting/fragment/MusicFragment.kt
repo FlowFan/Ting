@@ -106,7 +106,6 @@ class MusicFragment : Fragment() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PlayList(
     viewModel: TingViewModel,
@@ -244,7 +243,6 @@ private fun LargeButton(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DailyWord(
     viewModel: TingViewModel
@@ -308,7 +306,6 @@ private fun DailyWord(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun NewSong(
     viewModel: TingViewModel
@@ -403,7 +400,6 @@ private fun NewSong(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TopList(
     viewModel: TingViewModel,

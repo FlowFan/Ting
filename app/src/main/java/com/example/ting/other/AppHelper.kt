@@ -38,36 +38,24 @@ fun String.toast() = Toast.makeText(AppInitializer.mContext, this, Toast.LENGTH_
 fun RecyclerView.setOnItemClickListener(listener: (Int, RecyclerView.ViewHolder) -> Unit) {
     addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
         val gestureDetector = GestureDetector(context, object : GestureDetector.OnGestureListener {
-            override fun onDown(p0: MotionEvent?) = false
+            override fun onDown(p0: MotionEvent) = false
 
-            override fun onShowPress(p0: MotionEvent?) {
+            override fun onShowPress(p0: MotionEvent) {
             }
 
-            override fun onSingleTapUp(p0: MotionEvent?): Boolean {
-                p0?.let {
-                    findChildViewUnder(it.x, it.y)?.let { child ->
-                        listener(getChildAdapterPosition(child), getChildViewHolder(child))
-                    }
+            override fun onSingleTapUp(p0: MotionEvent): Boolean {
+                findChildViewUnder(p0.x, p0.y)?.let { child ->
+                    listener(getChildAdapterPosition(child), getChildViewHolder(child))
                 }
                 return false
             }
 
-            override fun onScroll(
-                p0: MotionEvent?,
-                p1: MotionEvent?,
-                p2: Float,
-                p3: Float
-            ) = false
+            override fun onScroll(p0: MotionEvent, p1: MotionEvent, p2: Float, p3: Float) = false
 
-            override fun onLongPress(p0: MotionEvent?) {
+            override fun onLongPress(p0: MotionEvent) {
             }
 
-            override fun onFling(
-                p0: MotionEvent?,
-                p1: MotionEvent?,
-                p2: Float,
-                p3: Float
-            ) = false
+            override fun onFling(p0: MotionEvent, p1: MotionEvent, p2: Float, p3: Float) = false
         })
 
         override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {

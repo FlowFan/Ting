@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     app:startDestination="@id/navigation">
     <navigation
         android:id="@+id/navigation"
@@ -8,7 +9,8 @@
         <fragment
             android:id="@+id/mainFragment"
             android:name="com.example.ting.fragment.MainFragment"
-            android:label="MainFragment">
+            android:label="MainFragment"
+            tools:layout="@layout/fragment_main">
             <action
                 android:id="@+id/action_mainFragment_to_detailFragment"
                 app:destination="@id/detailFragment" />
@@ -44,7 +46,8 @@
         <fragment
             android:id="@+id/detailFragment"
             android:name="com.example.ting.fragment.DetailFragment"
-            android:label="DetailFragment">
+            android:label="DetailFragment"
+            tools:layout="@layout/fragment_detail">
             <argument
                 android:name="album"
                 app:argType="com.example.ting.model.Album"
@@ -53,7 +56,8 @@
         <fragment
             android:id="@+id/songListFragment"
             android:name="com.example.ting.fragment.SongListFragment"
-            android:label="SongListFragment">
+            android:label="SongListFragment"
+            tools:layout="@layout/fragment_song_list">
             <argument
                 android:name="id"
                 app:argType="long" />
@@ -61,11 +65,13 @@
         <fragment
             android:id="@+id/loginFragment"
             android:name="com.example.ting.fragment.LoginFragment"
-            android:label="LoginFragment" />
+            android:label="LoginFragment"
+            tools:layout="@layout/fragment_login" />
         <fragment
             android:id="@+id/typeFragment"
             android:name="com.example.ting.fragment.TypeFragment"
-            android:label="TypeFragment">
+            android:label="TypeFragment"
+            tools:layout="@layout/fragment_type">
             <action
                 android:id="@+id/action_typeFragment_to_songListFragment"
                 app:destination="@id/songListFragment"
@@ -77,7 +83,8 @@
         <fragment
             android:id="@+id/dailyListFragment"
             android:name="com.example.ting.fragment.DailyListFragment"
-            android:label="DailyListFragment" />
+            android:label="DailyListFragment"
+            tools:layout="@layout/fragment_daily_list" />
         <action
             android:id="@+id/action_global_playerFragment"
             app:destination="@id/playerFragment"
@@ -89,5 +96,6 @@
     <fragment
         android:id="@+id/playerFragment"
         android:name="com.example.ting.fragment.PlayerFragment"
-        android:label="PlayerFragment" />
+        android:label="PlayerFragment"
+        tools:layout="@layout/fragment_player" />
 </navigation>
