@@ -94,10 +94,8 @@ private fun RequireLoginVisible(
         }
         Scaffold(
             topBar = {
-                SmallTopAppBar(
-                    modifier = Modifier.padding(
-                        WindowInsets.statusBars.asPaddingValues()
-                    ),
+                TopAppBar(
+                    modifier = Modifier.padding(WindowInsets.statusBars.asPaddingValues()),
                     title = {
                         Text(text = userData.profile.nickname)
                     },
@@ -146,7 +144,8 @@ private fun RequireLoginVisible(
                         delay(500)
                         state.isRefreshing = false
                     }
-                }) {
+                }
+            ) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -197,11 +196,7 @@ private fun PlayListItem(
             .padding(horizontal = 16.dp)
             .fillMaxWidth()
             .clickable {
-                navController.navigate(
-                    MainFragmentDirections.actionMainFragmentToSongListFragment(
-                        playlist.id
-                    )
-                )
+                navController.navigate(MainFragmentDirections.actionMainFragmentToSongListFragment(playlist.id))
             },
         tonalElevation = 8.dp,
         shape = RoundedCornerShape(6.dp)
@@ -245,11 +240,7 @@ private fun PlayListItem(
             }
 
             IconButton(onClick = {
-                navController.navigate(
-                    MainFragmentDirections.actionMainFragmentToSongListFragment(
-                        playlist.id
-                    )
-                )
+                navController.navigate(MainFragmentDirections.actionMainFragmentToSongListFragment(playlist.id))
             }) {
                 Icon(Icons.Rounded.Menu, null)
             }

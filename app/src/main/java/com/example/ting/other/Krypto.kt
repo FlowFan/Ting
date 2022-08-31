@@ -37,9 +37,7 @@ fun Map<String, String>.encryptWeAPI(): Map<String, String> {
             iv = iv.toByteArray(),
             padding = Padding.PKCS7Padding
         ).toBase64(),
-        "encSecKey" to rsaEncrypt(
-            key
-        )
+        "encSecKey" to rsaEncrypt(key)
     )
 }
 

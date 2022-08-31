@@ -39,9 +39,8 @@ fun HttpUrl.toHttps() = toString().run {
     }
 }
 
-fun sharedPreferencesOf(
-    name: String
-): SharedPreferences = AppInitializer.mContext.getSharedPreferences(name, Context.MODE_PRIVATE)
+fun sharedPreferencesOf(name: String): SharedPreferences =
+    AppInitializer.mContext.getSharedPreferences(name, Context.MODE_PRIVATE)
 
 class CookieHelper : CookieJar {
     override fun loadForRequest(url: HttpUrl): List<Cookie> {
@@ -52,18 +51,14 @@ class CookieHelper : CookieJar {
                 .value(v.toString())
                 .build()
         }.toMutableList()
-        if (!cookies.any {
-                it.name == "os"
-            }) {
+        if (!cookies.any { it.name == "os" }) {
             cookies += Cookie.Builder()
                 .domain("music.163.com")
                 .name("os")
                 .value("pc")
                 .build()
         }
-        if (!cookies.any {
-                it.name == "appver"
-            }) {
+        if (!cookies.any { it.name == "appver" }) {
             cookies += Cookie.Builder()
                 .domain("music.163.com")
                 .name("appver")
@@ -71,28 +66,20 @@ class CookieHelper : CookieJar {
                 .build()
         }
         return cookies.also {
-            Log.d(
-                "CookieHelper",
-                "loadForRequest: ${cookies.joinToString(separator = ",") { it.name }}"
-            )
+            Log.d("CookieHelper", "loadForRequest: ${cookies.joinToString(separator = ",") { it.name }}")
         }
     }
 
     override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {
-        sharedPreferencesOf("cookie").let {
-            cookies
-                .filter {
-                    it.domain == "music.163.com"
+        sharedPreferencesOf("cookie").apply {
+            cookies.filter {
+                it.domain == "music.163.com"
+            }.forEach {
+                edit {
+                    putString(it.name, it.value)
+                    Log.i("CookieHelper", "saveFromResponse: saved cookie: ${it.name}=${it.value}")
                 }
-                .forEach { cookie ->
-                    it.edit {
-                        putString(cookie.name, cookie.value)
-                        Log.i(
-                            "CookieHelper",
-                            "saveFromResponse: saved cookie: ${cookie.name}=${cookie.value}"
-                        )
-                    }
-                }
+            }
         }
     }
 }

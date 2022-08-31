@@ -20,6 +20,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import retrofit2.create
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
@@ -33,17 +34,17 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideRecommendService(): RecommendService =
+    fun provideRecommendService() =
         Retrofit.Builder()
             .client(OkHttpClient())
             .baseUrl(BASE_URL)
             .addConverterFactory(JsonConverterFactory.create())
             .build()
-            .create(RecommendService::class.java)
+            .create<RecommendService>()
 
     @Singleton
     @Provides
-    fun provideHttpClient(): OkHttpClient =
+    fun provideHttpClient() =
         OkHttpClient.Builder()
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(5, TimeUnit.SECONDS)
@@ -56,31 +57,31 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideMusicWeService(okHttpClient: OkHttpClient): MusicWeService =
+    fun provideMusicWeService(okHttpClient: OkHttpClient) =
         Retrofit.Builder()
             .client(okHttpClient)
             .baseUrl("https://music.163.com")
             .addConverterFactory(JsonConverterFactory.create())
             .build()
-            .create(MusicWeService::class.java)
+            .create<MusicWeService>()
 
     @Singleton
     @Provides
-    fun provideHitokotoService(okHttpClient: OkHttpClient): HitokotoService =
+    fun provideHitokotoService(okHttpClient: OkHttpClient) =
         Retrofit.Builder()
             .client(okHttpClient)
             .baseUrl("https://v1.hitokoto.cn")
             .addConverterFactory(JsonConverterFactory.create())
             .build()
-            .create(HitokotoService::class.java)
+            .create<HitokotoService>()
 
     @Singleton
     @Provides
-    fun provideUrlService(okHttpClient: OkHttpClient): UrlService =
+    fun provideUrlService(okHttpClient: OkHttpClient) =
         Retrofit.Builder()
             .client(okHttpClient)
             .baseUrl("https://interface3.music.163.com")
             .addConverterFactory(JsonConverterFactory.create())
             .build()
-            .create(UrlService::class.java)
+            .create<UrlService>()
 }

@@ -74,10 +74,8 @@ private fun LoginScreen(
 ) {
     Scaffold(
         topBar = {
-            SmallTopAppBar(
-                modifier = Modifier.padding(
-                    WindowInsets.statusBars.asPaddingValues()
-                ),
+            TopAppBar(
+                modifier = Modifier.padding(WindowInsets.statusBars.asPaddingValues()),
                 title = {
                     Text(text = "登录")
                 },
@@ -110,9 +108,13 @@ private fun Body(
 
     AnimatedVisibility(showDialog) {
         AlertDialog(
-            onDismissRequest = { showDialog = false },
+            onDismissRequest = {
+                showDialog = false
+            },
             confirmButton = {
-                TextButton(onClick = { showDialog = false }) {
+                TextButton(onClick = {
+                    showDialog = false
+                }) {
                     Text(text = "关闭")
                 }
             },
@@ -249,10 +251,7 @@ private fun Body(
             onClick = {
                 showDialog = true
                 if (!isSend) {
-                    viewModel.loginCellPhone(
-                        phone = username,
-                        password = password
-                    )
+                    viewModel.loginCellPhone(username, password)
                 } else {
                     viewModel.loginCaptcha(username, password)
                 }

@@ -116,9 +116,7 @@ private fun DiscoverPage(
             }
         } else {
             Column {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     ScrollableTabRow(
                         modifier = Modifier.weight(1f),
                         selectedTabIndex = pagerState.currentPage,
@@ -133,12 +131,17 @@ private fun DiscoverPage(
                                     }
                                 }
                             ) {
-                                Text(text = sub, modifier = Modifier.padding(4.dp))
+                                Text(
+                                    text = sub,
+                                    modifier = Modifier.padding(4.dp)
+                                )
                             }
                         }
                     }
 
-                    IconButton(onClick = { editing = true }) {
+                    IconButton(onClick = {
+                        editing = true
+                    }) {
                         Icon(Icons.Rounded.DashboardCustomize, null)
                     }
                 }
@@ -175,15 +178,11 @@ private fun CategoryEditor(
                 modifier = Modifier.weight(1f),
                 style = MaterialTheme.typography.headlineSmall
             )
-            Button(
-                onClick = {
-                    // 保存前重排序一遍
-                    val list =
-                        categoryAll.sub.filter { category.contains(it.name) }.map { it.name }
-                            .toList()
-                    onSave(list)
-                }
-            ) {
+            Button(onClick = {
+                // 保存前重排序一遍
+                val list = categoryAll.sub.filter { category.contains(it.name) }.map { it.name }.toList()
+                onSave(list)
+            }) {
                 Text(text = "保存")
             }
         }
@@ -206,15 +205,13 @@ private fun CategoryEditor(
                         categoryAll.sub.filter { it.category == k.toInt() }.forEach { sub ->
                             if (category.contains(sub.name)) {
                                 OutlinedButton(onClick = {
-                                    category = ArrayList(
-                                        category.toMutableList().apply { remove(sub.name) })
+                                    category = ArrayList(category.toMutableList().apply { remove(sub.name) })
                                 }) {
                                     Text(text = sub.name)
                                 }
                             } else {
                                 TextButton(onClick = {
-                                    category =
-                                        ArrayList(category.toMutableList().apply { add(sub.name) })
+                                    category = ArrayList(category.toMutableList().apply { add(sub.name) })
                                 }) {
                                     Text(text = sub.name)
                                 }
@@ -234,31 +231,33 @@ private fun TopPlaylist(
     navController: NavController
 ) {
     if (category == "精品") {
-        val highQualityPlaylist by viewModel.highQualityPlaylist.observeAsState(
-            HighQualityPlaylist()
-        )
+        val highQualityPlaylist by viewModel.highQualityPlaylist.observeAsState(HighQualityPlaylist())
         LazyVerticalGrid(
             columns = GridCells.Adaptive(110.dp),
             modifier = Modifier.fillMaxSize()
         ) {
             items(highQualityPlaylist.playlists) { playlist ->
-                PlaylistItem(playlist = playlist, navController = navController)
+                PlaylistItem(
+                    playlist = playlist,
+                    navController = navController
+                )
             }
         }
         return
     }
 
-    val items = (viewModel.playlistCatPager[category] ?: run {
-        viewModel.getTopPlaylist(category).also {
-            viewModel.playlistCatPager[category] = it
-        }
+    val items = (viewModel.playlistCatPager[category] ?: viewModel.getTopPlaylist(category).also {
+        viewModel.playlistCatPager[category] = it
     }).collectAsLazyPagingItems()
     LazyVerticalGrid(
         columns = GridCells.Adaptive(110.dp),
         modifier = Modifier.fillMaxSize()
     ) {
         items(items.itemCount) { index ->
-            PlaylistItem(playlist = items[index]!!, navController = navController)
+            PlaylistItem(
+                playlist = items[index]!!,
+                navController = navController
+            )
         }
     }
 }
@@ -272,11 +271,7 @@ private fun PlaylistItem(
         modifier = Modifier
             .clip(RoundedCornerShape(4.dp))
             .clickable {
-                navController.navigate(
-                    TypeFragmentDirections.actionTypeFragmentToSongListFragment(
-                        playlist.id
-                    )
-                )
+                navController.navigate(TypeFragmentDirections.actionTypeFragmentToSongListFragment(playlist.id))
             }
             .padding(8.dp)
             .width(IntrinsicSize.Min),

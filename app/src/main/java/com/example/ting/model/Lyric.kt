@@ -35,8 +35,7 @@ fun Lyric.parse(): List<LyricLine> {
             it.matches(Regex("\\[\\d+:\\d+.\\d+].+"))
         }.map {
             val minutes = it.substring(1 until (it.indexOf(":"))).toIntOrNull() ?: 0
-            val seconds =
-                it.substring((it.indexOf(":") + 1) until it.indexOf(".")).toIntOrNull() ?: 0
+            val seconds = it.substring((it.indexOf(":") + 1) until it.indexOf(".")).toIntOrNull() ?: 0
             val time = minutes * 60 + seconds
             LyricLine(
                 time = time,
@@ -47,16 +46,16 @@ fun Lyric.parse(): List<LyricLine> {
 
     // 将翻译添加到歌词中
     if (tlyric.lyric.isNotBlank()) {
-        tlyric.lyric.split("\n").filter {
-            it.matches(Regex("\\[\\d+:\\d+.\\d+].+"))
-        }.forEach {
-            val minutes = it.substring(1 until (it.indexOf(":"))).toIntOrNull() ?: 0
-            val seconds =
-                it.substring((it.indexOf(":") + 1) until it.indexOf(".")).toIntOrNull() ?: 0
-            val time = minutes * 60 + seconds
-            lines.find { lyric -> lyric.time == time && lyric.translation == null }?.translation =
-                it.substring(it.indexOf("]") + 1)
-        }
+        tlyric.lyric.split("\n")
+            .filter {
+                it.matches(Regex("\\[\\d+:\\d+.\\d+].+"))
+            }.forEach {
+                val minutes = it.substring(1 until (it.indexOf(":"))).toIntOrNull() ?: 0
+                val seconds = it.substring((it.indexOf(":") + 1) until it.indexOf(".")).toIntOrNull() ?: 0
+                val time = minutes * 60 + seconds
+                lines.find { lyric -> lyric.time == time && lyric.translation == null }?.translation =
+                    it.substring(it.indexOf("]") + 1)
+            }
     }
     return lines
 }

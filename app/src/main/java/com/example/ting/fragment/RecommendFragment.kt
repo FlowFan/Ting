@@ -40,14 +40,14 @@ class RecommendFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.albumList.observe(viewLifecycleOwner) {
+            recommendListAdapter.submitData(viewLifecycleOwner.lifecycle, it)
+        }
         binding.recommendList.apply {
-            adapter =
-                recommendListAdapter.withLoadStateFooter(FooterAdapter { recommendListAdapter.retry() })
+            adapter = recommendListAdapter.withLoadStateFooter(FooterAdapter { recommendListAdapter.retry() })
             setOnItemClickListener { i, holder ->
                 holder as RecommendListAdapter.RecommendListViewHolder
-                val action = MainFragmentDirections.actionMainFragmentToDetailFragment(
-                    recommendListAdapter.peek(i)
-                )
+                val action = MainFragmentDirections.actionMainFragmentToDetailFragment(recommendListAdapter.peek(i))
                 holder.itemView.transitionName = getString(R.string.item_description)
                 holder.binding.albumCover.transitionName = getString(R.string.image_description)
                 val extras = FragmentNavigatorExtras(
@@ -57,28 +57,24 @@ class RecommendFragment : Fragment() {
                 holder.itemView.findNavController().navigate(action, extras)
             }
         }
-        viewModel.albumList.observe(viewLifecycleOwner) {
-            recommendListAdapter.submitData(viewLifecycleOwner.lifecycle, it)
-        }
         viewLifecycleOwner.lifecycleScope.launch {
-            recommendListAdapter.loadStateFlow.flowWithLifecycle(viewLifecycleOwner.lifecycle)
-                .collectLatest {
-                    when (it.refresh) {
-                        //加载完成300ms后停止转动
-                        is LoadState.NotLoading -> {
-                            delay(300)
-                            binding.swipeRefresh.isRefreshing = false
-                        }
-                        //正在加载时转动
-                        is LoadState.Loading -> binding.swipeRefresh.isRefreshing = true
-                        //加载失败时每隔3秒重试一次并重新转动
-                        is LoadState.Error -> {
-                            delay(3000)
-                            binding.swipeRefresh.isRefreshing = false
-                            recommendListAdapter.retry()
-                        }
+            recommendListAdapter.loadStateFlow.flowWithLifecycle(viewLifecycleOwner.lifecycle).collectLatest {
+                when (it.refresh) {
+                    //加载完成300ms后停止转动
+                    is LoadState.NotLoading -> {
+                        delay(300)
+                        binding.swipeRefresh.isRefreshing = false
+                    }
+                    //正在加载时转动
+                    is LoadState.Loading -> binding.swipeRefresh.isRefreshing = true
+                    //加载失败时每隔3秒重试一次并重新转动
+                    is LoadState.Error -> {
+                        delay(3000)
+                        binding.swipeRefresh.isRefreshing = false
+                        recommendListAdapter.retry()
                     }
                 }
+            }
         }
         binding.swipeRefresh.setOnRefreshListener {
             recommendListAdapter.refresh()
@@ -87,6 +83,7 @@ class RecommendFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.recommendList.adapter = null
         _binding = null
     }
 }

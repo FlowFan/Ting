@@ -18,8 +18,7 @@ class TingViewModel @Inject constructor(
     private val tingRepository: TingRepository
 ) : ViewModel() {
     val albumList = tingRepository.getRecommendData().cachedIn(viewModelScope).asLiveData()
-    fun getTrackList(albumId: Int) =
-        tingRepository.getDetailData(albumId).cachedIn(viewModelScope).asLiveData()
+    fun getTrackList(albumId: Int) = tingRepository.getDetailData(albumId).cachedIn(viewModelScope).asLiveData()
 
     val playList by lazy { tingRepository.getPlayList() }
     private val _dailyWord by lazy { MutableStateFlow(DailyWord()) }
@@ -50,8 +49,7 @@ class TingViewModel @Inject constructor(
     val musicDetail get() = _musicDetail.asStateFlow()
     private val _lyric by lazy { MutableStateFlow(Lyric()) }
     val lyric get() = _lyric.asStateFlow()
-    fun getTopPlaylist(category: String) =
-        tingRepository.getTopPlaylist(category).cachedIn(viewModelScope)
+    fun getTopPlaylist(category: String) = tingRepository.getTopPlaylist(category).cachedIn(viewModelScope)
 
     fun refreshDailyWord() {
         tingRepository.getDailyWord().onEach {

@@ -27,7 +27,10 @@ class TingRepository @Inject constructor(
 ) {
     @OptIn(ExperimentalPagingApi::class)
     fun getRecommendData() = Pager(
-        config = PagingConfig(pageSize = 10, initialLoadSize = 10),
+        config = PagingConfig(
+            pageSize = 10,
+            initialLoadSize = 10
+        ),
         //请求网络数据
         remoteMediator = RecommendRemoteMediator(recommendService, database)
     ) {
@@ -36,7 +39,10 @@ class TingRepository @Inject constructor(
     }.flow.flowOn(Dispatchers.IO)
 
     fun getDetailData(albumId: Int) = Pager(
-        config = PagingConfig(pageSize = 20, initialLoadSize = 20)
+        config = PagingConfig(
+            pageSize = 20,
+            initialLoadSize = 20
+        )
     ) {
         DetailPagingSource(albumId)
     }.flow.flowOn(Dispatchers.IO)
@@ -111,9 +117,7 @@ class TingRepository @Inject constructor(
 
     fun getTypeList() = liveData(Dispatchers.IO) {
         try {
-            val result = musicWeService.getTypeList(
-                mapOf<String, String>().encryptWeAPI()
-            )
+            val result = musicWeService.getTypeList(mapOf<String, String>().encryptWeAPI())
             emit(result)
         } catch (e: Exception) {
             e.stackTraceToString()
@@ -121,10 +125,7 @@ class TingRepository @Inject constructor(
     }
 
     fun getHotPlaylistTags() = flow {
-        val sharedPreferences = AppInitializer.mContext.getSharedPreferences(
-            "playlist_category",
-            Context.MODE_PRIVATE
-        )
+        val sharedPreferences = AppInitializer.mContext.getSharedPreferences("playlist_category", Context.MODE_PRIVATE)
         val result = if (sharedPreferences.contains("data")) {
             // 载入用户自定义歌单category
             sharedPreferences.getString("data", "")?.split(",") ?: emptyList()
@@ -198,20 +199,14 @@ class TingRepository @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     fun sendCaptcha(phone: String) = flow {
-        val result = musicWeService.sendCaptcha(
-            mapOf(
-                "cellphone" to phone
-            ).encryptWeAPI()
-        )
+        val result = musicWeService.sendCaptcha(mapOf("cellphone" to phone).encryptWeAPI())
         emit(result)
     }.catch {
         it.stackTraceToString()
     }.flowOn(Dispatchers.IO)
 
     fun refreshLogin() = flow {
-        val result = musicWeService.refreshLogin(
-            mapOf<String, String>().encryptWeAPI()
-        )
+        val result = musicWeService.refreshLogin(mapOf<String, String>().encryptWeAPI())
         emit(result)
     }.catch {
         it.stackTraceToString()
@@ -264,20 +259,14 @@ class TingRepository @Inject constructor(
     }.flowOn(Dispatchers.IO)
 
     fun getLikeList(id: Long) = flow {
-        val result = musicWeService.getLikeList(
-            mapOf("uid" to "$id").encryptWeAPI()
-        )
+        val result = musicWeService.getLikeList(mapOf("uid" to "$id").encryptWeAPI())
         emit(result)
     }.catch {
         it.stackTraceToString()
     }.flowOn(Dispatchers.IO)
 
     fun getMusicDetail(id: Long) = flow {
-        val result = musicWeService.getMusicDetail(
-            mapOf(
-                "c" to "[{\"id\":$id}]"
-            )
-        )
+        val result = musicWeService.getMusicDetail(mapOf("c" to "[{\"id\":$id}]"))
         emit(result)
     }.catch {
         it.stackTraceToString()

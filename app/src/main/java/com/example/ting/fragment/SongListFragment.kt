@@ -84,7 +84,7 @@ class SongListFragment : Fragment() {
                     Scaffold(
                         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                         topBar = {
-                            SmallTopAppBar(
+                            TopAppBar(
                                 modifier = Modifier.padding(
                                     WindowInsets.statusBars.asPaddingValues()
                                 ),
@@ -254,15 +254,12 @@ private fun SongIcon(
                                         setTitle(track.name)
                                         setArtist(track.ar.joinToString(", ") { ar -> ar.name })
                                         setRequestMetadata(
-                                            MediaItem.RequestMetadata.Builder()
+                                            MediaItem.RequestMetadata
+                                                .Builder()
                                                 .setMediaUri(Uri.parse("$TING_PROTOCOL://music?id=${track.id}"))
                                                 .build()
                                         )
-                                        setArtworkUri(
-                                            Uri.parse(
-                                                track.al.picUrl.toHttpUrl().toHttps()
-                                            )
-                                        )
+                                        setArtworkUri(Uri.parse(track.al.picUrl.toHttpUrl().toHttps()))
                                     }
                                 }
                             }
@@ -327,9 +324,7 @@ private fun SongList(
                 contentDescription = null,
                 contentScale = ContentScale.FillBounds
             )
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = track.name,
                     overflow = TextOverflow.Ellipsis,
@@ -354,7 +349,8 @@ private fun SongList(
                                     setTitle(track.name)
                                     setArtist(track.ar.joinToString(", ") { ar -> ar.name })
                                     setRequestMetadata(
-                                        MediaItem.RequestMetadata.Builder()
+                                        MediaItem.RequestMetadata
+                                            .Builder()
                                             .setMediaUri(Uri.parse("$TING_PROTOCOL://music?id=${track.id}"))
                                             .build()
                                     )

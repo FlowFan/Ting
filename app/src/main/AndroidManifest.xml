@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.ting">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-sdk tools:overrideLibrary="dev.burnoo.compose.rememberpreference" />
     <!--连接网络-->
@@ -47,8 +46,8 @@
             android:process=":player" />
         <service
             android:name=".exoplayer.MusicService"
-            android:foregroundServiceType="mediaPlayback"
-            android:exported="false">
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback">
             <intent-filter>
                 <action android:name="androidx.media3.session.MediaLibraryService" />
             </intent-filter>

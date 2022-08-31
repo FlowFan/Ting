@@ -2,10 +2,12 @@ package com.example.ting.exoplayer
 
 import android.app.PendingIntent
 import android.net.Uri
+import androidx.annotation.OptIn
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DataSpec
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.ResolvingDataSource
@@ -22,16 +24,16 @@ import com.google.common.util.concurrent.ListenableFuture
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import okhttp3.HttpUrl.Companion.toHttpUrl
-import java.io.IOException
 import javax.inject.Inject
 
 @AndroidEntryPoint
+@OptIn(UnstableApi::class)
 class MusicService : MediaLibraryService() {
     @Inject
     lateinit var musicRepo: TingRepository
     private val lifecycleScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
-    lateinit var player: Player
+    private lateinit var player: Player
     private lateinit var mediaSession: MediaLibrarySession
 
     override fun onCreate() {
@@ -99,8 +101,7 @@ class MusicService : MediaLibraryService() {
         override fun resolveDataSpec(dataSpec: DataSpec): DataSpec {
             // 动态解析歌曲地址
             if (dataSpec.uri.scheme == TING_PROTOCOL && dataSpec.uri.host == "music") {
-                val musicId =
-                    dataSpec.uri.getQueryParameter("id")?.toLong() ?: error("can't find music id")
+                val musicId = dataSpec.uri.getQueryParameter("id")?.toLong() ?: error("can't find music id")
                 val url = runBlocking {
                     var musicUrl = ""
                     musicRepo.getMusicUrl(musicId).collect {
@@ -109,17 +110,6 @@ class MusicService : MediaLibraryService() {
                         }
                     }
                     musicUrl
-                }
-                if (url.isBlank()) {
-                    lifecycleScope.launch {
-                        if (player.hasNextMediaItem()) {
-                            player.seekToNextMediaItem()
-                            player.prepare()
-                            player.play()
-                        } else {
-                            throw IOException("无法解析Music URL")
-                        }
-                    }
                 }
                 return dataSpec.buildUpon()
                     .apply {

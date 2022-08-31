@@ -79,6 +79,7 @@ class PlayerFragment : Fragment() {
                         null -> {
                             NotConnectScreen(findNavController())
                         }
+
                         else -> {
                             PlayerUI(player!!, viewModel, findNavController())
                         }
@@ -101,10 +102,8 @@ private fun NotConnectScreen(
 ) {
     Scaffold(
         topBar = {
-            SmallTopAppBar(
-                modifier = Modifier.padding(
-                    WindowInsets.statusBars.asPaddingValues()
-                ),
+            TopAppBar(
+                modifier = Modifier.padding(WindowInsets.statusBars.asPaddingValues()),
                 title = {
                     Text(text = "播放器")
                 },
@@ -118,7 +117,10 @@ private fun NotConnectScreen(
             )
         }
     ) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
             Text(text = "很抱歉，无法连接到播放器服务", modifier = Modifier)
         }
     }
@@ -146,9 +148,7 @@ private fun PlayerUI(
     }
 
     val musicDetail by viewModel.musicDetail.collectAsState()
-    val painter = rememberAsyncImagePainter(
-        model = musicDetail.songs[0].al.picUrl
-    )
+    val painter = rememberAsyncImagePainter(model = musicDetail.songs[0].al.picUrl)
 
     LaunchedEffect(currentMediaItem) {
         viewModel.loadMusicDetail(currentMediaItem?.mediaId?.toLong() ?: 0L)
@@ -187,7 +187,6 @@ private fun PlayerUI(
                     )
                 }
                 IconButton(onClick = {
-
                 }) {
                     Icon(Icons.Rounded.Menu, null)
                 }
@@ -216,11 +215,7 @@ private fun PlayerUI(
                             valueChanger = it
                         },
                         onValueChangeFinished = {
-                            player.seekTo(
-                                (valueChanger * (progress?.second ?: 0L))
-                                    .roundToLong()
-                                    .coerceAtLeast(0L)
-                            )
+                            player.seekTo((valueChanger * (progress?.second ?: 0L)).roundToLong().coerceAtLeast(0L))
                         }
                     )
                     Text(text = progress?.second?.formatAsPlayerTime() ?: "00:00")
@@ -228,10 +223,7 @@ private fun PlayerUI(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(
-                        16.dp,
-                        Alignment.CenterHorizontally
-                    )
+                    horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
                 ) {
                     var show by remember {
                         mutableStateOf(false)
@@ -265,15 +257,13 @@ private fun PlayerUI(
                         Icon(Icons.Rounded.SkipPrevious, null)
                     }
 
-                    IconButton(
-                        onClick = {
-                            if (player.isPlaying) {
-                                player.pause()
-                            } else {
-                                player.play()
-                            }
+                    IconButton(onClick = {
+                        if (player.isPlaying) {
+                            player.pause()
+                        } else {
+                            player.play()
                         }
-                    ) {
+                    }) {
                         Icon(
                             modifier = Modifier.size(60.dp),
                             imageVector = if (isPlaying == true) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,

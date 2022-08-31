@@ -115,7 +115,10 @@ private fun PlayList(
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(text = "推荐声音", style = MaterialTheme.typography.headlineSmall)
+        Text(
+            text = "推荐声音",
+            style = MaterialTheme.typography.headlineSmall
+        )
         ElevatedCard(
             shape = RoundedCornerShape(12.dp)
         ) {
@@ -186,7 +189,10 @@ private fun LargeButton(
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(text = "个性功能", style = MaterialTheme.typography.headlineSmall)
+        Text(
+            text = "个性功能",
+            style = MaterialTheme.typography.headlineSmall
+        )
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -252,7 +258,10 @@ private fun DailyWord(
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(text = "每日一言", style = MaterialTheme.typography.headlineSmall)
+        Text(
+            text = "每日一言",
+            style = MaterialTheme.typography.headlineSmall
+        )
         ElevatedCard(
             shape = RoundedCornerShape(8.dp)
         ) {
@@ -315,7 +324,10 @@ private fun NewSong(
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(text = "新歌速递", style = MaterialTheme.typography.headlineSmall)
+        Text(
+            text = "新歌速递",
+            style = MaterialTheme.typography.headlineSmall
+        )
         ElevatedCard(
             shape = RoundedCornerShape(12.dp)
         ) {
@@ -351,7 +363,8 @@ private fun NewSong(
                                                     setTitle(songList.name)
                                                     setArtist(songList.song.artists.joinToString(",") { ar -> ar.name })
                                                     setRequestMetadata(
-                                                        MediaItem.RequestMetadata.Builder()
+                                                        MediaItem.RequestMetadata
+                                                            .Builder()
                                                             .setMediaUri(Uri.parse("$TING_PROTOCOL://music?id=${songList.id}"))
                                                             .build()
                                                     )
@@ -409,7 +422,10 @@ private fun TopList(
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(text = "声音榜单", style = MaterialTheme.typography.headlineSmall)
+        Text(
+            text = "声音榜单",
+            style = MaterialTheme.typography.headlineSmall
+        )
         ElevatedCard(
             shape = RoundedCornerShape(12.dp)
         ) {

@@ -29,16 +29,15 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val tabTitles = resources.getStringArray(R.array.tab_title)
         binding.viewPager.apply {
-            adapter =
-                object : FragmentStateAdapter(childFragmentManager, viewLifecycleOwner.lifecycle) {
-                    override fun getItemCount() = tabTitles.size
+            adapter = object : FragmentStateAdapter(childFragmentManager, viewLifecycleOwner.lifecycle) {
+                override fun getItemCount() = tabTitles.size
 
-                    override fun createFragment(position: Int) = when (position) {
-                        0 -> RecommendFragment()
-                        1 -> MusicFragment()
-                        else -> UserCenterFragment()
-                    }
+                override fun createFragment(position: Int) = when (position) {
+                    0 -> RecommendFragment()
+                    1 -> MusicFragment()
+                    else -> UserCenterFragment()
                 }
+            }
             setCurrentItem(1, false)
         }
         TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->

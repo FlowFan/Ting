@@ -74,9 +74,7 @@ class DailyListFragment : Fragment() {
                         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                         topBar = {
                             LargeTopAppBar(
-                                modifier = Modifier.padding(
-                                    WindowInsets.statusBars.asPaddingValues()
-                                ),
+                                modifier = Modifier.padding(WindowInsets.statusBars.asPaddingValues()),
                                 title = {
                                     Text(text = "每日推荐")
                                 },
@@ -100,7 +98,8 @@ class DailyListFragment : Fragment() {
                                                                 setTitle(track.name)
                                                                 setArtist(track.ar.joinToString(", ") { ar -> ar.name })
                                                                 setRequestMetadata(
-                                                                    MediaItem.RequestMetadata.Builder()
+                                                                    MediaItem.RequestMetadata
+                                                                        .Builder()
                                                                         .setMediaUri(Uri.parse("$TING_PROTOCOL://music?id=${track.id}"))
                                                                         .build()
                                                                 )
@@ -207,7 +206,8 @@ private fun DailyList(
                                     setTitle(track.name)
                                     setArtist(track.ar.joinToString(", ") { ar -> ar.name })
                                     setRequestMetadata(
-                                        MediaItem.RequestMetadata.Builder()
+                                        MediaItem.RequestMetadata
+                                            .Builder()
                                             .setMediaUri(Uri.parse("$TING_PROTOCOL://music?id=${track.id}"))
                                             .build()
                                     )

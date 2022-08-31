@@ -42,8 +42,7 @@ class DetailFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        sharedElementEnterTransition =
-            TransitionInflater.from(requireContext()).inflateTransition(R.transition.shared)
+        sharedElementEnterTransition = TransitionInflater.from(requireContext()).inflateTransition(R.transition.shared)
     }
 
     override fun onCreateView(

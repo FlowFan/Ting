@@ -9,10 +9,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ting.R
 import com.example.ting.databinding.ItemFooterBinding
 
-class FooterAdapter(private val retry: () -> Unit) :
-    LoadStateAdapter<FooterAdapter.FooterViewHolder>() {
-    inner class FooterViewHolder(val binding: ItemFooterBinding) :
-        RecyclerView.ViewHolder(binding.root)
+class FooterAdapter(private val retry: () -> Unit) : LoadStateAdapter<FooterAdapter.FooterViewHolder>() {
+    inner class FooterViewHolder(val binding: ItemFooterBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onBindViewHolder(holder: FooterViewHolder, loadState: LoadState) {
         holder.binding.apply {
@@ -27,13 +25,7 @@ class FooterAdapter(private val retry: () -> Unit) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): FooterViewHolder {
-        val holder = FooterViewHolder(
-            ItemFooterBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-        )
+        val holder = FooterViewHolder(ItemFooterBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         holder.itemView.setOnClickListener { retry() }
         return holder
     }

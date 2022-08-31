@@ -10,6 +10,7 @@ import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.MoreExecutors
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 
 @Composable
@@ -21,18 +22,15 @@ fun rememberMediaSessionPlayer(clazz: Class<out Any>): State<MediaController?> {
     DisposableEffect(context) {
         val builder = MediaController.Builder(
             context,
-            SessionToken(
-                context,
-                ComponentName(
-                    context,
-                    clazz
-                )
-            )
+            SessionToken(context, ComponentName(context, clazz))
         ).buildAsync()
 
-        builder.addListener({
-            controller.value = builder.get()
-        }, MoreExecutors.directExecutor())
+        builder.addListener(
+            {
+                controller.value = builder.get()
+            },
+            MoreExecutors.directExecutor()
+        )
 
         onDispose {
             MediaController.releaseFuture(builder)
@@ -44,18 +42,15 @@ fun rememberMediaSessionPlayer(clazz: Class<out Any>): State<MediaController?> {
 fun Context.asyncGetSessionPlayer(clazz: Class<out Any>, handler: (MediaController) -> Unit) {
     val controller = MediaController.Builder(
         this,
-        SessionToken(
-            this,
-            ComponentName(
-                this,
-                clazz
-            )
-        )
+        SessionToken(this, ComponentName(this, clazz))
     ).buildAsync()
 
-    controller.addListener({
-        handler(controller.get())
-    }, MoreExecutors.directExecutor())
+    controller.addListener(
+        {
+            handler(controller.get())
+        },
+        MoreExecutors.directExecutor()
+    )
 }
 
 fun buildMediaItem(mediaId: String, buildScope: MediaItem.Builder.() -> Unit): MediaItem =
@@ -90,18 +85,20 @@ fun rememberCurrentMediaItem(player: Player?): MediaItem? {
 @Composable
 fun rememberPlayProgress(player: Player?): Pair<Long, Long>? {
     return produceState(
-        initialValue = player?.let { player.currentPosition to player.duration },
+        initialValue = player?.let {
+            it.currentPosition to it.duration
+        },
         key1 = player
     ) {
         while (isActive) {
             value = player?.let {
-                if (player.currentMediaItem == null) {
+                if (it.currentMediaItem == null) {
                     0L to 1L
                 } else {
-                    player.currentPosition to player.duration.coerceAtLeast(1)
+                    it.currentPosition to it.duration.coerceAtLeast(1)
                 }
             }
-            kotlinx.coroutines.delay(500)
+            delay(500)
         }
     }.value
 }

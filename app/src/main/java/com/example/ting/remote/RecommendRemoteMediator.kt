@@ -27,12 +27,7 @@ class RecommendRemoteMediator(
     @SuppressLint("HardwareIds")
     override suspend fun load(loadType: LoadType, state: PagingState<Int, Album>): MediatorResult {
         return try {
-            println(
-                Settings.Secure.getString(
-                    AppInitializer.mContext.contentResolver,
-                    Settings.Secure.ANDROID_ID
-                )
-            )
+            println(Settings.Secure.getString(AppInitializer.mContext.contentResolver, Settings.Secure.ANDROID_ID))
             val album = recommendService.searchRecommendData(accessToken, recommendSig)
             if (!AppInitializer.mContext.isConnectedNetwork()) {
                 return MediatorResult.Success(true)
