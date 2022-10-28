@@ -14,6 +14,15 @@ android {
     compileSdk 33
     buildToolsVersion = '33.0.0'
 
+    signingConfigs {
+        release {
+            storeFile file('fan')
+            storePassword '1138612367'
+            keyAlias 'fan'
+            keyPassword '1138612367'
+        }
+    }
+
     defaultConfig {
         applicationId 'com.example.ting'
         minSdk 23
@@ -25,6 +34,7 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+        signingConfig signingConfigs.release
     }
 
     buildTypes {
@@ -73,12 +83,12 @@ dependencies {
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
     implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
-    implementation 'androidx.compose.material3:material3:1.0.0'
+    implementation 'androidx.compose.material3:material3:1.0.1'
     implementation 'androidx.paging:paging-compose:1.0.0-alpha17'
     implementation 'androidx.constraintlayout:constraintlayout-compose:1.0.1'
     implementation 'io.coil-kt:coil-compose:2.2.2'
     implementation 'dev.burnoo:compose-remember-preference:1.0.0'
-    implementation 'io.github.fornewid:material-motion-compose-core:0.9.1'
+    implementation 'io.github.fornewid:material-motion-compose-core:0.10.3'
     androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
     debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
     debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
@@ -137,7 +147,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-swiperefresh:$accompanist_version"
 
     //Krypto
-    implementation 'com.soywiz.korlibs.krypto:krypto-android:3.3.0'
+    implementation 'com.soywiz.korlibs.krypto:krypto-android:3.4.0'
 
     //Media3
     implementation "androidx.media3:media3-exoplayer:$media3_version"
@@ -145,6 +155,6 @@ dependencies {
     implementation "androidx.media3:media3-session:$media3_version"
 
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
 }
