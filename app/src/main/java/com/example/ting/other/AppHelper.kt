@@ -12,6 +12,9 @@ import android.widget.Toast
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ting.init.AppInitializer
 import com.example.ting.other.Constants.APP_SECRET
@@ -19,6 +22,9 @@ import com.example.ting.other.Constants.SHP_DATASTORE
 import com.ximalaya.ting.android.opensdk.httputil.util.BASE64Encoder
 import com.ximalaya.ting.android.opensdk.httputil.util.HMACSHA1
 import com.ximalaya.ting.android.player.MD5
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(SHP_DATASTORE)
@@ -27,9 +33,9 @@ fun Context.isConnectedNetwork() = (getSystemService(Context.CONNECTIVITY_SERVIC
     it.getNetworkCapabilities(it.activeNetwork)?.hasCapability(NET_CAPABILITY_VALIDATED) ?: false
 }
 
-fun Long.convertNumber(): String = when (toString().length) {
-    in 0..4 -> toString()
-    in 5..8 -> String.format("%.1f万", toDouble() / 10000)
+fun Long.convertNumber(): String = when {
+    this < 10000 -> toString()
+    this < 100000000 -> String.format("%.1f万", toDouble() / 10000)
     else -> DecimalFormat("0.#亿").format(toDouble() / 100000000)
 }
 
@@ -73,6 +79,24 @@ inline fun EditText.addTextChangedListener(listener: TextChangedListener.() -> U
     val textChangedListener = TextChangedListener().apply(listener).build()
     addTextChangedListener(textChangedListener)
     return textChangedListener
+}
+
+fun <T> LifecycleOwner.collectWhenStarted(
+    flow: Flow<T>,
+    action: suspend (value: T) -> Unit
+) {
+    lifecycleScope.launch {
+        flow.flowWithLifecycle(lifecycle).collect(action)
+    }
+}
+
+fun <T> LifecycleOwner.collectLatestWhenStarted(
+    flow: Flow<T>,
+    action: suspend (value: T) -> Unit
+) {
+    lifecycleScope.launch {
+        flow.flowWithLifecycle(lifecycle).collectLatest(action)
+    }
 }
 
 inline fun RecyclerView.setOnItemClickListener(crossinline listener: (Int, RecyclerView.ViewHolder) -> Unit) {
