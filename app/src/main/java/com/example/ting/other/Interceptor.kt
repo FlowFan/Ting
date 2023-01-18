@@ -10,12 +10,13 @@ import okhttp3.*
 
 class HttpsInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
-        val request = chain.request().run {
-            if (isHttps) {
-                this
-            } else {
-                newBuilder().url(url.toHttps()).build()
-            }
+        val request = chain.request().let {
+            it.newBuilder()
+                .url(
+                    it.url.newBuilder()
+                        .scheme("https")
+                        .build()
+                ).build()
         }
         return chain.proceed(request)
     }
@@ -28,14 +29,6 @@ class UserAgentInterceptor : Interceptor {
             .header("User-Agent", WebSettings.getDefaultUserAgent(AppInitializer.mContext))
             .build()
         return chain.proceed(request)
-    }
-}
-
-fun HttpUrl.toHttps() = toString().run {
-    if (startsWith("https")) {
-        this
-    } else {
-        replace("http://", "https://")
     }
 }
 
@@ -66,7 +59,7 @@ class CookieHelper : CookieJar {
                 .build()
         }
         return cookies.also {
-            Log.d("CookieHelper", "loadForRequest: ${cookies.joinToString(separator = ",") { it.name }}")
+            Log.d("CookieHelper", "loadForRequest: $it")
         }
     }
 
@@ -77,7 +70,7 @@ class CookieHelper : CookieJar {
             }.forEach {
                 edit {
                     putString(it.name, it.value)
-                    Log.i("CookieHelper", "saveFromResponse: saved cookie: ${it.name}=${it.value}")
+                    Log.i("CookieHelper", "saveFromResponse: saved cookie: $it")
                 }
             }
         }

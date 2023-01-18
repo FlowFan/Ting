@@ -27,6 +27,7 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.media3.common.MediaItem
@@ -48,7 +49,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.HttpUrl.Companion.toHttpUrl
 
 @AndroidEntryPoint
 class SongListFragment : Fragment() {
@@ -259,7 +259,7 @@ private fun SongIcon(
                                                 .setMediaUri(Uri.parse("$TING_PROTOCOL://music?id=${track.id}"))
                                                 .build()
                                         )
-                                        setArtworkUri(Uri.parse(track.al.picUrl.toHttpUrl().toHttps()))
+                                        setArtworkUri(track.al.picUrl.toUri().buildUpon().scheme("https").build())
                                     }
                                 }
                             }

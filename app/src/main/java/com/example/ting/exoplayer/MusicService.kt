@@ -1,8 +1,8 @@
 package com.example.ting.exoplayer
 
 import android.app.PendingIntent
-import android.net.Uri
 import androidx.annotation.OptIn
+import androidx.core.net.toUri
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -17,13 +17,11 @@ import androidx.media3.extractor.DefaultExtractorsFactory
 import androidx.media3.session.MediaLibraryService
 import androidx.media3.session.MediaSession
 import com.example.ting.other.Constants.TING_PROTOCOL
-import com.example.ting.other.toHttps
 import com.example.ting.repository.TingRepository
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import okhttp3.HttpUrl.Companion.toHttpUrl
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -114,7 +112,7 @@ class MusicService : MediaLibraryService() {
                 return dataSpec.buildUpon()
                     .apply {
                         if (url.isNotBlank()) {
-                            setUri(Uri.parse(url.toHttpUrl().toHttps()))
+                            setUri(url.toUri().buildUpon().scheme("https").build())
                         }
                     }
                     .build()
