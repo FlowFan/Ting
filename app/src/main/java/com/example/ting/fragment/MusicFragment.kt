@@ -49,8 +49,8 @@ import com.example.ting.other.metadata
 import com.example.ting.ui.theme.TingTheme
 import com.example.ting.viewmodel.TingViewModel
 import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.material.placeholder
-import com.google.accompanist.placeholder.material.shimmer
+import com.google.accompanist.placeholder.material3.placeholder
+import com.google.accompanist.placeholder.material3.shimmer
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

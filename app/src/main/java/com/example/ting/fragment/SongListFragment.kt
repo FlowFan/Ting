@@ -38,13 +38,16 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.ting.databinding.FragmentSongListBinding
 import com.example.ting.exoplayer.MusicService
 import com.example.ting.model.SongList
-import com.example.ting.other.*
 import com.example.ting.other.Constants.TING_PROTOCOL
+import com.example.ting.other.asyncGetSessionPlayer
+import com.example.ting.other.buildMediaItem
+import com.example.ting.other.metadata
+import com.example.ting.other.toast
 import com.example.ting.ui.theme.TingTheme
 import com.example.ting.viewmodel.TingViewModel
 import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.material.placeholder
-import com.google.accompanist.placeholder.material.shimmer
+import com.google.accompanist.placeholder.material3.placeholder
+import com.google.accompanist.placeholder.material3.shimmer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -98,7 +101,7 @@ class SongListFragment : Fragment() {
                                         Icon(Icons.Rounded.ArrowBack, "Back")
                                     }
                                 },
-                                colors = TopAppBarDefaults.smallTopAppBarColors(
+                                colors = TopAppBarDefaults.topAppBarColors(
                                     containerColor = MaterialTheme.colorScheme.background,
                                     scrolledContainerColor = MaterialTheme.colorScheme.background
                                 ),

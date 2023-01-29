@@ -12,9 +12,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Logout
 import androidx.compose.material.icons.rounded.Menu
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -37,10 +41,8 @@ import com.example.ting.other.sharedPreferencesOf
 import com.example.ting.ui.theme.TingTheme
 import com.example.ting.viewmodel.TingViewModel
 import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.material.placeholder
-import com.google.accompanist.placeholder.material.shimmer
-import com.google.accompanist.swiperefresh.SwipeRefresh
-import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.google.accompanist.placeholder.material3.placeholder
+import com.google.accompanist.placeholder.material3.shimmer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -78,7 +80,7 @@ class UserCenterFragment : Fragment() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 private fun RequireLoginVisible(
     viewModel: TingViewModel,
@@ -129,22 +131,24 @@ private fun RequireLoginVisible(
                             contentDescription = "Search"
                         )
                     },
-                    colors = TopAppBarDefaults.smallTopAppBarColors()
+                    colors = TopAppBarDefaults.topAppBarColors()
                 )
             }
-        ) {
-            val state = rememberSwipeRefreshState(isRefreshing = false)
+        ) { padding ->
+            var refreshing by remember { mutableStateOf(false) }
             val scope = rememberCoroutineScope()
-            SwipeRefresh(
-                state = state,
-                onRefresh = {
-                    viewModel.refreshLibraryPage(userData.account.id)
-                    scope.launch {
-                        state.isRefreshing = true
-                        delay(500)
-                        state.isRefreshing = false
-                    }
+            val pullRefreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
+                viewModel.refreshLibraryPage(userData.account.id)
+                scope.launch {
+                    refreshing = true
+                    delay(1000)
+                    refreshing = false
                 }
+            })
+            Box(
+                Modifier
+                    .pullRefresh(pullRefreshState)
+                    .padding(padding)
             ) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
@@ -169,6 +173,7 @@ private fun RequireLoginVisible(
                         }
                     }
                 }
+                PullRefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter))
             }
         }
     } else {

@@ -31,7 +31,6 @@ import com.example.ting.other.toast
 import com.example.ting.ui.theme.TingTheme
 import com.example.ting.viewmodel.TingViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import dev.burnoo.compose.rememberpreference.rememberStringPreference
 
 @AndroidEntryPoint
 class LoginFragment : Fragment() {
@@ -79,7 +78,7 @@ private fun LoginScreen(
                 title = {
                     Text(text = "登录")
                 },
-                colors = TopAppBarDefaults.smallTopAppBarColors()
+                colors = TopAppBarDefaults.topAppBarColors()
             )
         }
     ) { innerPadding ->
@@ -96,7 +95,6 @@ private fun LoginScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun Body(
     viewModel: TingViewModel,
@@ -147,16 +145,8 @@ private fun Body(
         }
     }
 
-    var username by rememberStringPreference(
-        keyName = "login.phone",
-        defaultValue = "",
-        initialValue = ""
-    )
-    var password by rememberStringPreference(
-        keyName = "login.password",
-        defaultValue = "",
-        initialValue = ""
-    )
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
     Column(
         modifier = Modifier.width(IntrinsicSize.Min),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -173,10 +163,8 @@ private fun Body(
         OutlinedTextField(
             value = username,
             onValueChange = {
-                username = if (it.length > 11) {
-                    it.substring(0..10)
-                } else {
-                    it
+                if (it.length <= 11) {
+                    username = it
                 }
             },
             singleLine = true,
@@ -201,10 +189,8 @@ private fun Body(
             OutlinedTextField(
                 value = password,
                 onValueChange = {
-                    password = if (it.length > 16) {
-                        it.substring(0..15)
-                    } else {
-                        it
+                    if (it.length <= 16) {
+                        password = it
                     }
                 },
                 label = {
@@ -230,10 +216,8 @@ private fun Body(
             OutlinedTextField(
                 value = password,
                 onValueChange = {
-                    password = if (it.length > 4) {
-                        it.substring(0..3)
-                    } else {
-                        it
+                    if (it.length <= 4) {
+                        password = it
                     }
                 },
                 label = {
