@@ -47,7 +47,10 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
-        freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+        freeCompilerArgs += [
+                "-opt-in=kotlin.RequiresOptIn",
+                "-Xcontext-receivers"
+        ]
     }
     sourceSets {
         main {
@@ -92,7 +95,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout-compose:1.0.1'
     implementation 'io.coil-kt:coil-compose:2.3.0'
     implementation 'dev.burnoo:compose-remember-preference:1.0.1'
-    implementation 'io.github.fornewid:material-motion-compose-core:1.0.0'
+    implementation 'io.github.fornewid:material-motion-compose-core:0.11.2'
 
     //Gson
     implementation 'com.google.code.gson:gson:2.10.1'

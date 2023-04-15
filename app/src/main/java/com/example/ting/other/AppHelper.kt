@@ -12,9 +12,11 @@ import android.widget.Toast
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ting.init.AppInitializer
 import com.example.ting.other.Constants.APP_SECRET
@@ -22,10 +24,15 @@ import com.example.ting.other.Constants.SHP_DATASTORE
 import com.ximalaya.ting.android.opensdk.httputil.util.BASE64Encoder
 import com.ximalaya.ting.android.opensdk.httputil.util.HMACSHA1
 import com.ximalaya.ting.android.player.MD5
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(SHP_DATASTORE)
 
@@ -96,6 +103,35 @@ fun <T> LifecycleOwner.collectLatestWhenStarted(
 ) {
     lifecycleScope.launch {
         flow.flowWithLifecycle(lifecycle).collectLatest(action)
+    }
+}
+
+fun LifecycleOwner.launchWithLifeCycle(
+    context: CoroutineContext = EmptyCoroutineContext,
+    start: CoroutineStart = CoroutineStart.DEFAULT,
+    minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
+    block: suspend CoroutineScope.() -> Unit
+): Job = lifecycleScope.launch(context, start) {
+    repeatOnLifecycle(minActiveState, block)
+}
+
+context(LifecycleOwner)
+fun <T> Flow<T>.collectWithLifecycle(
+    minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
+    action: suspend (value: T) -> Unit
+) {
+    lifecycleScope.launch {
+        flowWithLifecycle(lifecycle, minActiveState).collect(action)
+    }
+}
+
+context(LifecycleOwner)
+fun <T> Flow<T>.collectLatestWithLifecycle(
+    minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
+    action: suspend (value: T) -> Unit
+) {
+    lifecycleScope.launch {
+        flowWithLifecycle(lifecycle, minActiveState).collectLatest(action)
     }
 }
 

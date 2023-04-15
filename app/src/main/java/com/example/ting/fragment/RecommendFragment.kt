@@ -13,7 +13,7 @@ import com.example.ting.R
 import com.example.ting.adapter.FooterAdapter
 import com.example.ting.adapter.RecommendListAdapter
 import com.example.ting.databinding.FragmentRecommendBinding
-import com.example.ting.other.collectLatestWhenStarted
+import com.example.ting.other.collectLatestWithLifecycle
 import com.example.ting.other.setOnItemClickListener
 import com.example.ting.viewmodel.TingViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -54,20 +54,22 @@ class RecommendFragment : Fragment() {
                 holder.itemView.findNavController().navigate(action, extras)
             }
         }
-        viewLifecycleOwner.collectLatestWhenStarted(recommendListAdapter.loadStateFlow) {
-            when (it.refresh) {
-                //加载完成300ms后停止转动
-                is LoadState.NotLoading -> {
-                    delay(300)
-                    binding.swipeRefresh.isRefreshing = false
-                }
-                //正在加载时转动
-                is LoadState.Loading -> binding.swipeRefresh.isRefreshing = true
-                //加载失败时每隔3秒重试一次并重新转动
-                is LoadState.Error -> {
-                    delay(3000)
-                    binding.swipeRefresh.isRefreshing = false
-                    recommendListAdapter.retry()
+        with(viewLifecycleOwner) {
+            recommendListAdapter.loadStateFlow.collectLatestWithLifecycle {
+                when (it.refresh) {
+                    //加载完成300ms后停止转动
+                    is LoadState.NotLoading -> {
+                        delay(300)
+                        binding.swipeRefresh.isRefreshing = false
+                    }
+                    //正在加载时转动
+                    is LoadState.Loading -> binding.swipeRefresh.isRefreshing = true
+                    //加载失败时每隔3秒重试一次并重新转动
+                    is LoadState.Error -> {
+                        delay(3000)
+                        binding.swipeRefresh.isRefreshing = false
+                        recommendListAdapter.retry()
+                    }
                 }
             }
         }

@@ -34,7 +34,7 @@ class RecommendListAdapter : PagingDataAdapter<Album, RecommendListAdapter.Recom
 fun bindingImage(imageView: ImageView, url: String?) {
     imageView.load(url) {
         crossfade(1000)
-        placeholder(R.drawable.shape_r13_white)
+        placeholder(R.color.white)
         transformations(RoundedCornersTransformation(20f))
     }
 }
