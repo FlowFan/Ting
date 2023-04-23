@@ -10,7 +10,7 @@ import com.example.ting.init.AppInitializer
 import com.example.ting.other.encryptEApi
 import com.example.ting.other.encryptWeAPI
 import com.example.ting.remote.*
-import com.soywiz.krypto.md5
+import korlibs.crypto.md5
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch

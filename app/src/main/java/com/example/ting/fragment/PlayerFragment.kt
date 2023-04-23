@@ -29,6 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.Player
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
@@ -71,7 +72,7 @@ class PlayerFragment : Fragment() {
             setContent {
                 TingTheme(false) {
                     val player by rememberMediaSessionPlayer(MusicService::class.java)
-                    val userData by viewModel.userData.collectAsState()
+                    val userData by viewModel.userData.collectAsStateWithLifecycle()
                     LaunchedEffect(userData) {
                         viewModel.loadLikeList(userData.account.id)
                     }
@@ -149,7 +150,7 @@ private fun PlayerUI(
         }
     }
 
-    val musicDetail by viewModel.musicDetail.collectAsState()
+    val musicDetail by viewModel.musicDetail.collectAsStateWithLifecycle()
     val painter = rememberAsyncImagePainter(model = musicDetail.songs[0].al.picUrl)
 
     LaunchedEffect(currentMediaItem) {
@@ -279,8 +280,8 @@ private fun PlayerUI(
                         Icon(Icons.Rounded.SkipNext, null)
                     }
 
-                    val likeList by viewModel.likeList.collectAsState()
-                    val userData by viewModel.userData.collectAsState()
+                    val likeList by viewModel.likeList.collectAsStateWithLifecycle()
+                    val userData by viewModel.userData.collectAsStateWithLifecycle()
                     IconButton(onClick = {
                         viewModel.like(userData.account.id)
                     }) {
@@ -332,7 +333,7 @@ private fun PlayerUI(
                             .padding(16.dp),
                         contentAlignment = Alignment.Center
                     ) {
-                        val lyric by viewModel.lyric.collectAsState()
+                        val lyric by viewModel.lyric.collectAsStateWithLifecycle()
                         val lyricLines = lyric.parse()
                         val listState = rememberLazyListState()
 

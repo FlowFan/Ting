@@ -22,6 +22,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import coil.compose.rememberAsyncImagePainter
@@ -100,9 +101,9 @@ private fun Body(
     viewModel: TingViewModel,
     navController: NavController
 ) {
-    val loginState by viewModel.loginState.collectAsState()
+    val loginState by viewModel.loginState.collectAsStateWithLifecycle()
     var showDialog by remember { mutableStateOf(false) }
-    val isSend by viewModel.isSend.collectAsState()
+    val isSend by viewModel.isSend.collectAsStateWithLifecycle()
 
     AnimatedVisibility(showDialog) {
         AlertDialog(

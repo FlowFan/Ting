@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import coil.compose.AsyncImagePainter
@@ -86,8 +87,8 @@ private fun RequireLoginVisible(
     viewModel: TingViewModel,
     navController: NavController
 ) {
-    val userData by viewModel.userData.collectAsState()
-    val playlists by viewModel.userPlaylist.collectAsState()
+    val userData by viewModel.userData.collectAsStateWithLifecycle()
+    val playlists by viewModel.userPlaylist.collectAsStateWithLifecycle()
     if (userData.account.id != 0L) {
         LaunchedEffect(userData) {
             if (playlists.playlist.isEmpty()) {

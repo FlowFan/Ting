@@ -20,8 +20,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.DashboardCustomize
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,9 +36,11 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.example.ting.databinding.FragmentTypeBinding
@@ -94,7 +101,7 @@ private fun DiscoverPage(
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
     val categoryAll by viewModel.categoryAll.observeAsState(TypeList())
-    val categorySelect by viewModel.categorySelected.collectAsState()
+    val categorySelect by viewModel.categorySelected.collectAsStateWithLifecycle()
     var editing by remember { mutableStateOf(false) }
     val category = listOf("全部", "官方", "精品") + categorySelect
 
@@ -180,7 +187,8 @@ private fun CategoryEditor(
             )
             Button(onClick = {
                 // 保存前重排序一遍
-                val list = categoryAll.sub.filter { category.contains(it.name) }.map { it.name }.toList()
+                val list =
+                    categoryAll.sub.filter { category.contains(it.name) }.map { it.name }.toList()
                 onSave(list)
             }) {
                 Text(text = "保存")
@@ -205,13 +213,15 @@ private fun CategoryEditor(
                         categoryAll.sub.filter { it.category == k.toInt() }.forEach { sub ->
                             if (category.contains(sub.name)) {
                                 OutlinedButton(onClick = {
-                                    category = ArrayList(category.toMutableList().apply { remove(sub.name) })
+                                    category = ArrayList(
+                                        category.toMutableList().apply { remove(sub.name) })
                                 }) {
                                     Text(text = sub.name)
                                 }
                             } else {
                                 TextButton(onClick = {
-                                    category = ArrayList(category.toMutableList().apply { add(sub.name) })
+                                    category =
+                                        ArrayList(category.toMutableList().apply { add(sub.name) })
                                 }) {
                                     Text(text = sub.name)
                                 }
@@ -253,7 +263,10 @@ private fun TopPlaylist(
         columns = GridCells.Adaptive(110.dp),
         modifier = Modifier.fillMaxSize()
     ) {
-        items(items.itemCount) { index ->
+        items(
+            count = items.itemCount,
+            key = items.itemKey { it.id }
+        ) { index ->
             PlaylistItem(
                 playlist = items[index]!!,
                 navController = navController
@@ -271,7 +284,11 @@ private fun PlaylistItem(
         modifier = Modifier
             .clip(RoundedCornerShape(4.dp))
             .clickable {
-                navController.navigate(TypeFragmentDirections.actionTypeFragmentToSongListFragment(playlist.id))
+                navController.navigate(
+                    TypeFragmentDirections.actionTypeFragmentToSongListFragment(
+                        playlist.id
+                    )
+                )
             }
             .padding(8.dp)
             .width(IntrinsicSize.Min),

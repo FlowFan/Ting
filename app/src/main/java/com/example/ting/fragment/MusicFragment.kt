@@ -17,7 +17,6 @@ import androidx.compose.material.icons.rounded.Album
 import androidx.compose.material.icons.rounded.Today
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -32,6 +31,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -253,7 +253,7 @@ private fun LargeButton(
 private fun DailyWord(
     viewModel: TingViewModel
 ) {
-    val dailyWord by viewModel.dailyWord.collectAsState()
+    val dailyWord by viewModel.dailyWord.collectAsStateWithLifecycle()
     val clipboardManager = LocalClipboardManager.current
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -286,7 +286,8 @@ private fun DailyWord(
                 } else {
                     Text(
                         text = dailyWord.hitokoto,
-                        maxLines = 7
+                        maxLines = 7,
+                        minLines = 2
                     )
                     Text(
                         text = "《${dailyWord.from}》",

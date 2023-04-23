@@ -138,7 +138,7 @@ fun <T> Flow<T>.collectLatestWithLifecycle(
 inline fun RecyclerView.setOnItemClickListener(crossinline listener: (Int, RecyclerView.ViewHolder) -> Unit) {
     addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
         val gestureDetector = GestureDetector(context, object : GestureDetector.OnGestureListener {
-            override fun onDown(p0: MotionEvent) = false
+            override fun onDown(p0: MotionEvent): Boolean = false
 
             override fun onShowPress(p0: MotionEvent) {
             }
@@ -150,12 +150,12 @@ inline fun RecyclerView.setOnItemClickListener(crossinline listener: (Int, Recyc
                 return false
             }
 
-            override fun onScroll(p0: MotionEvent, p1: MotionEvent, p2: Float, p3: Float) = false
+            override fun onScroll(p0: MotionEvent?, p1: MotionEvent, p2: Float, p3: Float): Boolean = false
 
             override fun onLongPress(p0: MotionEvent) {
             }
 
-            override fun onFling(p0: MotionEvent, p1: MotionEvent, p2: Float, p3: Float) = false
+            override fun onFling(p0: MotionEvent?, p1: MotionEvent, p2: Float, p3: Float): Boolean = false
         })
 
         override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {

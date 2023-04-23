@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -82,7 +83,7 @@ class SongListFragment : Fragment() {
 
                     val lazyListState = rememberLazyListState()
                     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-                    val songList by viewModel.songList.collectAsState()
+                    val songList by viewModel.songList.collectAsStateWithLifecycle()
                     val scope = rememberCoroutineScope()
                     Scaffold(
                         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),

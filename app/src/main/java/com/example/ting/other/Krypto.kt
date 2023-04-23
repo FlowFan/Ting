@@ -1,10 +1,10 @@
 package com.example.ting.other
 
-import com.soywiz.krypto.AES
-import com.soywiz.krypto.Padding
-import com.soywiz.krypto.encoding.hex
-import com.soywiz.krypto.encoding.toBase64
-import com.soywiz.krypto.md5
+import korlibs.crypto.AES
+import korlibs.crypto.Padding
+import korlibs.crypto.encoding.hex
+import korlibs.crypto.encoding.toBase64
+import korlibs.crypto.md5
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 

@@ -11,8 +11,8 @@ plugins {
 
 android {
     namespace 'com.example.ting'
-    compileSdk 33
-    buildToolsVersion = '33.0.0'
+    compileSdk 34
+    buildToolsVersion = '34.0.0'
 
     signingConfigs {
         release {
@@ -26,7 +26,7 @@ android {
     defaultConfig {
         applicationId 'com.example.ting'
         minSdk 23
-        targetSdk 33
+        targetSdk 34
         versionCode 1
         versionName "1.0"
 
@@ -48,7 +48,6 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
         freeCompilerArgs += [
-                "-opt-in=kotlin.RequiresOptIn",
                 "-Xcontext-receivers"
         ]
     }
@@ -62,11 +61,14 @@ android {
         dataBinding true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion "1.4.4"
+        kotlinCompilerExtensionVersion "1.5.1"
     }
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+        jniLibs {
+            useLegacyPackaging true
         }
     }
 }
@@ -74,28 +76,28 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar', '*.aar'])
 
-    def composeBom = platform('androidx.compose:compose-bom:2023.04.00')
+    def composeBom = platform('androidx.compose:compose-bom:2023.06.01')
     implementation composeBom
     androidTestImplementation composeBom
 
-    implementation 'androidx.core:core-ktx:1.10.0'
+    implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
     //Compose
-    implementation 'androidx.compose.material3:material3:1.1.0-beta02'
+    implementation 'androidx.compose.material3:material3'
     implementation "androidx.compose.ui:ui-tooling-preview"
     debugImplementation "androidx.compose.ui:ui-tooling"
     androidTestImplementation "androidx.compose.ui:ui-test-junit4"
     debugImplementation "androidx.compose.ui:ui-test-manifest"
     implementation "androidx.compose.material:material-icons-extended"
     implementation "androidx.compose.runtime:runtime-livedata"
-    implementation 'androidx.paging:paging-compose:1.0.0-alpha18'
+    implementation 'androidx.paging:paging-compose:3.2.0'
     implementation 'androidx.constraintlayout:constraintlayout-compose:1.0.1'
-    implementation 'io.coil-kt:coil-compose:2.3.0'
+    implementation 'io.coil-kt:coil-compose:2.4.0'
     implementation 'dev.burnoo:compose-remember-preference:1.0.1'
-    implementation 'io.github.fornewid:material-motion-compose-core:0.11.2'
+    implementation 'io.github.fornewid:material-motion-compose-core:0.12.3'
 
     //Gson
     implementation 'com.google.code.gson:gson:2.10.1'
@@ -104,22 +106,21 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
 
     //Serialization
-    implementation 'io.github.fantyflow:converter-json:1.5.0'
-    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0'
+    implementation 'io.github.flowfan:converter-json:1.5.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1'
 
     //Coil
-    implementation 'io.coil-kt:coil:2.3.0'
+    implementation 'io.coil-kt:coil:2.4.0'
 
     //Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
     implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
 
     //ViewModel
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$viewModel_version"
-    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$viewModel_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-compose:$viewModel_version"
 
     //Paging3
-    implementation 'androidx.paging:paging-runtime-ktx:3.1.1'
+    implementation 'androidx.paging:paging-runtime-ktx:3.2.0'
 
     //SwipeRefresh
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
@@ -128,7 +129,7 @@ dependencies {
     implementation 'androidx.startup:startup-runtime:1.1.1'
 
     //SplashScreen
-    implementation 'androidx.core:core-splashscreen:1.0.0'
+    implementation 'androidx.core:core-splashscreen:1.0.1'
 
     //DataStore
     implementation 'androidx.datastore:datastore-preferences:1.0.0'
@@ -151,7 +152,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-swiperefresh:$accompanist_version"
 
     //Krypto
-    implementation 'com.soywiz.korlibs.krypto:krypto-android:3.4.0'
+    implementation 'com.soywiz.korlibs.krypto:krypto-android:4.0.9'
 
     //Media3
     implementation "androidx.media3:media3-exoplayer:$media3_version"
