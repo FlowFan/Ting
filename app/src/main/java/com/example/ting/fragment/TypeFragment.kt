@@ -98,12 +98,12 @@ private fun DiscoverPage(
     viewModel: TingViewModel,
     navController: NavController
 ) {
-    val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
     val categoryAll by viewModel.categoryAll.observeAsState(TypeList())
     val categorySelect by viewModel.categorySelected.collectAsStateWithLifecycle()
     var editing by remember { mutableStateOf(false) }
     val category = listOf("全部", "官方", "精品") + categorySelect
+    val pagerState = rememberPagerState { category.size }
 
     MaterialFadeThrough(targetState = editing) { edit ->
         if (edit) {
@@ -153,7 +153,6 @@ private fun DiscoverPage(
                     }
                 }
                 HorizontalPager(
-                    pageCount = category.size,
                     state = pagerState
                 ) {
                     TopPlaylist(viewModel, category[it], navController)

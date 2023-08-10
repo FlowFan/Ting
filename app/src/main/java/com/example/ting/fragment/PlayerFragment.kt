@@ -136,7 +136,7 @@ private fun PlayerUI(
     viewModel: TingViewModel,
     navController: NavController
 ) {
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState { 2 }
     val currentMediaItem = rememberCurrentMediaItem(player)
     val progress = rememberPlayProgress(player)
     val isPlaying = rememberPlayState(player)
@@ -299,7 +299,6 @@ private fun PlayerUI(
         }
     ) {
         HorizontalPager(
-            pageCount = 2,
             state = pagerState,
             modifier = Modifier
                 .fillMaxSize()
