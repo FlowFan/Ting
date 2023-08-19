@@ -12,11 +12,7 @@ import android.widget.Toast
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.flowWithLifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.lifecycle.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.ting.init.AppInitializer
 import com.example.ting.other.Constants.APP_SECRET
@@ -138,24 +134,25 @@ fun <T> Flow<T>.collectLatestWithLifecycle(
 inline fun RecyclerView.setOnItemClickListener(crossinline listener: (Int, RecyclerView.ViewHolder) -> Unit) {
     addOnItemTouchListener(object : RecyclerView.OnItemTouchListener {
         val gestureDetector = GestureDetector(context, object : GestureDetector.OnGestureListener {
-            override fun onDown(p0: MotionEvent): Boolean = false
+            override fun onDown(e: MotionEvent): Boolean = false
 
-            override fun onShowPress(p0: MotionEvent) {
+            override fun onShowPress(e: MotionEvent) {
             }
 
-            override fun onSingleTapUp(p0: MotionEvent): Boolean {
-                findChildViewUnder(p0.x, p0.y)?.let { child ->
+            override fun onSingleTapUp(e: MotionEvent): Boolean {
+                findChildViewUnder(e.x, e.y)?.let { child ->
                     listener(getChildAdapterPosition(child), getChildViewHolder(child))
                 }
                 return false
             }
 
-            override fun onScroll(p0: MotionEvent?, p1: MotionEvent, p2: Float, p3: Float): Boolean = false
+            override fun onScroll(e1: MotionEvent?, e2: MotionEvent, distanceX: Float, distanceY: Float): Boolean =
+                false
 
-            override fun onLongPress(p0: MotionEvent) {
+            override fun onLongPress(e: MotionEvent) {
             }
 
-            override fun onFling(p0: MotionEvent?, p1: MotionEvent, p2: Float, p3: Float): Boolean = false
+            override fun onFling(e1: MotionEvent?, e2: MotionEvent, velocityX: Float, velocityY: Float): Boolean = false
         })
 
         override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
