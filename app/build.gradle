@@ -61,7 +61,7 @@ android {
         dataBinding true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion "1.5.1"
+        kotlinCompilerExtensionVersion "1.5.2"
     }
     packagingOptions {
         resources {
@@ -105,8 +105,8 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
 
     //Serialization
-    implementation 'io.github.flowfan:converter-json:1.5.1'
-    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.1'
+    implementation 'io.github.flowfan:converter-json:1.6.0'
+    implementation 'org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0'
 
     //Coil
     implementation 'io.coil-kt:coil:2.4.0'
@@ -152,7 +152,7 @@ dependencies {
     implementation "com.google.accompanist:accompanist-swiperefresh:$accompanist_version"
 
     //Krypto
-    implementation 'com.soywiz.korlibs.krypto:krypto-android:4.0.9'
+    implementation 'com.soywiz.korlibs.krypto:krypto-android:4.0.10'
 
     //Media3
     implementation "androidx.media3:media3-exoplayer:$media3_version"
