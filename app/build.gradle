@@ -61,7 +61,7 @@ android {
         dataBinding true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion "1.5.2"
+        kotlinCompilerExtensionVersion "1.5.3"
     }
     packagingOptions {
         resources {
@@ -136,7 +136,7 @@ dependencies {
 
     //Hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
-    kapt "com.google.dagger:hilt-compiler:$hilt_version"
+    ksp "com.google.dagger:hilt-compiler:$hilt_version"
 
     //Room
     implementation "androidx.room:room-runtime:$room_version"
