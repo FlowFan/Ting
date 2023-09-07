@@ -209,7 +209,7 @@ private fun PlayerUI(
                     val percent = progress?.let { (it.first * 100f / it.second) / 100f } ?: 0f
                     Text(text = progress?.first?.formatAsPlayerTime() ?: "00:00")
                     var valueChanger by remember(percent) {
-                        mutableStateOf(percent)
+                        mutableFloatStateOf(percent)
                     }
                     Slider(
                         modifier = Modifier.weight(1f),
@@ -337,7 +337,7 @@ private fun PlayerUI(
                         val listState = rememberLazyListState()
 
                         var currentLyricIndex by remember {
-                            mutableStateOf(0)
+                            mutableIntStateOf(0)
                         }
 
                         LaunchedEffect(progress) {

@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -51,7 +50,6 @@ import com.example.ting.model.TypeList
 import com.example.ting.other.toast
 import com.example.ting.ui.theme.TingTheme
 import com.example.ting.viewmodel.TingViewModel
-import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material3.placeholder
 import com.google.accompanist.placeholder.material3.shimmer
@@ -92,7 +90,7 @@ class TypeFragment : Fragment() {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun DiscoverPage(
     viewModel: TingViewModel,
@@ -162,6 +160,7 @@ private fun DiscoverPage(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun CategoryEditor(
     categoryAll: TypeList,
@@ -207,7 +206,7 @@ private fun CategoryEditor(
                 item {
                     FlowRow(
                         modifier = Modifier.fillMaxWidth(),
-                        mainAxisSpacing = 8.dp
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         categoryAll.sub.filter { it.category == k.toInt() }.forEach { sub ->
                             if (category.contains(sub.name)) {
