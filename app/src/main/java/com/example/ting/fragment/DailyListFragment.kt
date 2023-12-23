@@ -1,22 +1,20 @@
 package com.example.ting.fragment
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.Icons.AutoMirrored.Rounded
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,27 +24,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.navigation.fragment.findNavController
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.ting.databinding.FragmentDailyListBinding
-import com.example.ting.exoplayer.MusicService
 import com.example.ting.model.DailyList
+import com.example.ting.other.Constants.DOMAIN
 import com.example.ting.other.Constants.TING_PROTOCOL
-import com.example.ting.other.asyncGetSessionPlayer
-import com.example.ting.other.buildMediaItem
-import com.example.ting.other.metadata
 import com.example.ting.ui.theme.TingTheme
 import com.example.ting.viewmodel.TingViewModel
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.material3.placeholder
-import com.google.accompanist.placeholder.material3.shimmer
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
+@OptIn(ExperimentalMaterial3Api::class)
 class DailyListFragment : Fragment() {
     private var _binding: FragmentDailyListBinding? = null
     private val binding get() = _binding!!
@@ -61,20 +55,19 @@ class DailyListFragment : Fragment() {
         return binding.root
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.composeView.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 TingTheme(false) {
-                    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-                    val dailyList by viewModel.dailyList.observeAsState(DailyList())
+                    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+                    val dailyList by viewModel.dailyList.collectAsStateWithLifecycle()
+
                     Scaffold(
                         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                         topBar = {
                             LargeTopAppBar(
-                                modifier = Modifier.padding(WindowInsets.statusBars.asPaddingValues()),
                                 title = {
                                     Text(text = "每日推荐")
                                 },
@@ -82,37 +75,11 @@ class DailyListFragment : Fragment() {
                                     IconButton(onClick = {
                                         findNavController().navigateUp()
                                     }) {
-                                        Icon(Icons.Rounded.ArrowBack, "Back")
+                                        Icon(Rounded.ArrowBack, null)
                                     }
                                 },
                                 actions = {
-                                    IconButton(onClick = {
-                                        requireContext().asyncGetSessionPlayer(MusicService::class.java) {
-                                            it.apply {
-                                                stop()
-                                                clearMediaItems()
-                                                dailyList.data.dailySongs.forEach { track ->
-                                                    addMediaItem(
-                                                        buildMediaItem(track.id.toString()) {
-                                                            metadata {
-                                                                setTitle(track.name)
-                                                                setArtist(track.ar.joinToString(", ") { ar -> ar.name })
-                                                                setRequestMetadata(
-                                                                    MediaItem.RequestMetadata
-                                                                        .Builder()
-                                                                        .setMediaUri(Uri.parse("$TING_PROTOCOL://music?id=${track.id}"))
-                                                                        .build()
-                                                                )
-                                                                setArtworkUri(Uri.parse(track.al.picUrl))
-                                                            }
-                                                        }
-                                                    )
-                                                }
-                                                prepare()
-                                                play()
-                                            }
-                                        }
-                                    }) {
+                                    IconButton(onClick = { }) {
                                         Icon(Icons.Rounded.PlayArrow, null)
                                     }
                                 },
@@ -134,8 +101,15 @@ class DailyListFragment : Fragment() {
                             ),
                             verticalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            itemsIndexed(dailyList.data.dailySongs) { index, item ->
-                                DailyList(index = index, track = item)
+                            itemsIndexed(
+                                items = dailyList.data.dailySongs,
+                                key = { _, item -> item.id }
+                            ) { index, item ->
+                                DailyList(
+                                    viewModel = viewModel,
+                                    index = index,
+                                    track = item
+                                )
                             }
                         }
                     }
@@ -152,9 +126,10 @@ class DailyListFragment : Fragment() {
 
 @Composable
 private fun DailyList(
-    index: Int, track: DailyList.Data.DailySong
+    viewModel: TingViewModel,
+    index: Int,
+    track: DailyList.Data.DailySong
 ) {
-    val context = LocalContext.current
     Surface(
         modifier = Modifier.fillMaxWidth(),
         tonalElevation = 16.dp,
@@ -166,22 +141,18 @@ private fun DailyList(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = "${index + 1}")
-            val painter = rememberAsyncImagePainter(model = track.al.picUrl)
-            Image(
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(track.al.picUrl)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = null,
                 modifier = Modifier
                     .clip(RoundedCornerShape(4.dp))
-                    .placeholder(
-                        visible = painter.state is AsyncImagePainter.State.Loading,
-                        highlight = PlaceholderHighlight.shimmer()
-                    )
                     .size(50.dp),
-                painter = painter,
-                contentDescription = null,
                 contentScale = ContentScale.FillBounds
             )
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = track.name,
                     overflow = TextOverflow.Ellipsis,
@@ -196,29 +167,21 @@ private fun DailyList(
                 )
             }
             IconButton(onClick = {
-                context.asyncGetSessionPlayer(MusicService::class.java) {
-                    it.apply {
-                        stop()
-                        clearMediaItems()
-                        addMediaItem(
-                            buildMediaItem(track.id.toString()) {
-                                metadata {
-                                    setTitle(track.name)
-                                    setArtist(track.ar.joinToString(", ") { ar -> ar.name })
-                                    setRequestMetadata(
-                                        MediaItem.RequestMetadata
-                                            .Builder()
-                                            .setMediaUri(Uri.parse("$TING_PROTOCOL://music?id=${track.id}"))
-                                            .build()
-                                    )
-                                    setArtworkUri(Uri.parse(track.al.picUrl))
-                                }
-                            }
+                viewModel.play(
+                    MediaItem
+                        .Builder()
+                        .setMediaId("${track.id}")
+                        .setUri("${TING_PROTOCOL}://${DOMAIN}?id=${track.id}".toUri())
+                        .setMediaMetadata(
+                            MediaMetadata
+                                .Builder()
+                                .setTitle(track.name)
+                                .setArtist(track.ar.joinToString(", ") { ar -> ar.name })
+                                .setArtworkUri(track.al.picUrl.toUri())
+                                .build()
                         )
-                        prepare()
-                        play()
-                    }
-                }
+                        .build()
+                )
             }) {
                 Icon(Icons.Rounded.PlayArrow, null)
             }

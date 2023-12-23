@@ -5,50 +5,48 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Logout
+import androidx.compose.material.icons.automirrored.rounded.Logout
 import androidx.compose.material.icons.rounded.Menu
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.dp
-import androidx.core.content.edit
+import androidx.datastore.preferences.core.edit
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
-import coil.compose.AsyncImagePainter
+import androidx.navigation.fragment.findNavController
+import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
+import coil.request.ImageRequest
 import com.example.ting.databinding.FragmentUserCenterBinding
 import com.example.ting.model.UserPlaylist
-import com.example.ting.other.sharedPreferencesOf
+import com.example.ting.other.cookieDataStore
 import com.example.ting.ui.theme.TingTheme
 import com.example.ting.viewmodel.TingViewModel
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.material3.placeholder
-import com.google.accompanist.placeholder.material3.shimmer
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@AndroidEntryPoint
 class UserCenterFragment : Fragment() {
     private var _binding: FragmentUserCenterBinding? = null
     private val binding get() = _binding!!
@@ -81,24 +79,24 @@ class UserCenterFragment : Fragment() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 private fun RequireLoginVisible(
     viewModel: TingViewModel,
     navController: NavController
 ) {
     val userData by viewModel.userData.collectAsStateWithLifecycle()
-    val playlists by viewModel.userPlaylist.collectAsStateWithLifecycle()
     if (userData.account.id != 0L) {
+        val playlists by viewModel.userPlaylist.collectAsStateWithLifecycle()
         LaunchedEffect(userData) {
             if (playlists.playlist.isEmpty()) {
-                viewModel.refreshLibraryPage(userData.account.id)
+                viewModel.refreshUserPlaylist(userData.account.id)
             }
         }
+        val context = LocalContext.current
         Scaffold(
             topBar = {
                 TopAppBar(
-                    modifier = Modifier.padding(WindowInsets.statusBars.asPaddingValues()),
                     title = {
                         Text(text = userData.profile.nickname)
                     },
@@ -108,10 +106,6 @@ private fun RequireLoginVisible(
                             modifier = Modifier
                                 .padding(16.dp)
                                 .clip(CircleShape)
-                                .placeholder(
-                                    visible = painter.state is AsyncImagePainter.State.Loading,
-                                    highlight = PlaceholderHighlight.shimmer()
-                                )
                                 .size(50.dp),
                             painter = painter,
                             contentDescription = null,
@@ -122,34 +116,34 @@ private fun RequireLoginVisible(
                         Icon(
                             modifier = Modifier
                                 .clickable {
-                                    sharedPreferencesOf("cookie").edit {
-                                        clear()
+                                    viewModel.viewModelScope.launch {
+                                        context.cookieDataStore.edit {
+                                            it.clear()
+                                        }
+                                        viewModel.logout()
                                     }
-                                    viewModel.init()
                                 }
                                 .padding(8.dp),
-                            imageVector = Icons.Rounded.Logout,
+                            imageVector = Icons.AutoMirrored.Rounded.Logout,
                             contentDescription = "Search"
                         )
                     },
                     colors = TopAppBarDefaults.topAppBarColors()
                 )
             }
-        ) { padding ->
-            var refreshing by remember { mutableStateOf(false) }
-            val scope = rememberCoroutineScope()
-            val pullRefreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = {
-                viewModel.refreshLibraryPage(userData.account.id)
-                scope.launch {
-                    refreshing = true
+        ) { innerPadding ->
+            val state = rememberPullToRefreshState()
+            if (state.isRefreshing) {
+                LaunchedEffect(true) {
+                    viewModel.refreshUserPlaylist(userData.account.id)
                     delay(1000)
-                    refreshing = false
+                    state.endRefresh()
                 }
-            })
+            }
             Box(
                 Modifier
-                    .pullRefresh(pullRefreshState)
-                    .padding(padding)
+                    .nestedScroll(state.nestedScrollConnection)
+                    .padding(innerPadding)
             ) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
@@ -169,12 +163,18 @@ private fun RequireLoginVisible(
                             }
                         }
 
-                        items(it.component2()) { item ->
+                        items(
+                            items = it.component2(),
+                            key = { item -> item.id }
+                        ) { item ->
                             PlayListItem(item, navController)
                         }
                     }
                 }
-                PullRefreshIndicator(refreshing, pullRefreshState, Modifier.align(Alignment.TopCenter))
+                PullToRefreshContainer(
+                    state = state,
+                    modifier = Modifier.align(Alignment.TopCenter)
+                )
             }
         }
     } else {
@@ -214,19 +214,17 @@ private fun PlayListItem(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val painter = rememberAsyncImagePainter(model = playlist.coverImgUrl)
-            Image(
-                painter = painter,
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(playlist.coverImgUrl)
+                    .crossfade(true)
+                    .build(),
                 contentDescription = null,
                 modifier = Modifier
                     .clip(RoundedCornerShape(10))
                     .aspectRatio(1f)
                     .heightIn(min = 100.dp)
-                    .fillMaxHeight()
-                    .placeholder(
-                        visible = painter.state is AsyncImagePainter.State.Loading,
-                        highlight = PlaceholderHighlight.shimmer()
-                    ),
+                    .fillMaxHeight(),
                 contentScale = ContentScale.FillHeight
             )
 

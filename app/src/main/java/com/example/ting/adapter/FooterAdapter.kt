@@ -9,11 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.ting.R
 import com.example.ting.databinding.ItemFooterBinding
 
-class FooterAdapter(private val retry: () -> Unit) : LoadStateAdapter<FooterAdapter.FooterViewHolder>() {
+class FooterAdapter : LoadStateAdapter<FooterAdapter.FooterViewHolder>() {
     inner class FooterViewHolder(val binding: ItemFooterBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onBindViewHolder(holder: FooterViewHolder, loadState: LoadState) {
-        holder.binding.apply {
+        with(holder.binding) {
             progressBar.isVisible = loadState is LoadState.Loading
             holder.itemView.isClickable = loadState is LoadState.Error
             when (loadState) {
@@ -24,9 +24,6 @@ class FooterAdapter(private val retry: () -> Unit) : LoadStateAdapter<FooterAdap
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): FooterViewHolder {
-        val holder = FooterViewHolder(ItemFooterBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-        holder.itemView.setOnClickListener { retry() }
-        return holder
-    }
+    override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): FooterViewHolder =
+        FooterViewHolder(ItemFooterBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 }

@@ -1,26 +1,27 @@
 package com.example.ting.other
 
 object Constants {
-    const val APP_SECRET = "8646d66d6abe2efd14f2891f9fd1c8af"
+    const val SHP_DATASTORE = "shp_datastore"
+    const val KEY_FIRST_START = "first_start"
+    const val APP_DATABASE = "app_database"
+
     const val APP_KEY = "9f9ef8f10bebeaa83e71e62f935bede8"
     const val PACK_ID = "com.app.test.android"
-    const val APP_DATABASE = "app_database"
-    const val SHP_DATASTORE = "shp_datastore"
-    const val KEY_LAST_OAID = "last_oaid"
-    const val KEY_FIRST_START = "first_start"
-    const val BASE_URL = "https://api.ximalaya.com/openapi-gateway-app/"
+    const val APP_SECRET = "8646d66d6abe2efd14f2891f9fd1c8af"
 
-    private const val CLIENT_OS_TYPE = 2
-    private const val DEVICE_ID = "a73672ed56ae694e"
-    private const val DEVICE_ID_TYPE = "Android_ID"
-    private const val DEVICE_TYPE = 2
-    private const val SDK_CLIENT_TYPE = 2
-    private const val SDK_VERSION = "v8.0.7"
-
-    //获取推荐专辑
+    const val CLIENT_OS_TYPE = 2
+    const val DEVICE_ID_TYPE = "Android_ID"
+    const val DEVICE_TYPE = 2
     const val LIKE_COUNT = 10
-    const val LIKE_KEY =
-        "app_key=$APP_KEY&client_os_type=$CLIENT_OS_TYPE&device_id=$DEVICE_ID&device_id_type=$DEVICE_ID_TYPE&device_type=$DEVICE_TYPE&like_count=$LIKE_COUNT&pack_id=$PACK_ID&sdk_client_type=$SDK_CLIENT_TYPE&sdk_version=$SDK_VERSION"
+    const val SDK_CLIENT_TYPE = 2
+    const val SDK_VERSION = "v8.0.7"
 
+    const val DEVICE_ID = "device_id"
+    const val ACCESS_TOKEN = "access_token"
+
+    const val PAGE_SIZE = 10
+
+    const val COOKIE_DATASTORE = "cookie_datastore"
+    const val DOMAIN = "music.163.com"
     const val TING_PROTOCOL = "ting"
 }

@@ -1,63 +1,42 @@
 package com.example.ting.fragment
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.DashboardCustomize
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.dp
-import androidx.core.content.edit
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.itemKey
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
 import com.example.ting.databinding.FragmentTypeBinding
-import com.example.ting.init.AppInitializer
-import com.example.ting.model.HighQualityPlaylist
-import com.example.ting.model.Playlists
-import com.example.ting.model.TypeList
 import com.example.ting.other.toast
 import com.example.ting.ui.theme.TingTheme
 import com.example.ting.viewmodel.TingViewModel
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.material3.placeholder
-import com.google.accompanist.placeholder.material3.shimmer
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import soup.compose.material.motion.MaterialFadeThrough
 
-@AndroidEntryPoint
 class TypeFragment : Fragment() {
     private var _binding: FragmentTypeBinding? = null
     private val binding get() = _binding!!
@@ -90,225 +69,83 @@ class TypeFragment : Fragment() {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun DiscoverPage(
     viewModel: TingViewModel,
     navController: NavController
 ) {
-    val scope = rememberCoroutineScope()
-    val categoryAll by viewModel.categoryAll.observeAsState(TypeList())
-    val categorySelect by viewModel.categorySelected.collectAsStateWithLifecycle()
-    var editing by remember { mutableStateOf(false) }
-    val category = listOf("全部", "官方", "精品") + categorySelect
+    val (editing, setEditing) = remember { mutableStateOf(false) }
+    val category = listOf("全部", "官方", "精品")
     val pagerState = rememberPagerState { category.size }
+    val coroutineScope = rememberCoroutineScope()
 
-    MaterialFadeThrough(targetState = editing) { edit ->
+    Crossfade(
+        targetState = editing,
+        label = "editing"
+    ) { edit ->
         if (edit) {
-            CategoryEditor(categoryAll, categorySelect) {
-                scope.launch {
-                    pagerState.scrollToPage(0)
+            Scaffold(topBar = {
+                TopAppBar(
+                    title = { Text(text = "自定义声音类型") },
+                    navigationIcon = {
+                        IconButton(onClick = { setEditing(false) }) {
+                            Icon(Icons.AutoMirrored.Rounded.ArrowBack, null)
+                        }
+                    },
+                    actions = {
+                        Button(onClick = {
+                            coroutineScope.launch {
+                                pagerState.scrollToPage(0)
+                            }
+                            "保存成功".toast()
+                            setEditing(false)
+                        }) {
+                            Text(text = "保存")
+                        }
+                    }
+                )
+            }) { innerPadding ->
+                Column(modifier = Modifier.padding(innerPadding)) {
+
                 }
-                AppInitializer.mContext.getSharedPreferences(
-                    "playlist_category",
-                    Context.MODE_PRIVATE
-                ).edit {
-                    putString("data", it.distinct().joinToString(","))
-                }
-                viewModel.refreshSelectedCategory()
-                "保存成功".toast()
-                editing = false
             }
         } else {
-            Column {
+            Column(modifier = Modifier.statusBarsPadding()) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     ScrollableTabRow(
-                        modifier = Modifier.weight(1f),
                         selectedTabIndex = pagerState.currentPage,
+                        modifier = Modifier.weight(1f),
+                        containerColor = Color.Transparent,
                         edgePadding = 0.dp
                     ) {
-                        category.forEachIndexed { index, sub ->
+                        category.forEachIndexed { index, s ->
                             Tab(
                                 selected = pagerState.currentPage == index,
                                 onClick = {
-                                    scope.launch {
+                                    coroutineScope.launch {
                                         pagerState.animateScrollToPage(index)
                                     }
                                 }
                             ) {
                                 Text(
-                                    text = sub,
+                                    text = s,
                                     modifier = Modifier.padding(4.dp)
                                 )
                             }
                         }
                     }
-
-                    IconButton(onClick = {
-                        editing = true
-                    }) {
+                    IconButton(onClick = { setEditing(true) }) {
                         Icon(Icons.Rounded.DashboardCustomize, null)
                     }
                 }
-                HorizontalPager(
-                    state = pagerState
-                ) {
-                    TopPlaylist(viewModel, category[it], navController)
-                }
-            }
-        }
-    }
-}
 
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun CategoryEditor(
-    categoryAll: TypeList,
-    selectedCategory: List<String>,
-    onSave: (List<String>) -> Unit
-) {
-    var category by remember(selectedCategory) {
-        mutableStateOf(selectedCategory)
-    }
-    Column {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Text(
-                text = "自定义声音类型",
-                modifier = Modifier.weight(1f),
-                style = MaterialTheme.typography.headlineSmall
-            )
-            Button(onClick = {
-                // 保存前重排序一遍
-                val list =
-                    categoryAll.sub.filter { category.contains(it.name) }.map { it.name }.toList()
-                onSave(list)
-            }) {
-                Text(text = "保存")
-            }
-        }
+                HorizontalPager(state = pagerState) {
+                    LazyVerticalGrid(columns = GridCells.Fixed(3)) {
 
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            contentPadding = PaddingValues(16.dp)
-        ) {
-            categoryAll.categories.entries.forEach { (k, v) ->
-                item {
-                    Text(text = v)
-                }
-
-                item {
-                    FlowRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        categoryAll.sub.filter { it.category == k.toInt() }.forEach { sub ->
-                            if (category.contains(sub.name)) {
-                                OutlinedButton(onClick = {
-                                    category = ArrayList(
-                                        category.toMutableList().apply { remove(sub.name) })
-                                }) {
-                                    Text(text = sub.name)
-                                }
-                            } else {
-                                TextButton(onClick = {
-                                    category =
-                                        ArrayList(category.toMutableList().apply { add(sub.name) })
-                                }) {
-                                    Text(text = sub.name)
-                                }
-                            }
-                        }
                     }
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun TopPlaylist(
-    viewModel: TingViewModel,
-    category: String,
-    navController: NavController
-) {
-    if (category == "精品") {
-        val highQualityPlaylist by viewModel.highQualityPlaylist.observeAsState(HighQualityPlaylist())
-        LazyVerticalGrid(
-            columns = GridCells.Adaptive(110.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(highQualityPlaylist.playlists) { playlist ->
-                PlaylistItem(
-                    playlist = playlist,
-                    navController = navController
-                )
-            }
-        }
-        return
-    }
-
-    val items = (viewModel.playlistCatPager[category] ?: viewModel.getTopPlaylist(category).also {
-        viewModel.playlistCatPager[category] = it
-    }).collectAsLazyPagingItems()
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(110.dp),
-        modifier = Modifier.fillMaxSize()
-    ) {
-        items(
-            count = items.itemCount,
-            key = items.itemKey { it.id }
-        ) { index ->
-            PlaylistItem(
-                playlist = items[index]!!,
-                navController = navController
-            )
-        }
-    }
-}
-
-@Composable
-private fun PlaylistItem(
-    playlist: Playlists,
-    navController: NavController
-) {
-    Column(
-        modifier = Modifier
-            .clip(RoundedCornerShape(4.dp))
-            .clickable {
-                navController.navigate(
-                    TypeFragmentDirections.actionTypeFragmentToSongListFragment(
-                        playlist.id
-                    )
-                )
-            }
-            .padding(8.dp)
-            .width(IntrinsicSize.Min),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        val painter = rememberAsyncImagePainter(model = playlist.coverImgUrl)
-        Image(
-            modifier = Modifier
-                .clip(RoundedCornerShape(4.dp))
-                .placeholder(
-                    visible = painter.state is AsyncImagePainter.State.Loading,
-                    highlight = PlaceholderHighlight.shimmer()
-                )
-                .size(100.dp),
-            painter = painter,
-            contentDescription = null,
-            contentScale = ContentScale.FillBounds
-        )
-        Text(
-            text = playlist.name,
-            style = MaterialTheme.typography.labelMedium,
-            maxLines = 2
-        )
     }
 }

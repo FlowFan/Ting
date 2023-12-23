@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-sdk tools:overrideLibrary="dev.burnoo.compose.rememberpreference" />
     <!--连接网络-->
     <uses-permission android:name="android.permission.INTERNET" />
     <!--用于管理监听网络状态的变化-->
@@ -13,45 +12,34 @@
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
     <!--获取电话的状态,在打电话的时候暂停播放-->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <!--target >=28 需要设置此权限 -->
+    <!--target >=28 需要设置此权限-->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!--target >=34 需要设置此权限-->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <!--使 CPU 保持运行状态-->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
     <application
         android:name="com.example.ting.init.MyApplication"
         android:allowBackup="true"
-        android:fullBackupOnly="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:enableOnBackInvokedCallback="true"
+        android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Ting.MyStyle.Base">
+        android:theme="@style/Theme.Ting"
+        tools:targetApi="34">
         <activity
-            android:name="com.example.ting.activity.MainActivity"
-            android:configChanges="orientation|screenSize|keyboardHidden"
-            android:exported="true"
-            android:launchMode="singleInstance"
-            android:theme="@style/Theme.Ting.MyStyle"
-            android:windowSoftInputMode="adjustResize">
+            android:name=".activity.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <service
-            android:name="com.ximalaya.ting.android.opensdk.player.service.XmPlayerService"
-            android:process=":player" />
-        <service
-            android:name=".exoplayer.MusicService"
-            android:exported="false"
-            android:foregroundServiceType="mediaPlayback">
-            <intent-filter>
-                <action android:name="androidx.media3.session.MediaLibraryService" />
-            </intent-filter>
-        </service>
-
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
@@ -61,6 +49,14 @@
                 android:name="com.example.ting.init.AppInitializer"
                 android:value="androidx.startup" />
         </provider>
+        <service
+            android:name=".exoplayer.MusicService"
+            android:exported="false"
+            android:foregroundServiceType="mediaPlayback">
+            <intent-filter>
+                <action android:name="androidx.media3.session.MediaSessionService" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>
