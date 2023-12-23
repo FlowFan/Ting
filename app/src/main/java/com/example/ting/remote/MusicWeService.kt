@@ -57,7 +57,7 @@ interface MusicWeService {
     @FormUrlEncoded
     suspend fun loginCellphone(
         @FieldMap body: Map<String, String>
-    ): LoginResponse
+    ): JsonObject
 
     @POST("/weapi/sms/captcha/sent")
     @FormUrlEncoded
