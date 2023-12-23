@@ -31,9 +31,7 @@ import com.example.ting.databinding.FragmentLoginBinding
 import com.example.ting.other.toast
 import com.example.ting.ui.theme.TingTheme
 import com.example.ting.viewmodel.TingViewModel
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
 class LoginFragment : Fragment() {
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
@@ -75,7 +73,6 @@ private fun LoginScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                modifier = Modifier.padding(WindowInsets.statusBars.asPaddingValues()),
                 title = {
                     Text(text = "登录")
                 },
@@ -102,17 +99,17 @@ private fun Body(
     navController: NavController
 ) {
     val loginState by viewModel.loginState.collectAsStateWithLifecycle()
-    var showDialog by remember { mutableStateOf(false) }
+    val (showDialog, setShowDialog) = remember { mutableStateOf(false) }
     val isSend by viewModel.isSend.collectAsStateWithLifecycle()
 
     AnimatedVisibility(showDialog) {
         AlertDialog(
             onDismissRequest = {
-                showDialog = false
+                setShowDialog(false)
             },
             confirmButton = {
                 TextButton(onClick = {
-                    showDialog = false
+                    setShowDialog(false)
                 }) {
                     Text(text = "关闭")
                 }
@@ -122,14 +119,14 @@ private fun Body(
             },
             text = {
                 Text(
-                    when (loginState.code) {
+                    when (loginState) {
                         0 -> "登录中, 请稍等..."
                         200 -> "登录成功！"
                         400 -> "没有此账号!"
                         502 -> "密码错误!"
                         501 -> "登录时发生错误，请检查你的网络连接！"
                         509 -> "请求频繁，请稍后重试！"
-                        else -> "未知错误: ${loginState.code}"
+                        else -> "未知错误: $loginState"
                     }
                 )
             }
@@ -137,17 +134,17 @@ private fun Body(
     }
 
     LaunchedEffect(loginState) {
-        showDialog = loginState.code != 0
-        if (loginState.code == 200) {
+        setShowDialog(loginState != 0)
+        if (loginState == 200) {
             // 登录成功
             "登录成功".toast()
-            viewModel.init()
+            viewModel.refreshUserData()
             navController.navigateUp()
         }
     }
 
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val (username, setUsername) = remember { mutableStateOf("") }
+    val (password, setPassword) = remember { mutableStateOf("") }
     Column(
         modifier = Modifier.width(IntrinsicSize.Min),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -165,7 +162,7 @@ private fun Body(
             value = username,
             onValueChange = {
                 if (it.length <= 11) {
-                    username = it
+                    setUsername(it)
                 }
             },
             singleLine = true,
@@ -183,15 +180,13 @@ private fun Body(
             )
         )
 
-        var passwordVisible by remember {
-            mutableStateOf(false)
-        }
+        val (passwordVisible, setPasswordVisible) = remember { mutableStateOf(false) }
         if (!isSend) {
             OutlinedTextField(
                 value = password,
                 onValueChange = {
                     if (it.length <= 16) {
-                        password = it
+                        setPassword(it)
                     }
                 },
                 label = {
@@ -200,7 +195,7 @@ private fun Body(
                 visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
                     IconButton(onClick = {
-                        passwordVisible = !passwordVisible
+                        setPasswordVisible(!passwordVisible)
                     }) {
                         Icon(
                             imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
@@ -218,7 +213,7 @@ private fun Body(
                 value = password,
                 onValueChange = {
                     if (it.length <= 4) {
-                        password = it
+                        setPassword(it)
                     }
                 },
                 label = {
@@ -234,12 +229,8 @@ private fun Body(
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
-                showDialog = true
-                if (!isSend) {
-                    viewModel.loginCellPhone(username, password)
-                } else {
-                    viewModel.loginCaptcha(username, password)
-                }
+                setShowDialog(true)
+                viewModel.login(username, password, isSend)
             }
         ) {
             Text(text = "登录")

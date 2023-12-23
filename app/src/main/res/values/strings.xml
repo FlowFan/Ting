@@ -7,9 +7,15 @@
     <string name="footer_loading">正在加载</string>
     <string name="footer_error">加载出错，点击重试</string>
     <string name="footer_success">加载完毕</string>
+    <string name="recommend">推荐</string>
+    <string name="music">声音</string>
+    <string name="user_center">我的</string>
     <string-array name="tab_title">
-        <item>推荐</item>
-        <item>声音</item>
-        <item>我的</item>
+        <item>@string/recommend</item>
+        <item>@string/music</item>
+        <item>@string/user_center</item>
     </string-array>
+    <string name="content_size">%s集</string>
+    <string name="play_count">播放次数：%s</string>
+    <string name="format_time">%02d:%02d</string>
 </resources>

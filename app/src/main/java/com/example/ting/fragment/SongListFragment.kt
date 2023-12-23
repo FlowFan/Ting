@@ -1,11 +1,9 @@
 package com.example.ting.fragment
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,7 +12,11 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.*
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.ArrowUpward
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -29,37 +31,35 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.ting.databinding.FragmentSongListBinding
-import com.example.ting.exoplayer.MusicService
 import com.example.ting.model.SongList
-import com.example.ting.other.Constants.TING_PROTOCOL
-import com.example.ting.other.asyncGetSessionPlayer
-import com.example.ting.other.buildMediaItem
-import com.example.ting.other.metadata
+import com.example.ting.other.Constants
 import com.example.ting.other.toast
 import com.example.ting.ui.theme.TingTheme
 import com.example.ting.viewmodel.TingViewModel
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.material3.placeholder
-import com.google.accompanist.placeholder.material3.shimmer
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
+@OptIn(ExperimentalMaterial3Api::class)
 @AndroidEntryPoint
 class SongListFragment : Fragment() {
     private var _binding: FragmentSongListBinding? = null
     private val binding get() = _binding!!
     private val args by navArgs<SongListFragmentArgs>()
-    private val viewModel by activityViewModels<TingViewModel>()
+    private val viewModel by viewModels<TingViewModel>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.setDetailId(args.id)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -70,28 +70,20 @@ class SongListFragment : Fragment() {
         return binding.root
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.composeView.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 TingTheme(false) {
-                    LaunchedEffect(args.id) {
-                        viewModel.getSongList(args.id)
-                    }
-
                     val lazyListState = rememberLazyListState()
-                    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+                    val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
                     val songList by viewModel.songList.collectAsStateWithLifecycle()
                     val scope = rememberCoroutineScope()
                     Scaffold(
                         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                         topBar = {
                             TopAppBar(
-                                modifier = Modifier.padding(
-                                    WindowInsets.statusBars.asPaddingValues()
-                                ),
                                 title = {
                                     Text(text = "声音详情")
                                 },
@@ -99,7 +91,7 @@ class SongListFragment : Fragment() {
                                     IconButton(onClick = {
                                         findNavController().navigateUp()
                                     }) {
-                                        Icon(Icons.Rounded.ArrowBack, "Back")
+                                        Icon(Icons.AutoMirrored.Rounded.ArrowBack, "Back")
                                     }
                                 },
                                 colors = TopAppBarDefaults.topAppBarColors(
@@ -141,8 +133,15 @@ class SongListFragment : Fragment() {
                             item {
                                 SongIcon(viewModel, songList.playlist)
                             }
-                            itemsIndexed(songList.playlist.tracks) { index, item ->
-                                SongList(index = index, track = item)
+                            itemsIndexed(
+                                items = songList.playlist.tracks,
+                                key = { _, item -> item.id }
+                            ) { index, item ->
+                                SongList(
+                                    viewModel = viewModel,
+                                    index = index,
+                                    track = item
+                                )
                             }
                         }
                     }
@@ -161,11 +160,11 @@ class SongListFragment : Fragment() {
 private fun SongInfo(
     playlist: SongList.Playlist
 ) {
-    var showPlaylistDetailDialog by remember { mutableStateOf(false) }
+    val (showPlaylistDetailDialog, setShowPlaylistDetailDialog) = remember { mutableStateOf(false) }
     if (showPlaylistDetailDialog) {
         AlertDialog(
             onDismissRequest = {
-                showPlaylistDetailDialog = false
+                setShowPlaylistDetailDialog(false)
             },
             title = {
                 Text(text = playlist.name.ifBlank { "歌单信息" })
@@ -177,7 +176,7 @@ private fun SongInfo(
             },
             confirmButton = {
                 TextButton(onClick = {
-                    showPlaylistDetailDialog = false
+                    setShowPlaylistDetailDialog(false)
                 }) {
                     Text(text = "关闭")
                 }
@@ -189,17 +188,15 @@ private fun SongInfo(
         horizontalArrangement = Arrangement.spacedBy(32.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val painter = rememberAsyncImagePainter(model = playlist.coverImgUrl)
-        Image(
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(playlist.coverImgUrl)
+                .crossfade(true)
+                .build(),
+            contentDescription = null,
             modifier = Modifier
                 .size(150.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .placeholder(
-                    visible = painter.state is AsyncImagePainter.State.Loading,
-                    highlight = PlaceholderHighlight.shimmer()
-                ),
-            painter = painter,
-            contentDescription = null,
+                .clip(RoundedCornerShape(8.dp)),
             contentScale = ContentScale.FillBounds
         )
         Column(
@@ -207,7 +204,7 @@ private fun SongInfo(
                 .fillMaxSize()
                 .clip(RoundedCornerShape(8.dp))
                 .clickable {
-                    showPlaylistDetailDialog = true
+                    setShowPlaylistDetailDialog(true)
                 },
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -238,49 +235,36 @@ private fun SongIcon(
     viewModel: TingViewModel,
     playlist: SongList.Playlist
 ) {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Button(onClick = {
-            context.asyncGetSessionPlayer(MusicService::class.java) {
-                it.apply {
-                    scope.launch {
-                        stop()
-                        clearMediaItems()
-                        val mediaList = withContext(Dispatchers.Default) {
-                            playlist.tracks.map { track ->
-                                buildMediaItem(track.id.toString()) {
-                                    metadata {
-                                        setTitle(track.name)
-                                        setArtist(track.ar.joinToString(", ") { ar -> ar.name })
-                                        setRequestMetadata(
-                                            MediaItem.RequestMetadata
-                                                .Builder()
-                                                .setMediaUri(Uri.parse("$TING_PROTOCOL://music?id=${track.id}"))
-                                                .build()
-                                        )
-                                        setArtworkUri(track.al.picUrl.toUri().buildUpon().scheme("https").build())
-                                    }
-                                }
-                            }
-                        }
-                        addMediaItems(mediaList)
-                        prepare()
-                        play()
-                        "开始播放该声音单".toast()
-                    }
-                }
-            }
+            viewModel.play(
+                *playlist.tracks.map {
+                    MediaItem
+                        .Builder()
+                        .setMediaId("${it.id}")
+                        .setUri("${Constants.TING_PROTOCOL}://${Constants.DOMAIN}?id=${it.id}".toUri())
+                        .setMediaMetadata(
+                            MediaMetadata
+                                .Builder()
+                                .setTitle(it.name)
+                                .setArtist(it.ar.joinToString(", ") { ar -> ar.name })
+                                .setArtworkUri(it.al.picUrl.toUri())
+                                .build()
+                        )
+                        .build()
+                }.toTypedArray()
+            )
+            "开始播放该声音单".toast()
         }) {
             Text(text = "播放")
         }
 
         IconButton(onClick = {
-            viewModel.subscribe(playlist.id, playlist.subscribed)
+//            viewModel.subscribe(playlist.id, playlist.subscribed)
         }) {
             Icon(
                 imageVector = if (playlist.subscribed) {
@@ -301,9 +285,10 @@ private fun SongIcon(
 
 @Composable
 private fun SongList(
-    index: Int, track: SongList.Playlist.Track
+    viewModel: TingViewModel,
+    index: Int,
+    track: SongList.Playlist.Track
 ) {
-    val context = LocalContext.current
     Surface(
         modifier = Modifier.fillMaxWidth(),
         tonalElevation = 16.dp,
@@ -315,17 +300,15 @@ private fun SongList(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = "${index + 1}")
-            val painter = rememberAsyncImagePainter(model = track.al.picUrl)
-            Image(
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(track.al.picUrl)
+                    .crossfade(true)
+                    .build(),
+                contentDescription = null,
                 modifier = Modifier
                     .clip(RoundedCornerShape(4.dp))
-                    .placeholder(
-                        visible = painter.state is AsyncImagePainter.State.Loading,
-                        highlight = PlaceholderHighlight.shimmer()
-                    )
                     .size(50.dp),
-                painter = painter,
-                contentDescription = null,
                 contentScale = ContentScale.FillBounds
             )
             Column(modifier = Modifier.weight(1f)) {
@@ -343,29 +326,21 @@ private fun SongList(
                 )
             }
             IconButton(onClick = {
-                context.asyncGetSessionPlayer(MusicService::class.java) {
-                    it.apply {
-                        stop()
-                        clearMediaItems()
-                        addMediaItem(
-                            buildMediaItem(track.id.toString()) {
-                                metadata {
-                                    setTitle(track.name)
-                                    setArtist(track.ar.joinToString(", ") { ar -> ar.name })
-                                    setRequestMetadata(
-                                        MediaItem.RequestMetadata
-                                            .Builder()
-                                            .setMediaUri(Uri.parse("$TING_PROTOCOL://music?id=${track.id}"))
-                                            .build()
-                                    )
-                                    setArtworkUri(Uri.parse(track.al.picUrl))
-                                }
-                            }
+                viewModel.play(
+                    MediaItem
+                        .Builder()
+                        .setMediaId("${track.id}")
+                        .setUri("${Constants.TING_PROTOCOL}://${Constants.DOMAIN}?id=${track.id}".toUri())
+                        .setMediaMetadata(
+                            MediaMetadata
+                                .Builder()
+                                .setTitle(track.name)
+                                .setArtist(track.ar.joinToString(", ") { ar -> ar.name })
+                                .setArtworkUri(track.al.picUrl.toUri())
+                                .build()
                         )
-                        prepare()
-                        play()
-                    }
-                }
+                        .build()
+                )
             }) {
                 Icon(Icons.Rounded.PlayArrow, null)
             }
