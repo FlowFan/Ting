@@ -5,7 +5,7 @@ import retrofit2.http.FieldMap
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 
-interface UrlService {
+fun interface UrlService {
     @POST("/eapi/song/enhance/player/url")
     @FormUrlEncoded
     suspend fun getMusicUrl(

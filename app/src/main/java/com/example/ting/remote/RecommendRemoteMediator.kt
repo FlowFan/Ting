@@ -1,8 +1,5 @@
 package com.example.ting.remote
 
-import android.annotation.SuppressLint
-import android.provider.Settings
-import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
@@ -10,45 +7,80 @@ import androidx.room.withTransaction
 import com.example.ting.db.AppDatabase
 import com.example.ting.init.AppInitializer
 import com.example.ting.model.Album
-import com.example.ting.other.Constants.LIKE_KEY
+import com.example.ting.other.Constants.APP_KEY
+import com.example.ting.other.Constants.CLIENT_OS_TYPE
+import com.example.ting.other.Constants.DEVICE_ID_TYPE
+import com.example.ting.other.Constants.DEVICE_TYPE
+import com.example.ting.other.Constants.LIKE_COUNT
+import com.example.ting.other.Constants.PACK_ID
+import com.example.ting.other.Constants.PAGE_SIZE
+import com.example.ting.other.Constants.SDK_CLIENT_TYPE
+import com.example.ting.other.Constants.SDK_VERSION
 import com.example.ting.other.isConnectedNetwork
 import com.example.ting.other.sig
-import com.ximalaya.ting.android.opensdk.datatrasfer.AccessTokenManager
+import kotlinx.coroutines.CancellationException
 
-@OptIn(ExperimentalPagingApi::class)
 class RecommendRemoteMediator(
+    private val database: AppDatabase,
     private val recommendService: RecommendService,
-    private val database: AppDatabase
+    private val deviceId: String,
+    private val accessToken: String
 ) : RemoteMediator<Int, Album>() {
-    private val accessToken by lazy { AccessTokenManager.getInstanse().accessToken }
-    private val recommendSig by lazy { "access_token=$accessToken&$LIKE_KEY".sig() }
+    private val recommendSig by lazy {
+        buildString {
+            append("access_token=$accessToken")
+            append("&app_key=$APP_KEY")
+            append("&client_os_type=$CLIENT_OS_TYPE")
+            append("&device_id=$deviceId")
+            append("&device_id_type=$DEVICE_ID_TYPE")
+            append("&device_type=$DEVICE_TYPE")
+            append("&like_count=$LIKE_COUNT")
+            append("&pack_id=$PACK_ID")
+            append("&sdk_client_type=$SDK_CLIENT_TYPE")
+            append("&sdk_version=$SDK_VERSION")
+        }.sig()
+    }
     private val recommendDao by lazy { database.recommendDao() }
 
-    @SuppressLint("HardwareIds")
-    override suspend fun load(loadType: LoadType, state: PagingState<Int, Album>): MediatorResult {
-        return try {
-            println(Settings.Secure.getString(AppInitializer.mContext.contentResolver, Settings.Secure.ANDROID_ID))
-            val album = recommendService.searchRecommendData(accessToken, recommendSig)
+    override suspend fun load(loadType: LoadType, state: PagingState<Int, Album>): MediatorResult =
+        runCatching {
             if (!AppInitializer.mContext.isConnectedNetwork()) {
-                return MediatorResult.Success(true)
+                return MediatorResult.Error(Throwable("网络连接失败"))
             }
-            database.withTransaction {
-                if (loadType == LoadType.REFRESH) {
-                    recommendDao.clearRecommendData()
-                }
-                recommendDao.insertRecommend(*album.toTypedArray())
-            }
-            when (loadType) {
-                LoadType.REFRESH -> return MediatorResult.Success(false)
+            val page = when (loadType) {
+                LoadType.REFRESH -> 1
                 LoadType.PREPEND -> return MediatorResult.Success(true)
                 LoadType.APPEND -> {
-                    state.lastItemOrNull() ?: return MediatorResult.Success(true)
-                    return MediatorResult.Success(false)
+                    val lastItem = state.lastItemOrNull() ?: return MediatorResult.Success(false)
+                    lastItem.page + 1
                 }
             }
-        } catch (e: Exception) {
-            e.stackTraceToString()
-            MediatorResult.Error(e)
+            recommendService.searchRecommendData(
+                appKey = APP_KEY,
+                clientOsType = CLIENT_OS_TYPE,
+                deviceId = deviceId,
+                deviceIdType = DEVICE_ID_TYPE,
+                deviceType = DEVICE_TYPE,
+                likeCount = LIKE_COUNT,
+                packId = PACK_ID,
+                sdkClientType = SDK_CLIENT_TYPE,
+                sdkVersion = SDK_VERSION,
+                accessToken = accessToken,
+                sig = recommendSig
+            ).map {
+                it.copy(page = page)
+            }.let {
+                database.withTransaction {
+                    if (loadType == LoadType.REFRESH) {
+                        recommendDao.clearRecommendData()
+                    }
+                    recommendDao.insertRecommend(*it.toTypedArray())
+                }
+                MediatorResult.Success(it.size < PAGE_SIZE)
+            }
+        }.getOrElse {
+            if (it is CancellationException) throw it
+            it.printStackTrace()
+            MediatorResult.Error(it)
         }
-    }
 }

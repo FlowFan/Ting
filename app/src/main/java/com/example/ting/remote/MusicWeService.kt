@@ -57,7 +57,7 @@ interface MusicWeService {
     @FormUrlEncoded
     suspend fun loginCellphone(
         @FieldMap body: Map<String, String>
-    ): LoginResponse
+    ): JsonObject
 
     @POST("/weapi/sms/captcha/sent")
     @FormUrlEncoded
@@ -99,12 +99,6 @@ interface MusicWeService {
     suspend fun getLikeList(
         @FieldMap body: Map<String, String>
     ): LikeList
-
-    @POST("/api/v3/song/detail")
-    @FormUrlEncoded
-    suspend fun getMusicDetail(
-        @FieldMap body: Map<String, String>
-    ): MusicDetail
 
     @POST("/api/song/lyric")
     @FormUrlEncoded

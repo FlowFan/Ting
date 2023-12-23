@@ -1,11 +1,9 @@
 package com.example.ting.fragment
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -29,31 +27,23 @@ import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
+import androidx.navigation.fragment.findNavController
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.ting.databinding.FragmentMusicBinding
-import com.example.ting.exoplayer.MusicService
-import com.example.ting.model.NewSong
 import com.example.ting.model.PlayList
-import com.example.ting.model.TopList
+import com.example.ting.other.Constants.DOMAIN
 import com.example.ting.other.Constants.TING_PROTOCOL
-import com.example.ting.other.asyncGetSessionPlayer
-import com.example.ting.other.buildMediaItem
-import com.example.ting.other.metadata
 import com.example.ting.ui.theme.TingTheme
 import com.example.ting.viewmodel.TingViewModel
-import com.google.accompanist.placeholder.PlaceholderHighlight
-import com.google.accompanist.placeholder.material3.placeholder
-import com.google.accompanist.placeholder.material3.shimmer
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
 class MusicFragment : Fragment() {
     private var _binding: FragmentMusicBinding? = null
     private val binding get() = _binding!!
@@ -112,16 +102,12 @@ private fun PlayList(
     navController: NavController
 ) {
     val playList by viewModel.playList.observeAsState(PlayList())
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
             text = "推荐声音",
             style = MaterialTheme.typography.headlineSmall
         )
-        ElevatedCard(
-            shape = RoundedCornerShape(12.dp)
-        ) {
+        ElevatedCard(shape = RoundedCornerShape(12.dp)) {
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -130,42 +116,32 @@ private fun PlayList(
             ) {
                 if (playList.result.isEmpty()) {
                     items(5) {
-                        Box(
-                            modifier = Modifier
-                                .placeholder(
-                                    visible = true,
-                                    highlight = PlaceholderHighlight.shimmer()
-                                )
-                                .size(100.dp)
-                        )
+                        Box(modifier = Modifier.size(100.dp))
                     }
                 } else {
-                    items(playList.result) {
+                    items(
+                        items = playList.result,
+                        key = { item -> item.id }
+                    ) {
                         Column(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(13.dp))
                                 .clickable {
-                                    navController.navigate(
-                                        MainFragmentDirections.actionMainFragmentToSongListFragment(
-                                            it.id
-                                        )
-                                    )
+                                    navController.navigate(MainFragmentDirections.actionMainFragmentToSongListFragment(it.id))
                                 }
                                 .padding(8.dp)
                                 .width(IntrinsicSize.Min),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            val painter = rememberAsyncImagePainter(model = it.picUrl)
-                            Image(
+                            AsyncImage(
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(it.picUrl)
+                                    .crossfade(true)
+                                    .build(),
+                                contentDescription = null,
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(4.dp))
-                                    .placeholder(
-                                        visible = painter.state is AsyncImagePainter.State.Loading,
-                                        highlight = PlaceholderHighlight.shimmer()
-                                    )
                                     .size(100.dp),
-                                painter = painter,
-                                contentDescription = null,
                                 contentScale = ContentScale.FillBounds
                             )
                             Text(
@@ -186,9 +162,7 @@ private fun PlayList(
 private fun LargeButton(
     navController: NavController
 ) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
             text = "个性功能",
             style = MaterialTheme.typography.headlineSmall
@@ -211,8 +185,8 @@ private fun LargeButton(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(Icons.Rounded.Album, null)
                     Text(
@@ -235,8 +209,8 @@ private fun LargeButton(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(Icons.Rounded.Today, null)
                     Text(
@@ -255,16 +229,12 @@ private fun DailyWord(
 ) {
     val dailyWord by viewModel.dailyWord.collectAsStateWithLifecycle()
     val clipboardManager = LocalClipboardManager.current
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
             text = "每日一言",
             style = MaterialTheme.typography.headlineSmall
         )
-        ElevatedCard(
-            shape = RoundedCornerShape(8.dp)
-        ) {
+        ElevatedCard(shape = RoundedCornerShape(8.dp)) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -278,8 +248,8 @@ private fun DailyWord(
             ) {
                 if (dailyWord.hitokoto.isBlank()) {
                     Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(text = "加载中 ~")
                     }
@@ -296,8 +266,8 @@ private fun DailyWord(
                 }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.End)
+                    horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.End),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     TextButton(onClick = {
                         clipboardManager.setText(AnnotatedString(dailyWord.hitokoto))
@@ -320,18 +290,13 @@ private fun DailyWord(
 private fun NewSong(
     viewModel: TingViewModel
 ) {
-    val newSong by viewModel.newSong.observeAsState(NewSong())
-    val context = LocalContext.current
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
+    val newSong by viewModel.newSong.collectAsStateWithLifecycle()
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
             text = "新歌速递",
             style = MaterialTheme.typography.headlineSmall
         )
-        ElevatedCard(
-            shape = RoundedCornerShape(12.dp)
-        ) {
+        ElevatedCard(shape = RoundedCornerShape(12.dp)) {
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -340,58 +305,46 @@ private fun NewSong(
             ) {
                 if (newSong.result.isEmpty()) {
                     items(5) {
-                        Box(
-                            modifier = Modifier
-                                .placeholder(
-                                    visible = true,
-                                    highlight = PlaceholderHighlight.shimmer()
-                                )
-                                .size(100.dp)
-                        )
+                        Box(modifier = Modifier.size(100.dp))
                     }
                 } else {
-                    items(newSong.result) { songList ->
+                    items(
+                        items = newSong.result,
+                        key = { item -> item.id }
+                    ) { songList ->
                         Column(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(13.dp))
                                 .clickable {
-                                    context.asyncGetSessionPlayer(MusicService::class.java) {
-                                        it.apply {
-                                            stop()
-                                            clearMediaItems()
-                                            addMediaItem(buildMediaItem(songList.id.toString()) {
-                                                metadata {
-                                                    setTitle(songList.name)
-                                                    setArtist(songList.song.artists.joinToString(",") { ar -> ar.name })
-                                                    setRequestMetadata(
-                                                        MediaItem.RequestMetadata
-                                                            .Builder()
-                                                            .setMediaUri(Uri.parse("$TING_PROTOCOL://music?id=${songList.id}"))
-                                                            .build()
-                                                    )
-                                                    setArtworkUri(Uri.parse(songList.picUrl))
-                                                }
-                                            })
-                                            prepare()
-                                            play()
-                                        }
-                                    }
+                                    viewModel.play(
+                                        MediaItem
+                                            .Builder()
+                                            .setMediaId("${songList.id}")
+                                            .setUri("$TING_PROTOCOL://$DOMAIN?id=${songList.id}".toUri())
+                                            .setMediaMetadata(
+                                                MediaMetadata
+                                                    .Builder()
+                                                    .setTitle(songList.name)
+                                                    .setArtist(songList.song.artists.joinToString(", ") { artist -> artist.name })
+                                                    .setArtworkUri(songList.picUrl.toUri())
+                                                    .build()
+                                            )
+                                            .build()
+                                    )
                                 }
                                 .padding(8.dp)
                                 .width(IntrinsicSize.Min),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            val painter = rememberAsyncImagePainter(model = songList.picUrl)
-                            Image(
+                            AsyncImage(
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(songList.picUrl)
+                                    .crossfade(true)
+                                    .build(),
+                                contentDescription = null,
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(4.dp))
-                                    .placeholder(
-                                        visible = painter.state is AsyncImagePainter.State.Loading,
-                                        highlight = PlaceholderHighlight.shimmer()
-                                    )
                                     .size(100.dp),
-                                painter = painter,
-                                contentDescription = null,
                                 contentScale = ContentScale.FillBounds
                             )
                             Text(
@@ -419,17 +372,13 @@ private fun TopList(
     viewModel: TingViewModel,
     navController: NavController
 ) {
-    val topList by viewModel.topList.observeAsState(TopList())
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
+    val topList by viewModel.topList.collectAsStateWithLifecycle()
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
             text = "声音榜单",
             style = MaterialTheme.typography.headlineSmall
         )
-        ElevatedCard(
-            shape = RoundedCornerShape(12.dp)
-        ) {
+        ElevatedCard(shape = RoundedCornerShape(12.dp)) {
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -438,40 +387,30 @@ private fun TopList(
             ) {
                 if (topList.list.isEmpty()) {
                     items(5) {
-                        Box(
-                            modifier = Modifier
-                                .placeholder(
-                                    visible = true,
-                                    highlight = PlaceholderHighlight.shimmer()
-                                )
-                                .size(100.dp)
-                        )
+                        Box(modifier = Modifier.size(100.dp))
                     }
                 } else {
-                    items(topList.list) {
+                    items(
+                        items = topList.list,
+                        key = { item -> item.id }
+                    ) {
                         Column(
                             modifier = Modifier
                                 .clip(RoundedCornerShape(4.dp))
                                 .clickable {
-                                    navController.navigate(
-                                        MainFragmentDirections.actionMainFragmentToSongListFragment(
-                                            it.id
-                                        )
-                                    )
+                                    navController.navigate(MainFragmentDirections.actionMainFragmentToSongListFragment(it.id))
                                 },
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            val painter = rememberAsyncImagePainter(model = it.coverImgUrl)
-                            Image(
+                            AsyncImage(
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(it.coverImgUrl)
+                                    .crossfade(true)
+                                    .build(),
+                                contentDescription = null,
                                 modifier = Modifier
                                     .clip(RoundedCornerShape(4.dp))
-                                    .placeholder(
-                                        visible = painter.state is AsyncImagePainter.State.Loading,
-                                        highlight = PlaceholderHighlight.shimmer()
-                                    )
                                     .size(100.dp),
-                                painter = painter,
-                                contentDescription = null,
                                 contentScale = ContentScale.FillBounds
                             )
                             Text(

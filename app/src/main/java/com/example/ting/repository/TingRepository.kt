@@ -1,300 +1,231 @@
 package com.example.ting.repository
 
-import android.content.Context
 import androidx.lifecycle.liveData
-import androidx.paging.ExperimentalPagingApi
+import androidx.media3.session.MediaController
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.liveData
 import com.example.ting.db.AppDatabase
-import com.example.ting.init.AppInitializer
+import com.example.ting.other.Constants.ACCESS_TOKEN
+import com.example.ting.other.Constants.DEVICE_ID
+import com.example.ting.other.Constants.PAGE_SIZE
 import com.example.ting.other.encryptEApi
 import com.example.ting.other.encryptWeAPI
 import com.example.ting.remote.*
+import com.google.common.util.concurrent.ListenableFuture
 import korlibs.crypto.md5
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.guava.await
 import javax.inject.Inject
+import javax.inject.Named
 
 class TingRepository @Inject constructor(
     private val recommendService: RecommendService,
     private val musicWeService: MusicWeService,
     private val urlService: UrlService,
     private val hitokotoService: HitokotoService,
-    private val database: AppDatabase
+    private val database: AppDatabase,
+    @Named(DEVICE_ID) private val deviceId: String,
+    @Named(ACCESS_TOKEN) private val accessToken: String,
+    private val mediaControllerListenableFuture: ListenableFuture<MediaController>
 ) {
-    @OptIn(ExperimentalPagingApi::class)
     fun getRecommendData() = Pager(
         config = PagingConfig(
-            pageSize = 10,
-            initialLoadSize = 10
+            pageSize = PAGE_SIZE,
+            prefetchDistance = PAGE_SIZE / 2,
+            initialLoadSize = PAGE_SIZE
         ),
         //请求网络数据
-        remoteMediator = RecommendRemoteMediator(recommendService, database)
+        remoteMediator = RecommendRemoteMediator(database, recommendService, deviceId, accessToken)
     ) {
         //从数据库拿到数据
         database.recommendDao().getRecommendData()
-    }.flow.flowOn(Dispatchers.IO)
+    }.liveData
 
-    fun getDetailData(albumId: Int) = Pager(
+    fun getDetailData(albumId: Long) = Pager(
         config = PagingConfig(
-            pageSize = 20,
-            initialLoadSize = 20
+            pageSize = PAGE_SIZE * 2,
+            prefetchDistance = PAGE_SIZE,
+            initialLoadSize = PAGE_SIZE * 2
         )
     ) {
-        DetailPagingSource(albumId)
-    }.flow.flowOn(Dispatchers.IO)
-
-    fun getPlayList() = liveData(Dispatchers.IO) {
-        try {
-            val playList = musicWeService.getPlayList(
-                mapOf(
-                    "limit" to "10",
-                    "total" to "true",
-                    "n" to "1000"
-                ).encryptWeAPI()
-            )
-            emit(playList)
-            database.playListDao().insertPlayList(playList.result)
-        } catch (e: Exception) {
-            e.stackTraceToString()
-        }
-    }
-
-    fun getDailyWord() = flow {
-        val result = hitokotoService.getDailyWord()
-        emit(result)
-        database.dailyWordDao().insertDailyWord(result)
-    }.catch {
-        it.stackTraceToString()
+        DetailPagingSource(albumId, recommendService, deviceId, accessToken)
+    }.flow.catch {
+        it.printStackTrace()
     }.flowOn(Dispatchers.IO)
 
-    fun getNewSong() = liveData(Dispatchers.IO) {
-        try {
-            val newSong = musicWeService.getNewSong(
+    fun getPlayList() = liveData(Dispatchers.IO) {
+        runCatching {
+            musicWeService.getPlayList(
                 mapOf(
-                    "type" to "recommend",
-                    "limit" to "10",
-                    "areaId" to "0"
+                    "limit" to 10,
+                    "total" to true,
+                    "n" to 1000
                 ).encryptWeAPI()
-            )
-            emit(newSong)
-        } catch (e: Exception) {
-            e.stackTraceToString()
+            ).also {
+                emit(it)
+            }
+        }.onFailure {
+            if (it is CancellationException) throw it
+            it.printStackTrace()
         }
     }
 
-    fun getTopList() = liveData(Dispatchers.IO) {
-        try {
-            emit(musicWeService.getTopList())
-        } catch (e: Exception) {
-            e.stackTraceToString()
+    fun getDailyWord() = database.dailyWordDao()
+        .getRecommendData()
+        .filterNotNull()
+        .onStart {
+            refreshDailyWord()
+        }
+        .catch {
+            it.printStackTrace()
+        }.flowOn(Dispatchers.IO)
+
+    suspend fun refreshDailyWord() {
+        runCatching {
+            hitokotoService.getDailyWord()
+        }.onSuccess {
+            database.dailyWordDao().insertDailyWord(it)
+        }.onFailure {
+            if (it is CancellationException) throw it
+            it.printStackTrace()
         }
     }
 
-    fun getDailyList() = liveData(Dispatchers.IO) {
-        try {
-            emit(musicWeService.getDailyList())
-        } catch (e: Exception) {
-            e.stackTraceToString()
+    fun getNewSong() = flow {
+        musicWeService.getNewSong(
+            mapOf(
+                "type" to "recommend",
+                "limit" to 10,
+                "areaId" to 0
+            ).encryptWeAPI()
+        ).also {
+            emit(it)
         }
-    }
+    }.catch {
+        it.printStackTrace()
+    }.flowOn(Dispatchers.IO)
+
+    fun getTopList() = flow {
+        musicWeService.getTopList().also {
+            emit(it)
+        }
+    }.catch {
+        it.printStackTrace()
+    }.flowOn(Dispatchers.IO)
+
+    fun getDailyList() = flow {
+        musicWeService.getDailyList().also {
+            emit(it)
+        }
+    }.catch {
+        it.printStackTrace()
+    }.flowOn(Dispatchers.IO)
 
     fun getSongList(id: Long) = flow {
-        val songList = musicWeService.getSongList(
+        musicWeService.getSongList(
             mapOf(
                 "id" to "$id",
                 "n" to "5000",
                 "s" to "8"
             )
-        )
-        emit(songList)
-    }.catch {
-        it.stackTraceToString()
-    }.flowOn(Dispatchers.IO)
-
-    fun getTypeList() = liveData(Dispatchers.IO) {
-        try {
-            val result = musicWeService.getTypeList(mapOf<String, String>().encryptWeAPI())
-            emit(result)
-        } catch (e: Exception) {
-            e.stackTraceToString()
+        ).also {
+            emit(it)
         }
-    }
-
-    fun getHotPlaylistTags() = flow {
-        val sharedPreferences = AppInitializer.mContext.getSharedPreferences("playlist_category", Context.MODE_PRIVATE)
-        val result = if (sharedPreferences.contains("data")) {
-            // 载入用户自定义歌单category
-            sharedPreferences.getString("data", "")?.split(",") ?: emptyList()
-        } else {
-            // 载入热门category
-            musicWeService.getHotPlaylistTags(
-                mapOf<String, String>().encryptWeAPI()
-            ).tags.map { it.name }
-        }
-        emit(result)
     }.catch {
-        it.stackTraceToString()
-    }.flowOn(Dispatchers.IO)
-
-    fun getHighQualityPlaylist() = liveData(Dispatchers.IO) {
-        try {
-            val result = musicWeService.getHighQualityPlaylist(
-                mapOf(
-                    "cat" to "全部",
-                    "limit" to "100",
-                    "lasttime" to "0",
-                    "total" to "true"
-                )
-            )
-            emit(result)
-        } catch (e: Exception) {
-            e.stackTraceToString()
-        }
-    }
-
-    fun getTopPlaylist(category: String) = Pager(
-        config = PagingConfig(
-            pageSize = 20,
-            prefetchDistance = 3,
-            initialLoadSize = 20
-        )
-    ) {
-        TopPlaylistPagingSource(category, musicWeService)
-    }.flow.flowOn(Dispatchers.IO)
-
-    fun loginCellphone(phone: String, password: String) = flow {
-        delay(500)
-        val result = musicWeService.loginCellphone(
-            mapOf(
-                "phone" to phone,
-                "countrycode" to "86",
-                "password" to password.toByteArray().md5().hex,
-                "rememberLogin" to "true"
-            ).encryptWeAPI()
-        )
-        emit(result)
-        database.loginResponseDao().insertLoginResponse(result)
-    }.catch {
-        it.stackTraceToString()
-    }.flowOn(Dispatchers.IO)
-
-    fun loginCaptcha(phone: String, captcha: String) = flow {
-        delay(500)
-        val result = musicWeService.loginCellphone(
-            mapOf(
-                "phone" to phone,
-                "captcha" to captcha,
-                "countrycode" to "86",
-                "rememberLogin" to "true"
-            ).encryptWeAPI()
-        )
-        emit(result)
-        database.loginResponseDao().insertLoginResponse(result)
-    }.catch {
-        it.stackTraceToString()
-    }.flowOn(Dispatchers.IO)
-
-    fun sendCaptcha(phone: String) = flow {
-        val result = musicWeService.sendCaptcha(mapOf("cellphone" to phone).encryptWeAPI())
-        emit(result)
-    }.catch {
-        it.stackTraceToString()
+        it.printStackTrace()
     }.flowOn(Dispatchers.IO)
 
     fun refreshLogin() = flow {
-        val result = musicWeService.refreshLogin(mapOf<String, String>().encryptWeAPI())
-        emit(result)
+        musicWeService.refreshLogin(
+            mapOf<String, String>().encryptWeAPI()
+        ).also {
+            emit(it)
+        }
     }.catch {
-        it.stackTraceToString()
+        it.printStackTrace()
     }.flowOn(Dispatchers.IO)
 
     fun getAccountDetail() = flow {
-        val result = musicWeService.getAccountDetail()
-        emit(result)
-        database.accountDetailDao().insertAccountDetail(result)
+        musicWeService.getAccountDetail().also {
+            emit(it)
+        }
     }.catch {
-        it.stackTraceToString()
+        it.printStackTrace()
     }.flowOn(Dispatchers.IO)
 
     fun getUserPlaylists(id: Long) = flow {
-        val result = musicWeService.getUserPlaylist(
+        musicWeService.getUserPlaylist(
             mapOf(
                 "uid" to "$id",
                 "limit" to "1000",
                 "includeVideo" to "false"
             )
-        )
-        emit(result)
+        ).also {
+            emit(it)
+        }
     }.catch {
-        it.stackTraceToString()
+        it.printStackTrace()
     }.flowOn(Dispatchers.IO)
 
-    fun subPlaylist(id: Long, sub: Boolean) = flow {
-        val result = musicWeService.subPlaylist(
-            if (sub) "unsubscribe" else "subscribe",
-            mapOf("id" to "$id").encryptWeAPI()
-        )
-        emit(result)
-    }.catch {
-        it.stackTraceToString()
-    }.flowOn(Dispatchers.IO)
-
-    fun likeMusic(id: Long, like: Boolean) = flow {
-        val result = musicWeService.like(
-            like,
+    fun loginCellphone(phone: String, password: String) = flow {
+        musicWeService.loginCellphone(
             mapOf(
-                "alg" to "itembased",
-                "trackId" to "$id",
-                "like" to "$like",
-                "time" to "3"
-            )
-        )
-        emit(result)
+                "phone" to phone,
+                "password" to password.toByteArray().md5().hex,
+                "countrycode" to 86,
+                "rememberLogin" to true
+            ).encryptWeAPI()
+        ).also {
+            emit(it)
+        }
     }.catch {
-        it.stackTraceToString()
+        it.printStackTrace()
     }.flowOn(Dispatchers.IO)
 
-    fun getLikeList(id: Long) = flow {
-        val result = musicWeService.getLikeList(mapOf("uid" to "$id").encryptWeAPI())
-        emit(result)
-    }.catch {
-        it.stackTraceToString()
-    }.flowOn(Dispatchers.IO)
-
-    fun getMusicDetail(id: Long) = flow {
-        val result = musicWeService.getMusicDetail(mapOf("c" to "[{\"id\":$id}]"))
-        emit(result)
-    }.catch {
-        it.stackTraceToString()
-    }.flowOn(Dispatchers.IO)
-
-    fun getLyric(id: Long) = flow {
-        val result = musicWeService.getLyric(
+    fun loginCaptcha(phone: String, captcha: String) = flow {
+        musicWeService.loginCellphone(
             mapOf(
-                "id" to "$id",
-                "lv" to "-1",
-                "kv" to "-1",
-                "tv" to "-1"
-            )
-        )
-        emit(result)
+                "phone" to phone,
+                "captcha" to captcha,
+                "countrycode" to 86,
+                "rememberLogin" to true
+            ).encryptWeAPI()
+        ).also {
+            emit(it)
+        }
     }.catch {
-        it.stackTraceToString()
+        it.printStackTrace()
     }.flowOn(Dispatchers.IO)
 
-    fun getMusicUrl(id: Long) = flow {
-        val result = urlService.getMusicUrl(
+    fun sendCaptcha(phone: String) = flow {
+        musicWeService.sendCaptcha(
+            mapOf("cellphone" to phone).encryptWeAPI()
+        ).also {
+            emit(it)
+        }
+    }.catch {
+        it.printStackTrace()
+    }.flowOn(Dispatchers.IO)
+
+    fun getMusicUrl(id: String) = flow {
+        urlService.getMusicUrl(
             mapOf(
                 "ids" to "[$id]",
-                "br" to "999000"
+                "br" to 999000
             ).encryptEApi()
-        )
-        emit(result)
+        ).also {
+            emit(it)
+        }
     }.catch {
-        it.stackTraceToString()
+        it.printStackTrace()
+    }.flowOn(Dispatchers.IO)
+
+    fun getMediaController() = flow {
+        emit(mediaControllerListenableFuture.await())
+    }.catch {
+        it.printStackTrace()
     }.flowOn(Dispatchers.IO)
 }

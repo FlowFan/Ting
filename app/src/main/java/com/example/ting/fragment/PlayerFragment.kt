@@ -5,27 +5,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.*
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -33,24 +33,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.Player
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.example.ting.R
 import com.example.ting.databinding.FragmentPlayerBinding
-import com.example.ting.exoplayer.MusicService
-import com.example.ting.model.LyricLine
-import com.example.ting.model.formatAsPlayerTime
-import com.example.ting.model.parse
-import com.example.ting.other.rememberCurrentMediaItem
-import com.example.ting.other.rememberMediaSessionPlayer
-import com.example.ting.other.rememberPlayProgress
-import com.example.ting.other.rememberPlayState
 import com.example.ting.ui.theme.TingTheme
 import com.example.ting.viewmodel.TingViewModel
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import kotlin.math.roundToLong
 
-@AndroidEntryPoint
 class PlayerFragment : Fragment() {
     private var _binding: FragmentPlayerBinding? = null
     private val binding get() = _binding!!
@@ -71,20 +61,10 @@ class PlayerFragment : Fragment() {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
                 TingTheme(false) {
-                    val player by rememberMediaSessionPlayer(MusicService::class.java)
-                    val userData by viewModel.userData.collectAsStateWithLifecycle()
-                    LaunchedEffect(userData) {
-                        viewModel.loadLikeList(userData.account.id)
-                    }
-                    when (player) {
-                        null -> {
-                            NotConnectScreen(findNavController())
-                        }
-
-                        else -> {
-                            PlayerUI(player!!, viewModel, findNavController())
-                        }
-                    }
+                    PlayerUI(
+                        viewModel = viewModel,
+                        navController = findNavController()
+                    )
                 }
             }
         }
@@ -96,104 +76,48 @@ class PlayerFragment : Fragment() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun NotConnectScreen(
-    navController: NavController
-) {
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                modifier = Modifier.padding(WindowInsets.statusBars.asPaddingValues()),
-                title = {
-                    Text(text = "播放器")
-                },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        navController.navigateUp()
-                    }) {
-                        Icon(Icons.Rounded.Close, "Back")
-                    }
-                }
-            )
-        }
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(text = "很抱歉，无法连接到播放器服务", modifier = Modifier)
-        }
-    }
-}
-
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun PlayerUI(
-    player: Player,
     viewModel: TingViewModel,
     navController: NavController
 ) {
     val pagerState = rememberPagerState { 2 }
-    val currentMediaItem = rememberCurrentMediaItem(player)
-    val progress = rememberPlayProgress(player)
-    val isPlaying = rememberPlayState(player)
-    val rotator by produceState(
-        initialValue = 0f,
-        key1 = isPlaying
-    ) {
-        while (isActive && isPlaying == true) {
-            value = (value + 1f) % 360f
-            delay(12L)
-        }
-    }
+    val currentMediaItem by viewModel.currentMediaItem.collectAsStateWithLifecycle()
+    val mediaController by viewModel.mediaController.collectAsStateWithLifecycle()
+    val playProgress by viewModel.playProgress.collectAsStateWithLifecycle()
+    val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
 
-    val musicDetail by viewModel.musicDetail.collectAsStateWithLifecycle()
-    val painter = rememberAsyncImagePainter(model = musicDetail.songs[0].al.picUrl)
-
-    LaunchedEffect(currentMediaItem) {
-        viewModel.loadMusicDetail(currentMediaItem?.mediaId?.toLong() ?: 0L)
-    }
     Scaffold(
         topBar = {
-            Row(
-                modifier = Modifier
-                    .statusBarsPadding()
-                    .padding(vertical = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
-                IconButton(onClick = {
-                    navController.navigateUp()
-                }) {
-                    Icon(Icons.Rounded.Close, "Back")
+            CenterAlignedTopAppBar(
+                title = {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = currentMediaItem.mediaMetadata.title?.toString() ?: "暂未播放",
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1,
+                            style = MaterialTheme.typography.titleLarge
+                        )
+                        Text(
+                            text = currentMediaItem.mediaMetadata.artist?.toString() ?: "暂无作者",
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1,
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.navigateUp() }) {
+                        Icon(imageVector = Icons.Rounded.Close, contentDescription = null)
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { }) {
+                        Icon(imageVector = Icons.Rounded.Menu, contentDescription = null)
+                    }
                 }
-                Column(
-                    modifier = Modifier.weight(1f),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = currentMediaItem?.mediaMetadata?.title?.toString() ?: "暂未播放",
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.titleLarge,
-                        maxLines = 1
-                    )
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = currentMediaItem?.mediaMetadata?.artist?.toString() ?: "暂未播放",
-                        textAlign = TextAlign.Center,
-                        style = MaterialTheme.typography.bodySmall,
-                        maxLines = 1
-                    )
-                }
-                IconButton(onClick = {
-                }) {
-                    Icon(Icons.Rounded.Menu, null)
-                }
-            }
+            )
         },
         bottomBar = {
             Column(
@@ -203,195 +127,111 @@ private fun PlayerUI(
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val percent = progress?.let { (it.first * 100f / it.second) / 100f } ?: 0f
-                    Text(text = progress?.first?.formatAsPlayerTime() ?: "00:00")
-                    var valueChanger by remember(percent) {
-                        mutableFloatStateOf(percent)
-                    }
+                    Text(text = stringResource(id = R.string.format_time, playProgress.first / 60000, playProgress.first % 60000 / 1000))
                     Slider(
-                        modifier = Modifier.weight(1f),
-                        value = valueChanger,
+                        value = playProgress.first.toFloat(),
                         onValueChange = {
-                            valueChanger = it
+                            mediaController?.seekTo(it.roundToLong())
                         },
-                        onValueChangeFinished = {
-                            player.seekTo((valueChanger * (progress?.second ?: 0L)).roundToLong().coerceAtLeast(0L))
-                        }
+                        modifier = Modifier.weight(1f),
+                        valueRange = 0f..playProgress.second.toFloat()
                     )
-                    Text(text = progress?.second?.formatAsPlayerTime() ?: "00:00")
+                    Text(text = stringResource(id = R.string.format_time, playProgress.second / 60000, playProgress.second % 60000 / 1000))
                 }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
+                    horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    var show by remember {
-                        mutableStateOf(false)
+                    val (show, setShow) = remember { mutableStateOf(false) }
+                    IconButton(onClick = { setShow(true) }) {
+                        DropdownMenu(expanded = show, onDismissRequest = { setShow(false) }) {
+                            DropdownMenuItem(
+                                text = {
+                                    Text(text = "单曲循环")
+                                },
+                                onClick = {
+                                    setShow(false)
+                                    mediaController?.repeatMode = Player.REPEAT_MODE_ONE
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = {
+                                    Text(text = "列表循环")
+                                },
+                                onClick = {
+                                    setShow(false)
+                                    mediaController?.repeatMode = Player.REPEAT_MODE_ALL
+                                }
+                            )
+                        }
+                        Icon(imageVector = Icons.Rounded.Repeat, contentDescription = null)
                     }
-                    DropdownMenu(
-                        expanded = show,
-                        onDismissRequest = { show = false }
-                    ) {
-                        DropdownMenuItem(onClick = {
-                            show = false
-                            player.repeatMode = Player.REPEAT_MODE_ONE
-                        }, text = {
-                            Text(text = "单曲循环")
-                        })
-                        DropdownMenuItem(onClick = {
-                            show = false
-                            player.repeatMode = Player.REPEAT_MODE_ALL
-                        }, text = {
-                            Text(text = "列表循环")
-                        })
+                    IconButton(onClick = { mediaController?.seekToPreviousMediaItem() }) {
+                        Icon(imageVector = Icons.Rounded.SkipPrevious, contentDescription = null)
                     }
                     IconButton(onClick = {
-                        show = true
-                    }) {
-                        Icon(Icons.Rounded.Repeat, null)
-                    }
-
-                    IconButton(onClick = {
-                        player.seekToPreviousMediaItem()
-                    }) {
-                        Icon(Icons.Rounded.SkipPrevious, null)
-                    }
-
-                    IconButton(onClick = {
-                        if (player.isPlaying) {
-                            player.pause()
-                        } else {
-                            player.play()
+                        mediaController?.let {
+                            if (it.isPlaying) {
+                                it.pause()
+                            } else {
+                                it.play()
+                            }
                         }
                     }) {
                         Icon(
-                            modifier = Modifier.size(60.dp),
-                            imageVector = if (isPlaying == true) Icons.Rounded.Pause else Icons.Rounded.PlayArrow,
-                            contentDescription = null
-                        )
-                    }
-
-                    IconButton(onClick = {
-                        player.seekToNextMediaItem()
-                    }) {
-                        Icon(Icons.Rounded.SkipNext, null)
-                    }
-
-                    val likeList by viewModel.likeList.collectAsStateWithLifecycle()
-                    val userData by viewModel.userData.collectAsStateWithLifecycle()
-                    IconButton(onClick = {
-                        viewModel.like(userData.account.id)
-                    }) {
-                        Icon(
-                            imageVector = if (likeList.ids.contains(currentMediaItem?.mediaId?.toLong())) {
-                                Icons.Rounded.Favorite
+                            imageVector = if (isPlaying) {
+                                Icons.Rounded.Pause
                             } else {
-                                Icons.Rounded.FavoriteBorder
+                                Icons.Rounded.PlayArrow
                             },
-                            contentDescription = null
+                            contentDescription = null,
+                            modifier = Modifier.size(60.dp)
                         )
+                    }
+                    IconButton(onClick = { mediaController?.seekToNextMediaItem() }) {
+                        Icon(imageVector = Icons.Rounded.SkipNext, contentDescription = null)
+                    }
+                    IconButton(onClick = { }) {
+                        Icon(imageVector = Icons.Rounded.Favorite, contentDescription = null)
                     }
                 }
             }
         }
-    ) {
+    ) { innerPadding ->
         HorizontalPager(
             state = pagerState,
             modifier = Modifier
+                .padding(innerPadding)
                 .fillMaxSize()
-                .padding(it)
-        ) { page ->
-            when (page) {
-                // 封面
+        ) {
+            when (it) {
                 0 -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        Image(
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(currentMediaItem.mediaMetadata.artworkUri)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = null,
                             modifier = Modifier
-                                .rotate(rotator)
+                                .rotate(playProgress.first.toFloat() * 3600 / playProgress.second)
                                 .clip(CircleShape)
                                 .fillMaxWidth(0.5f)
                                 .aspectRatio(1f)
-                                .background(Color.Black),
-                            painter = painter,
-                            contentDescription = null
+                                .background(Color.Black)
                         )
                     }
                 }
 
-                // 歌词
-                1 -> {
-                    BoxWithConstraints(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(16.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        val lyric by viewModel.lyric.collectAsStateWithLifecycle()
-                        val lyricLines = lyric.parse()
-                        val listState = rememberLazyListState()
-
-                        var currentLyricIndex by remember {
-                            mutableIntStateOf(0)
-                        }
-
-                        LaunchedEffect(progress) {
-                            val currentLyric = (progress?.first?.div(1000) ?: 0).toInt()
-                            val index = lyricLines.indexOfLast { lyric ->
-                                lyric.time <= currentLyric
-                            }
-                            index.takeIf { i -> i >= 0 }?.let { i ->
-                                if (listState.firstVisibleItemIndex < i) {
-                                    listState.animateScrollToItem(i)
-                                }
-                                currentLyricIndex = i
-                            }
-                        }
-                        LazyColumn(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                            state = listState
-                        ) {
-                            if (lyricLines.isEmpty()) {
-                                item {
-                                    Text(text = "没有歌词")
-                                }
-                            }
-                            itemsIndexed(lyricLines) { index, item ->
-                                LyricItem(item, currentLyricIndex == index)
-                            }
-                        }
-                    }
-                }
+                1 -> {}
             }
-        }
-    }
-}
-
-@Composable
-private fun LyricItem(lyricLine: LyricLine, currentLyric: Boolean = false) {
-    Column(
-        modifier = Modifier.padding(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp)
-    ) {
-        Text(
-            text = lyricLine.lyric,
-            fontWeight = if (currentLyric) FontWeight.Bold else LocalTextStyle.current.fontWeight,
-            style = if (currentLyric) MaterialTheme.typography.bodyLarge else MaterialTheme.typography.bodyMedium
-        )
-        lyricLine.translation?.let {
-            Text(
-                text = it,
-                fontWeight = if (currentLyric) FontWeight.Bold else LocalTextStyle.current.fontWeight,
-                style = MaterialTheme.typography.bodySmall
-            )
         }
     }
 }
