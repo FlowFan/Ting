@@ -4,8 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -76,7 +77,7 @@ class PlayerFragment : Fragment() {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PlayerUI(
     viewModel: TingViewModel,
@@ -131,12 +132,37 @@ private fun PlayerUI(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(text = stringResource(id = R.string.format_time, playProgress.first / 60000, playProgress.first % 60000 / 1000))
+                    val interactionSource = remember { MutableInteractionSource() }
                     Slider(
                         value = playProgress.first.toFloat(),
                         onValueChange = {
                             mediaController?.seekTo(it.roundToLong())
                         },
                         modifier = Modifier.weight(1f),
+                        interactionSource = interactionSource,
+                        thumb = {
+                            SliderDefaults.Thumb(
+                                interactionSource = interactionSource,
+                                modifier = Modifier
+                                    .size(20.dp, 20.dp)
+                                    .indication(
+                                        interactionSource = interactionSource,
+                                        indication = ripple(
+                                            bounded = false,
+                                            radius = 20.dp
+                                        )
+                                    )
+                            )
+                        },
+                        track = { sliderState ->
+                            SliderDefaults.Track(
+                                sliderState = sliderState,
+                                modifier = Modifier.height(4.dp),
+                                drawStopIndicator = null,
+                                thumbTrackGapSize = 0.dp,
+                                trackInsideCornerSize = 0.dp
+                            )
+                        },
                         valueRange = 0f..playProgress.second.toFloat()
                     )
                     Text(text = stringResource(id = R.string.format_time, playProgress.second / 60000, playProgress.second % 60000 / 1000))
