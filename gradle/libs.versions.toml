@@ -1,32 +1,32 @@
 [versions]
-agp = "8.5.2"
-kotlin = "2.0.20"
+agp = "8.7.1"
+kotlin = "2.0.21"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
 material = "1.12.0"
-activity = "1.9.1"
+activity = "1.9.3"
 constraintlayout = "2.1.4"
-composeBom = "2024.08.00"
-lifecycle = "2.8.4"
-navigationKtx = "2.7.7"
+composeBom = "2024.10.00"
+lifecycle = "2.8.6"
+navigationKtx = "2.8.3"
 swiperefreshlayout = "1.1.0"
 datastore = "1.1.1"
 coreSplashscreen = "1.0.1"
-startupRuntime = "1.1.1"
-ksp = "2.0.20-1.0.24"
+startupRuntime = "1.2.0"
+ksp = "2.0.21-1.0.25"
 hilt = "2.52"
 room = "2.6.1"
 paging = "3.3.2"
-kotlinxSerialization = "1.7.1"
+kotlinxSerialization = "1.7.3"
 okhttp = "4.12.0"
 retrofit = "2.11.0"
 coil = "2.7.0"
 krypto = "4.0.10"
 media3 = "1.4.1"
-kotlinxCoroutines = "1.8.1"
+kotlinxCoroutines = "1.9.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -79,6 +79,7 @@ androidx-room-compiler = { group = "androidx.room", name = "room-compiler", vers
 
 #Paging
 androidx-paging-runtime-ktx = { group = "androidx.paging", name = "paging-runtime-ktx", version.ref = "paging" }
+androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "paging" }
 
 # Serialization
 kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
