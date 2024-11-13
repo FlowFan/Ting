@@ -1,31 +1,31 @@
 [versions]
-agp = "8.7.1"
-kotlin = "2.0.21"
-coreKtx = "1.13.1"
+agp = "8.7.2"
+kotlin = "2.1.0"
+coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 appcompat = "1.7.0"
 material = "1.12.0"
 activity = "1.9.3"
-constraintlayout = "2.1.4"
-composeBom = "2024.10.00"
-lifecycle = "2.8.6"
-navigationKtx = "2.8.3"
+constraintlayout = "2.2.0"
+composeBom = "2024.12.01"
+lifecycle = "2.8.7"
+navigationKtx = "2.8.5"
 swiperefreshlayout = "1.1.0"
 datastore = "1.1.1"
 coreSplashscreen = "1.0.1"
 startupRuntime = "1.2.0"
-ksp = "2.0.21-1.0.25"
-hilt = "2.52"
+ksp = "2.1.0-1.0.29"
+hilt = "2.53.1"
 room = "2.6.1"
-paging = "3.3.2"
+paging = "3.3.5"
 kotlinxSerialization = "1.7.3"
 okhttp = "4.12.0"
 retrofit = "2.11.0"
-coil = "2.7.0"
+coil = "3.0.4"
 krypto = "4.0.10"
-media3 = "1.4.1"
+media3 = "1.5.0"
 kotlinxCoroutines = "1.9.0"
 
 [libraries]
@@ -90,12 +90,14 @@ okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhtt
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 
 # Coil
-coil = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+coil = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
+coil-network = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
 
 # Krypto
 krypto = { group = "com.soywiz.korlibs.krypto", name = "krypto-android", version.ref = "krypto" }
 
 # Media3
+media3-common-ktx = { group = "androidx.media3", name = "media3-common-ktx", version.ref = "media3" }
 media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }
 media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "media3" }
 
