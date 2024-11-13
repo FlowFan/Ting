@@ -35,8 +35,9 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.example.ting.databinding.FragmentMusicBinding
 import com.example.ting.model.PlayList
 import com.example.ting.other.Constants.DOMAIN
