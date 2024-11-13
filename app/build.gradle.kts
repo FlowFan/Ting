@@ -11,8 +11,8 @@ plugins {
 
 android {
     namespace = "com.example.ting"
-    compileSdk = 34
-    buildToolsVersion = "34.0.0"
+    compileSdk = 35
+    buildToolsVersion = "35.0.0"
 
     signingConfigs {
         create("release") {
@@ -26,7 +26,7 @@ android {
     defaultConfig {
         applicationId = "com.example.ting"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -115,6 +115,7 @@ dependencies {
 
     // Coil
     implementation(libs.coil)
+    implementation(libs.coil.network)
 
     // Krypto
     implementation(libs.krypto)

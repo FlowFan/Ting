@@ -31,8 +31,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.navigation.fragment.findNavController
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.example.ting.databinding.FragmentDailyListBinding
 import com.example.ting.model.DailyList
 import com.example.ting.other.Constants.DOMAIN
