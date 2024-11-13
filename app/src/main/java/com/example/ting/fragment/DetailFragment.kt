@@ -11,7 +11,8 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.navigation.fragment.navArgs
 import androidx.transition.TransitionInflater
-import coil.load
+import coil3.load
+import coil3.request.transformations
 import com.example.ting.R
 import com.example.ting.adapter.DetailListAdapter
 import com.example.ting.databinding.FragmentDetailBinding
