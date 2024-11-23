@@ -208,6 +208,16 @@ class TingViewModel @Inject constructor(
         initialValue = 0L to 1000L
     )
 
+    val lyric: StateFlow<Lyric> = _detailId.flatMapLatest {
+        tingRepository.getLyric(it)
+    }.catch {
+        it.printStackTrace()
+    }.flowOn(Dispatchers.IO).stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5.seconds),
+        initialValue = Lyric()
+    )
+
     init {
         tingRepository.refreshLogin().zip(userData) { jsonObject, _ ->
             if (jsonObject["code"].toString() == "301") {

@@ -41,6 +41,7 @@ import com.example.ting.R
 import com.example.ting.databinding.FragmentPlayerBinding
 import com.example.ting.ui.theme.TingTheme
 import com.example.ting.viewmodel.TingViewModel
+import okhttp3.internal.toLongOrDefault
 import kotlin.math.roundToLong
 
 class PlayerFragment : Fragment() {
@@ -89,6 +90,11 @@ private fun PlayerUI(
     val mediaController by viewModel.mediaController.collectAsStateWithLifecycle()
     val playProgress by viewModel.playProgress.collectAsStateWithLifecycle()
     val isPlaying by viewModel.isPlaying.collectAsStateWithLifecycle()
+    val lyric by viewModel.lyric.collectAsStateWithLifecycle()
+    println("1" + lyric)
+    viewModel.setDetailId(currentMediaItem.mediaId.toLongOrDefault(0))
+    viewModel.setDetailId(185726)
+    println("2" + lyric)
 
     Scaffold(
         topBar = {

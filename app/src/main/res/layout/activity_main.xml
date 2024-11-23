@@ -12,6 +12,7 @@
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:visibility="gone"
         app:defaultNavHost="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -27,6 +28,7 @@
         android:clickable="true"
         android:contentDescription="@string/music_description"
         android:focusable="true"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.9"
@@ -34,4 +36,34 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.9"
         app:srcCompat="@drawable/ic_baseline_queue_music_24" />
+
+    <ImageView
+        android:id="@+id/iv_bg"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:src="@drawable/live_bg_room_roulette"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.example.ting.LiveRoomRouletteView
+        android:id="@+id/roulette"
+        android:layout_width="270dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/iv_bg"
+        app:layout_constraintStart_toStartOf="@+id/iv_bg"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_icon"
+        android:layout_width="110dp"
+        android:layout_height="129dp"
+        android:background="@drawable/live_icon_room_roulette_pointer"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/roulette"
+        app:layout_constraintEnd_toEndOf="@+id/roulette"
+        app:layout_constraintStart_toStartOf="@+id/roulette"
+        app:layout_constraintTop_toTopOf="@+id/roulette" />
 </androidx.constraintlayout.widget.ConstraintLayout>

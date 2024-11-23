@@ -9,11 +9,11 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.isVisible
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
+import com.example.ting.LiveRoomRouletteItem
 import com.example.ting.NavigationDirections
 import com.example.ting.R
 import com.example.ting.databinding.ActivityMainBinding
@@ -83,10 +83,23 @@ class MainActivity : AppCompatActivity() {
         }
         splashScreen.setKeepOnScreenCondition { !viewModel.isReady }
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            binding.floatingActionButton.isVisible = destination.id != R.id.playerFragment
+//            binding.floatingActionButton.isVisible = destination.id != R.id.playerFragment
         }
         binding.floatingActionButton.setOnClickListener {
             navController.navigate(NavigationDirections.actionGlobalPlayerFragment())
+        }
+        val list = listOf(
+            LiveRoomRouletteItem(0, 30, "文案超出直接截断"),
+            LiveRoomRouletteItem(0, 330, "文案超出直接截断"),
+        )
+        binding.roulette.setRouletteList(list)
+        var end = 0
+        binding.roulette.setOnClickListener {
+            end = list.indices.random()
+            binding.roulette.startAnim(end)
+        }
+        binding.ivIcon.setOnClickListener {
+            binding.roulette.stopAnim(end)
         }
     }
 }

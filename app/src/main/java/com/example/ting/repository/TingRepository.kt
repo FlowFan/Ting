@@ -228,4 +228,20 @@ class TingRepository @Inject constructor(
     }.catch {
         it.printStackTrace()
     }.flowOn(Dispatchers.IO)
+
+    fun getLyric(id: Long) = flow {
+        musicWeService.getLyric(
+            mapOf(
+                "id" to "$id",
+                "lv" to "-1",
+                "kv" to "-1",
+                "tv" to "-1",
+                "yv" to "-1"
+            )
+        ).also {
+            emit(it)
+        }
+    }.catch {
+        it.printStackTrace()
+    }.flowOn(Dispatchers.IO)
 }

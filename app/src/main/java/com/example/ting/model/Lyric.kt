@@ -6,7 +6,8 @@ import kotlinx.serialization.Serializable
 data class Lyric(
     val lrc: Lrc = Lrc(),
     val klyric: Lrc = Lrc(),
-    val tlyric: Lrc = Lrc()
+    val tlyric: Lrc = Lrc(),
+    val yrc: Lrc = Lrc()
 ) {
     @Serializable
     data class Lrc(
