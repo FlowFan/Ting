@@ -117,8 +117,8 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.coil.network)
 
-    // Krypto
-    implementation(libs.krypto)
+    // Crypto
+    implementation(libs.crypto)
 
     // Media3
     implementation(libs.media3.exoplayer)

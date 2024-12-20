@@ -24,7 +24,7 @@ kotlinxSerialization = "1.7.3"
 okhttp = "4.12.0"
 retrofit = "2.11.0"
 coil = "3.0.4"
-krypto = "4.0.10"
+crypto = "6.0.0"
 media3 = "1.5.0"
 kotlinxCoroutines = "1.9.0"
 
@@ -93,8 +93,8 @@ retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = 
 coil = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref = "coil" }
 coil-network = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coil" }
 
-# Krypto
-krypto = { group = "com.soywiz.korlibs.krypto", name = "krypto-android", version.ref = "krypto" }
+# Crypto
+crypto = { group = "com.soywiz", name = "korlibs-crypto-android", version.ref = "crypto" }
 
 # Media3
 media3-common-ktx = { group = "androidx.media3", name = "media3-common-ktx", version.ref = "media3" }
