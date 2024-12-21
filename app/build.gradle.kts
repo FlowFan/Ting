@@ -11,8 +11,8 @@ plugins {
 
 android {
     namespace = "com.example.ting"
-    compileSdk = 35
-    buildToolsVersion = "35.0.0"
+    compileSdk = 36
+    buildToolsVersion = "36.0.0"
 
     signingConfigs {
         create("release") {
@@ -26,7 +26,7 @@ android {
     defaultConfig {
         applicationId = "com.example.ting"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -55,6 +55,7 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
+        buildConfig = true
     }
 }
 
