@@ -1,5 +1,6 @@
 package com.example.ting.fragment
 
+import android.content.ClipData
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,14 +18,15 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.ClipEntry
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -44,6 +46,7 @@ import com.example.ting.other.Constants.DOMAIN
 import com.example.ting.other.Constants.TING_PROTOCOL
 import com.example.ting.ui.theme.TingTheme
 import com.example.ting.viewmodel.TingViewModel
+import kotlinx.coroutines.launch
 
 class MusicFragment : Fragment() {
     private var _binding: FragmentMusicBinding? = null
@@ -229,7 +232,8 @@ private fun DailyWord(
     viewModel: TingViewModel
 ) {
     val dailyWord by viewModel.dailyWord.collectAsStateWithLifecycle()
-    val clipboardManager = LocalClipboardManager.current
+    val clipboard = LocalClipboard.current
+    val coroutineScope = rememberCoroutineScope()
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
             text = "每日一言",
@@ -271,7 +275,9 @@ private fun DailyWord(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     TextButton(onClick = {
-                        clipboardManager.setText(AnnotatedString(dailyWord.hitokoto))
+                        coroutineScope.launch {
+                            clipboard.setClipEntry(ClipEntry(ClipData.newPlainText("", dailyWord.hitokoto)))
+                        }
                     }) {
                         Text(text = "复制")
                     }

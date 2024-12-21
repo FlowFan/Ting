@@ -155,11 +155,11 @@ private fun RequireLoginVisible(
                 ) {
                     playlists.playlist.groupBy {
                         it.creator.userId == userData.account.id
-                    }.forEach {
+                    }.forEach { (isCreator, playlist) ->
                         stickyHeader {
                             Surface(modifier = Modifier.fillMaxWidth()) {
                                 Text(
-                                    text = if (it.component1()) "创建的声音单" else "收藏的声音单",
+                                    text = if (isCreator) "创建的声音单" else "收藏的声音单",
                                     style = MaterialTheme.typography.headlineSmall,
                                     modifier = Modifier.padding(16.dp)
                                 )
@@ -167,7 +167,7 @@ private fun RequireLoginVisible(
                         }
 
                         items(
-                            items = it.component2(),
+                            items = playlist,
                             key = { item -> item.id }
                         ) { item ->
                             PlayListItem(item, navController)

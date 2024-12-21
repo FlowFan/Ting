@@ -94,23 +94,23 @@ fun LifecycleOwner.launchWithLifecycle(
     repeatOnLifecycle(minActiveState, block)
 }
 
-context(LifecycleOwner)
+context(lifecycleOwner: LifecycleOwner)
 fun <T> Flow<T>.collectWithLifecycle(
     minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
     collector: FlowCollector<T>
 ) {
-    lifecycleScope.launch {
-        flowWithLifecycle(lifecycle, minActiveState).collect(collector)
+    lifecycleOwner.lifecycleScope.launch {
+        flowWithLifecycle(lifecycleOwner.lifecycle, minActiveState).collect(collector)
     }
 }
 
-context(LifecycleOwner)
+context(lifecycleOwner: LifecycleOwner)
 fun <T> Flow<T>.collectLatestWithLifecycle(
     minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
     action: suspend (value: T) -> Unit
 ) {
-    lifecycleScope.launch {
-        flowWithLifecycle(lifecycle, minActiveState).collectLatest(action)
+    lifecycleOwner.lifecycleScope.launch {
+        flowWithLifecycle(lifecycleOwner.lifecycle, minActiveState).collectLatest(action)
     }
 }
 

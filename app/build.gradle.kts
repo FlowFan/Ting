@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -11,8 +13,8 @@ plugins {
 
 android {
     namespace = "com.example.ting"
-    compileSdk = 35
-    buildToolsVersion = "35.0.0"
+    compileSdk = 36
+    buildToolsVersion = "36.0.0"
 
     signingConfigs {
         create("release") {
@@ -26,7 +28,7 @@ android {
     defaultConfig {
         applicationId = "com.example.ting"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -44,17 +46,27 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
-        freeCompilerArgs += listOf(
-            "-Xcontext-receivers",
-            "-opt-in=androidx.paging.ExperimentalPagingApi",
-            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
-        )
-    }
     buildFeatures {
         compose = true
         viewBinding = true
+        buildConfig = true
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_1_8
+        optIn.addAll(
+            listOf(
+                "androidx.paging.ExperimentalPagingApi",
+                "kotlinx.coroutines.ExperimentalCoroutinesApi"
+            )
+        )
+        freeCompilerArgs.addAll(
+            listOf(
+                "-Xcontext-parameters"
+            )
+        )
     }
 }
 
