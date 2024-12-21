@@ -84,7 +84,7 @@ class DailyListFragment : Fragment() {
                                         Icon(Icons.Rounded.PlayArrow, null)
                                     }
                                 },
-                                colors = TopAppBarDefaults.largeTopAppBarColors(
+                                colors = TopAppBarDefaults.topAppBarColors(
                                     containerColor = MaterialTheme.colorScheme.background,
                                     scrolledContainerColor = MaterialTheme.colorScheme.background
                                 ),
