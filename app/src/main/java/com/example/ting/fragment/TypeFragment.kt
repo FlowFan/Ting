@@ -112,7 +112,7 @@ private fun DiscoverPage(
         } else {
             Column(modifier = Modifier.statusBarsPadding()) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    ScrollableTabRow(
+                    SecondaryScrollableTabRow(
                         selectedTabIndex = pagerState.currentPage,
                         modifier = Modifier.weight(1f),
                         containerColor = Color.Transparent,
