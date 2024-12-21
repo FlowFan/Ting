@@ -1,16 +1,25 @@
 package com.example.ting.init
 
 import android.app.Application
+import androidx.compose.runtime.Composer
+import androidx.compose.runtime.ExperimentalComposeRuntimeApi
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import coil3.disk.DiskCache
 import coil3.disk.directory
 import coil3.memory.MemoryCache
+import com.example.ting.BuildConfig
 import dagger.hilt.android.HiltAndroidApp
 
+@OptIn(ExperimentalComposeRuntimeApi::class)
 @HiltAndroidApp
 class MyApplication : Application(), SingletonImageLoader.Factory {
+    override fun onCreate() {
+        super.onCreate()
+        Composer.setDiagnosticStackTraceEnabled(BuildConfig.DEBUG)
+    }
+
     override fun newImageLoader(context: PlatformContext): ImageLoader =
         ImageLoader.Builder(this)
             .memoryCache {
