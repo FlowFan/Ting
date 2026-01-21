@@ -2,7 +2,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.jetbrainsKotlinPluginParcelize)
     alias(libs.plugins.jetbrainsKotlinPluginSerialization)
     alias(libs.plugins.androidxNavigationSafeargs)
@@ -13,8 +12,7 @@ plugins {
 
 android {
     namespace = "com.example.ting"
-    compileSdk = 36
-    buildToolsVersion = "36.0.0"
+    compileSdk = 37
 
     signingConfigs {
         create("release") {
@@ -43,8 +41,8 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     buildFeatures {
         compose = true
@@ -55,7 +53,7 @@ android {
 
 kotlin {
     compilerOptions {
-        jvmTarget = JvmTarget.JVM_1_8
+        jvmTarget = JvmTarget.JVM_11
         optIn.addAll(
             listOf(
                 "androidx.paging.ExperimentalPagingApi",
@@ -116,6 +114,7 @@ dependencies {
 
     // Paging
     implementation(libs.androidx.paging.runtime.ktx)
+    implementation(libs.androidx.paging.compose)
 
     // Serialization
     implementation(libs.kotlinx.serialization)
@@ -135,9 +134,21 @@ dependencies {
     // Media3
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.session)
+    implementation(libs.media3.common.ktx)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.guava)
+
+    implementation(libs.remote.core)
+    implementation(libs.remote.creation)
+    implementation(libs.remote.creation.core)
+    implementation(libs.remote.creation.android)
+//    implementation(libs.remote.creation.jvm)
+    implementation(libs.remote.creation.compose)
+    implementation(libs.remote.player.core)
+    implementation(libs.remote.player.view)
+    implementation(libs.remote.player.compose)
+    implementation(libs.remote.tooling.preview)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

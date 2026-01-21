@@ -1,31 +1,31 @@
 [versions]
-agp = "8.13.0"
-kotlin = "2.3.0"
-coreKtx = "1.17.0"
+agp = "9.2.0"
+kotlin = "2.3.21"
+coreKtx = "1.18.0"
 junit = "4.13.2"
 junitVersion = "1.3.0"
 espressoCore = "3.7.0"
 appcompat = "1.7.1"
-material = "1.13.0"
-activity = "1.12.2"
+material = "1.14.0"
+activity = "1.13.0"
 constraintlayout = "2.2.1"
-composeBom = "2026.01.00"
+composeBom = "2026.05.00"
 lifecycle = "2.10.0"
-navigationKtx = "2.9.6"
+navigationKtx = "2.9.8"
 swiperefreshlayout = "1.2.0"
-datastore = "1.2.0"
+datastore = "1.2.1"
 coreSplashscreen = "1.2.0"
 startupRuntime = "1.2.0"
-ksp = "2.3.4"
-hilt = "2.57.2"
+ksp = "2.3.8"
+hilt = "2.59.2"
 room = "2.8.4"
-paging = "3.4.0-rc01"
-kotlinxSerialization = "1.9.0"
+paging = "3.5.0"
+kotlinxSerialization = "1.11.0"
 okhttp = "5.3.2"
 retrofit = "3.0.0"
-coil = "3.3.0"
+coil = "3.4.0"
 crypto = "6.0.1"
-media3 = "1.9.0"
+media3 = "1.10.0"
 kotlinxCoroutines = "1.10.2"
 
 [libraries]
@@ -106,7 +106,6 @@ kotlinx-coroutines-guava = { group = "org.jetbrains.kotlinx", name = "kotlinx-co
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
-jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 jetbrainsKotlinPluginParcelize = { id = "org.jetbrains.kotlin.plugin.parcelize", version.ref = "kotlin" }
 jetbrainsKotlinPluginSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 androidxNavigationSafeargs = { id = "androidx.navigation.safeargs.kotlin", version.ref = "navigationKtx" }
